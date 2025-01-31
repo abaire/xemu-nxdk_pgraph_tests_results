@@ -1,0 +1,18 @@
+[general]
+show_welcome = false
+skip_boot_anim = true
+
+[general.updates]
+check = false
+
+[net]
+enable = true
+
+[sys]
+mem_limit = '64'
+
+[sys.files]
+bootrom_path = '/work/inputs/mcpx.bin'
+flashrom_path = '/work/inputs/bios.bin'
+eeprom_path = '/work/cache/xemu/eeprom.bin'
+hdd_path = '/work/cache/xemu/xbox_hdd.qcow2'

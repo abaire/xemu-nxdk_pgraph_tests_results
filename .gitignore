@@ -1,0 +1,12 @@
+.idea/
+.DS_Store
+
+.venv/
+.work/
+
+/cache/*
+!/cache/README.md
+/inputs/*
+!/inputs/README.md
+/new_results/*
+!/new_results/README.md
