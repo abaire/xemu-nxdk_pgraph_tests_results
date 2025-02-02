@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - '.github/**'
       - '!.github/workflows/**'
-      - '!.github/scripts/generate_results_markdown.sh'
+      - '!.github/scripts/generate_results_markdown.py'
       - 'README.md'
   workflow_dispatch:
 
@@ -17,33 +17,6 @@ concurrency:
 
 
 jobs:
-#  UpdateWiki:
-#    name: Update wiki results pages
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: Clone tree
-#      uses: actions/checkout@v4
-#      with:
-#        path: results
-#    - name: Clone wiki
-#      uses: actions/checkout@v2
-#      with:
-#        repository: ${{github.repository}}.wiki
-#        path: wiki
-#    - name: Generate wiki content
-#      run: |
-#        ./results/.github/scripts/generate_results_markdown.sh results wiki
-#    - name: Commit changes
-#      run: |
-#        cd wiki
-#        find .
-#        git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
-#        git config --local user.name "$GITHUB_ACTOR via action"
-#        git add .
-#        git diff-index --quiet HEAD || git commit -m "Update from github action $GITHUB_RUN_NUMBER - $GITHUB_SHA"
-#        git push
-
-
 #  find-changes:
 #    runs-on: ubuntu-latest
 #    permissions:
@@ -58,18 +31,40 @@ jobs:
 #        with:
 #          filters: |
 #            results:
-#              - '.github/workflows/*.yml'
-#              - '.github/scripts/**'
-#              - 'tests/**'
-#              - 'pyproject.toml'
-#              - 'README.md'
-#              - 'LICENSE.txt'
+#              - 'results/**'
 #            docker:
 #              - '.github/workflows/*.yml'
 #              - 'Dockerfile'
 #              - '.docker/**'
-#
-#
+
+  UpdateWiki:
+    name: Update wiki results pages
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone tree
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: '1'
+        path: results
+    - name: Clone wiki
+      uses: actions/checkout@v4
+      with:
+        repository: ${{github.repository}}.wiki
+        path: wiki
+    - name: Generate wiki content
+      run: |
+        ./results/.github/scripts/generate_results_markdown.py results wiki
+    - name: Commit changes
+      run: |
+        cd wiki
+        find .
+        git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+        git config --local user.name "$GITHUB_ACTOR via action"
+        git add .
+        git diff-index --quiet HEAD || git commit -m "Update from github action $GITHUB_RUN_NUMBER - $GITHUB_SHA"
+        git push
+
+
 #  build-container:
 #    needs: [find-changes]
 #    name: Build and Publish Docker Image
