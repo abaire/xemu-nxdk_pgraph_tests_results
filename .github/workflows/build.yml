@@ -53,10 +53,14 @@ jobs:
       with:
         repository: ${{github.repository}}.wiki
         path: wiki
+    - name: Install requirements
+      run: |
+          export PIP_BREAK_SYSTEM_PACKAGES=1
+          pip3 install -r results/.github/scripts/requirements.txt
     - name: Generate wiki content
       run: |
         cd results
-        python3 .github/scripts/generate_results_markdown.py results ../wiki
+        python3 .github/scripts/generate_results_markdown.py results ../wiki --comparison-dir compare-results
     - name: Commit changes
       run: |
         cd wiki

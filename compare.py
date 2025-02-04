@@ -146,6 +146,7 @@ def _compare(
 
     differences: list[Difference] = []
 
+    logger.info("Comparing image files (this may take some time)...")
     for test_suite, test_cases in results_info.test_suites.items():
         golden_suite = golden_info.test_suites.get(test_suite, {})
         for test_case, artifact in test_cases.items():
