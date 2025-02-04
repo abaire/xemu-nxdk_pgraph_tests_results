@@ -24,9 +24,9 @@ class ResultsInfo(NamedTuple):
         components = run_identifier.split("/")
         return cls(
             run_identifier=components,
-            xemu_version=components[-1],
-            platform_info=components[-4],
-            gl_info=f"{components[-3]}:{components[-2]}",
+            xemu_version=components[-4],
+            platform_info=components[-3],
+            gl_info=f"{components[-2]}:{components[-1]}",
             toc_md_file=toc_md_file,
         )
 
