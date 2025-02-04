@@ -56,7 +56,7 @@ jobs:
     - name: Generate wiki content
       run: |
         cd results
-        python3 .github/scripts/generate_results_markdown.py results ../wiki
+        python3 .github/scripts/generate_results_markdown.py results ../wiki --comparison-dir compare-results
     - name: Commit changes
       run: |
         cd wiki
