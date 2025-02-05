@@ -1,4 +1,4 @@
-nxdk-pgraph-test-runner>=0.0.11
+nxdk-pgraph-test-runner>=0.1.0
 requests~=2.32.3
 GitPython~=3.1.44
 lpips~=0.1.4
