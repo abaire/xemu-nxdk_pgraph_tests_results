@@ -7,12 +7,15 @@ import glob
 import hashlib
 import itertools
 import json
+import logging
 import os
 import urllib.parse
 from collections import defaultdict
 from typing import NamedTuple, Any
 
 from frozendict import frozendict, deepfreeze
+
+logger = logging.getLogger(__name__)
 
 # Fully qualified comparison elements may be very long. This value is used to cap their length, switching to an MD5 if
 # needed.
@@ -468,6 +471,12 @@ def _write_home_markdown(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--verbose",
+        "-v",
+        help="Enables verbose logging information",
+        action="store_true",
+    )
+    parser.add_argument(
         "results_dir",
         help="Directory including test outputs that will be processed",
     )
@@ -488,6 +497,10 @@ def main():
     )
 
     args = parser.parse_args()
+
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(level=log_level)
+
     os.makedirs(args.output_dir, exist_ok=True)
 
     if args.comparison_dir:
@@ -496,6 +509,8 @@ def main():
         ).process()
     else:
         run_identifier_to_comparison_results = {}
+
+    logger.debug("Comparison files: %s", run_identifier_to_comparison_results)
 
     results_writer = ResultsWriter(
         args.results_dir,
