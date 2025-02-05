@@ -24,7 +24,8 @@ pip install -r requirements.txt
 
 ## Running tests for a new xemu (or nxdk_pgraph_tests) release
 
-You will need to provide your own BIOS and MCPX boot images.
+* You will need to provide your own BIOS and MCPX boot images.
+* The test procedure can take a very long time (more than 60 minutes).
 
 ### Test the latest xemu with the latest nxdk_pgraph_tests
 
@@ -54,6 +55,9 @@ You will need to
 install [perceptualdiff](https://github.com/myint/perceptualdiff)
 
 ### Compare to the latest [Xbox hardware goldens](https://github.com/abaire/nxdk_pgraph_tests_golden_results)
+
+*Note*: This repository contains a GitHub Action that will perform the hardware comparison on new results after
+they are merged to the `main` branch.
 
 ```shell
 ./compare.py <results_directory_created_by_execute>
