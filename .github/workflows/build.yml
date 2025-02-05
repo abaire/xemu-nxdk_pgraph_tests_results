@@ -43,11 +43,17 @@ jobs:
     if: needs.find-changes.outputs.wiki == 'true'
     permissions:
       contents: write
+    outputs:
+      sha: ${{ steps.sha.outputs.new_head_commit }}
     steps:
     - name: Clone tree
       uses: actions/checkout@v4
       with:
         fetch-depth: '1'
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
     - name: Install requirements
       run: |
           sudo apt-get update
@@ -67,8 +73,13 @@ jobs:
         git config --local user.name "$GITHUB_ACTOR via action"
         git add .
         git diff-index --quiet HEAD || git commit -m "Auto generated diffs against HW results $GITHUB_RUN_NUMBER - $GITHUB_SHA"
-        git push
-    
+            git push
+    - name: get sha
+      id: sha
+      run: |
+        sha_new=$(git rev-parse HEAD)
+        echo ${sha_new}
+        echo "name=new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
 
   UpdateWiki:
     name: Update wiki results pages
@@ -81,6 +92,7 @@ jobs:
     - name: Clone tree
       uses: actions/checkout@v4
       with:
+        ref: ${{ needs.DiffAgainstHW.outputs.sha }}
         fetch-depth: '1'
         path: results
     - name: Clone wiki
@@ -88,6 +100,10 @@ jobs:
       with:
         repository: ${{github.repository}}.wiki
         path: wiki
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
     - name: Install requirements
       run: |
           export PIP_BREAK_SYSTEM_PACKAGES=1
