@@ -332,6 +332,7 @@ class ResultsWriter:
             with open(machine_info_file, "r") as infile:
                 ret.append(infile.read())
             ret.append("```")
+            ret.append("")
         return "\n".join(ret)
 
     def generate_markdown_for_comparisons(self, result_info: ResultsInfo) -> str:
@@ -390,7 +391,7 @@ class ResultsWriter:
 
                 output_file.writelines(
                     [
-                        "",
+                        "\n",
                         "# Results\n",
                         *[
                             f"- [[{friendly_page_name(result)}|{result[:-3]}]]\n"
@@ -432,7 +433,7 @@ def _write_home_markdown(
             ]
         )
 
-        for xemu_version in sorted(xemu_version_to_results.keys()):
+        for xemu_version in sorted(xemu_version_to_results.keys(), reverse=True):
             output_file.write(f"# {xemu_version}\n")
 
             by_platform = {
