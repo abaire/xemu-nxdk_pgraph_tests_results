@@ -28,6 +28,7 @@ jobs:
           filters: |
             wiki:
               - '.github/workflows/*.yml'
+              - '.github/scripts/*'
               - 'results/**'
               - 'compare-results/**'
             scripts:
