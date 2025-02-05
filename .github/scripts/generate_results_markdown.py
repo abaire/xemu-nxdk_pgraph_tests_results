@@ -390,6 +390,7 @@ class ResultsWriter:
 
                 output_file.writelines(
                     [
+                        "",
                         "# Results\n",
                         *[
                             f"- [[{friendly_page_name(result)}|{result[:-3]}]]\n"
