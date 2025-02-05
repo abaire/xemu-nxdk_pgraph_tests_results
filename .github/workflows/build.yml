@@ -4,17 +4,7 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '.github/**'
-      - '!.github/workflows/**'
-      - '!.github/scripts/generate_results_markdown.py'
-      - 'README.md'
   pull_request:
-    paths-ignore:
-      - '.github/**'
-      - '!.github/workflows/**'
-      - '!.github/scripts/generate_results_markdown.py'
-      - 'README.md'
   workflow_dispatch:
 
 concurrency:
@@ -23,29 +13,33 @@ concurrency:
 
 
 jobs:
-#  find-changes:
-#    runs-on: ubuntu-latest
-#    permissions:
-#      pull-requests: read
-#    outputs:
-#      results: ${{ steps.filter.outputs.results }}
-#      docker: ${{ steps.filter.outputs.docker }}
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: dorny/paths-filter@v3
-#        id: filter
-#        with:
-#          filters: |
-#            results:
-#              - 'results/**'
-#            docker:
-#              - '.github/workflows/*.yml'
-#              - 'Dockerfile'
-#              - '.docker/**'
+  find-changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      wiki: ${{ steps.filter.outputs.wiki }}
+      docker: ${{ steps.filter.outputs.docker }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            wiki:
+              - '.github/workflows/*.yml'
+              - 'results/**'
+              - 'compare-results/**'
+            scripts:
+              - '.github/workflows/*.yml'
+              - 'compare.py'
+              - 'execute.py'
 
   DiffAgainstHW:
+    needs: [find-changes]
     name: Diff new results against Xbox hardware results
     runs-on: ubuntu-latest
+    if: needs.find-changes.outputs.wiki == 'true'
     permissions:
       contents: write
     steps:
@@ -78,7 +72,8 @@ jobs:
   UpdateWiki:
     name: Update wiki results pages
     runs-on: ubuntu-latest
-    needs: [DiffAgainstHW]
+    needs: [find-changes, DiffAgainstHW]
+    if: needs.find-changes.outputs.wiki == 'true'
     permissions:
       contents: write
     steps:
