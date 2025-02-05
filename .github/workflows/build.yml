@@ -99,7 +99,7 @@ jobs:
     - name: Generate wiki content
       run: |
         cd results
-        python3 .github/scripts/generate_results_markdown.py results ../wiki --comparison-dir compare-results
+        python3 .github/scripts/generate_results_markdown.py results ../wiki --comparison-dir compare-results -v
     - name: Commit changes
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
