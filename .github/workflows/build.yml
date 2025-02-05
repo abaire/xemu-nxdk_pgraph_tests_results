@@ -9,6 +9,12 @@ on:
       - '!.github/workflows/**'
       - '!.github/scripts/generate_results_markdown.py'
       - 'README.md'
+  pull_request:
+    paths-ignore:
+      - '.github/**'
+      - '!.github/workflows/**'
+      - '!.github/scripts/generate_results_markdown.py'
+      - 'README.md'
   workflow_dispatch:
 
 concurrency:
@@ -62,6 +68,7 @@ jobs:
         cd results
         python3 .github/scripts/generate_results_markdown.py results ../wiki --comparison-dir compare-results
     - name: Commit changes
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: |
         cd wiki
         git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
