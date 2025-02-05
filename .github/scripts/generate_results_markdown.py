@@ -384,10 +384,12 @@ class ResultsWriter:
                         0
                     ]
 
+                machine_info = self.generate_markdown_for_machine_info(run_result_dir)
+                if machine_info:
+                    output_file.write(machine_info)
+
                 output_file.writelines(
                     [
-                        f"{run_result_dir}\n",
-                        "===\n",
                         "# Results\n",
                         *[
                             f"- [[{friendly_page_name(result)}|{result[:-3]}]]\n"
@@ -399,10 +401,6 @@ class ResultsWriter:
                 failure_info = self.generate_markdown_for_failures(run_result_dir)
                 if failure_info:
                     output_file.write(failure_info)
-
-                machine_info = self.generate_markdown_for_machine_info(run_result_dir)
-                if machine_info:
-                    output_file.write(machine_info)
 
                 comparisons = self.generate_markdown_for_comparisons(results_info)
                 if comparisons:
