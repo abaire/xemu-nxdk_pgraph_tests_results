@@ -337,12 +337,30 @@ class ResultsWriter:
         if not comparisons:
             return ""
 
+        def bulletted_fq_names(fq_names: list[str]) -> list[str]:
+            return [f"* {name.replace(':', ' : ')}" for name in sorted(fq_names)]
+
         ret = ["", "# Comparisons"]
         for comparison, md_files in comparisons:
             ret.append(f"## {comparison.golden_identifier.replace(':', ' ')}")
 
             for page_title, md_file in sorted(md_files, key=lambda x: x[0]):
                 ret.append(f"- [[{page_title}|{md_file[:-3]}]]\n")
+
+            missing_goldens = comparison.summary.get("tests_without_goldens")
+            if missing_goldens:
+                ret.extend(
+                    [
+                        "### Results present without a golden to compare to",
+                        *bulletted_fq_names(missing_goldens),
+                    ]
+                )
+
+            missing_results = comparison.summary.get("goldens_without_results")
+            if missing_results:
+                ret.extend(
+                    ["### Missing results", *bulletted_fq_names(missing_results)]
+                )
 
         return "\n".join(ret)
 
