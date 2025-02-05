@@ -432,7 +432,7 @@ def _write_home_markdown(
             ]
         )
 
-        for xemu_version in sorted(xemu_version_to_results.keys()):
+        for xemu_version in sorted(xemu_version_to_results.keys(), reverse=True):
             output_file.write(f"# {xemu_version}\n")
 
             by_platform = {
