@@ -200,6 +200,8 @@ def perform_comparison(
         golden_info = ResultsInfo.parse(golden_path)
         against_name = golden_info.run_identifier
 
+    logger.debug("Comparing %s to %s", results_info.run_identifier, against_name)
+
     only_results, only_golden, diffs = _compare(
         results_info, golden_info, diff_threshold
     )
@@ -215,6 +217,8 @@ def perform_comparison(
     if os.path.isdir(comparison_output_directory):
         shutil.rmtree(comparison_output_directory)
     os.makedirs(comparison_output_directory, exist_ok=True)
+
+    logger.debug("Writing output to %s", comparison_output_directory)
 
     summary = {
         "result_identifier": results_info.run_identifier,
