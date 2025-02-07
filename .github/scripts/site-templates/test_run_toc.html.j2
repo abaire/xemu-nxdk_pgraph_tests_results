@@ -1,11 +1,10 @@
-<html>
-<head>
-    <title>
+{% extends "base.html.j2" %}
+
+{% block title %}
         {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }}
-    </title>
-    <link rel="stylesheet" href="{{ css_dir }}/site.css">
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 
 {% if machine_info %}
 <h1>Machine info</h1>
@@ -97,6 +96,4 @@
 
 {% endif %}
 
-    <script src="{{ js_dir }}/script.js"></script>
-</body>
-</html>
+{% endblock %}

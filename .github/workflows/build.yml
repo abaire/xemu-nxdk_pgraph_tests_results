@@ -18,7 +18,7 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      wiki: ${{ steps.filter.outputs.wiki }}
+      site: ${{ steps.filter.outputs.site }}
       docker: ${{ steps.filter.outputs.docker }}
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         id: filter
         with:
           filters: |
-            wiki:
+            site:
               - '.github/workflows/*.yml'
               - '.github/scripts/*'
               - 'results/**'
@@ -40,7 +40,7 @@ jobs:
     needs: [ find-changes ]
     name: Diff new results against Xbox hardware results
     runs-on: ubuntu-latest
-    if: needs.find-changes.outputs.wiki == 'true'
+    if: needs.find-changes.outputs.site == 'true'
     permissions:
       contents: write
     outputs:
@@ -66,6 +66,9 @@ jobs:
       - name: Generate new diffs
         run: |
           python3 .github/scripts/generate_missing_hw_diffs.py
+      - name: Generate new no-alpha images
+        run: |
+          python3 .github/scripts/generate_no_alpha_images.py
       - name: Commit changes
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
@@ -84,7 +87,7 @@ jobs:
   BuildSite:
     runs-on: ubuntu-latest
     needs: [ find-changes, DiffAgainstHW ]
-    if: needs.find-changes.outputs.wiki == 'true'
+    if: needs.find-changes.outputs.site == 'true'
     permissions:
       contents: write
     outputs:
@@ -103,9 +106,9 @@ jobs:
         run: |
           export PIP_BREAK_SYSTEM_PACKAGES=1
           pip3 install -r .github/scripts/requirements.txt
-      - name: Generate wiki content
+      - name: Generate site content
         run: |
-          python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results -v
+          python3 .github/scripts/generate_results_site.py results no-alpha .github/site --comparison-dir compare-results -v
       - name: Commit changes
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
@@ -126,7 +129,7 @@ jobs:
   DeploySite:
     runs-on: ubuntu-latest
     needs: [ find-changes, BuildSite ]
-    if: needs.find-changes.outputs.wiki == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
       contents: read
       pages: write

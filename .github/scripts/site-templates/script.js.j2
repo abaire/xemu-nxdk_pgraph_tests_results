@@ -55,7 +55,34 @@ function enableViewLinks(document) {
     });
 }
 
+function enableIgnoreAlpha(document) {
+    const ignoreAlphaCheckbox = document.getElementById('ignore-alpha');
+    if (!ignoreAlphaCheckbox) {
+        return;
+    }
+    ignoreAlphaCheckbox.addEventListener('change', () => {
+        const images = document.querySelectorAll('img[data-noalpha]');
+
+        if (ignoreAlphaCheckbox.checked) {
+            images.forEach(img => {
+                img.dataset.noalphaOriginalUrl = img.src;
+                img.dataset.noalphaOriginalAlt = img.alt;
+                img.src = img.dataset.noalpha;
+                img.alt = img.alt + " disregarding alpha";
+            });
+        } else {
+            images.forEach(img => {
+                img.dataset.noalphaOriginalUrl = img.src;
+                img.dataset.noalphaOriginalAlt = img.alt;
+                img.src = img.dataset.noalphaOriginalUrl;
+                img.alt = img.dataset.noalphaOriginalAlt;
+            });
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    enableIgnoreAlpha(document);
     enableViewLinks(document);
     enableImagePairs(document);
 });

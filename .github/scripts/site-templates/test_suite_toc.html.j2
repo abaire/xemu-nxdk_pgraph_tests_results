@@ -1,12 +1,10 @@
-<html>
-<head>
-    <title>
-        {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }} - {{ suite_name }}
-    </title>
-    <link rel="stylesheet" href="{{ css_dir }}/site.css">
-</head>
-<body>
+{% extends "base.html.j2" %}
 
+{% block title %}
+{{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }} - {{ suite_name }}
+{% endblock %}
+
+{% block content %}
 <h1>{{ suite_name }}</h1>
 
 <div class="label-value-grid">
@@ -42,5 +40,4 @@
     {% endif %}
 {% endfor %}
 
-</body>
-</html>
+{% endblock %}

@@ -63,7 +63,9 @@ class TestCaseComparisonInfo(NamedTuple):
 
     test_name: str
     source_image_url: str
+    source_no_alpha_image_url: str
     golden_image_url: str
+    golden_no_alpha_image_url: str
     diff_image_url: str
 
 
@@ -116,12 +118,14 @@ class ComparisonScanner:
         base_url: str,
         results_dir: str,
         hw_golden_base_url: str,
+        no_alpha_dir: str
     ) -> None:
         self.comparison_dir = comparison_dir
         self.output_dir = output_dir
         self.base_url = base_url
         self.results_dir = results_dir
         self.hw_golden_base_url = hw_golden_base_url
+        self.no_alpha_dir = no_alpha_dir
 
     def _process_test_case_artifacts(
         self,
@@ -155,18 +159,27 @@ class ComparisonScanner:
             fq_name = f"{suite_name}:{test_name}"
 
             original_image_subpath = fq_name.split(":")
-            source_image_url = "/".join(
-                [self.base_url, results_base_path, *original_image_subpath]
-            )
-            golden_image_url = "/".join(
-                [golden_base_url, golden_base_path, *original_image_subpath]
-            )
+
+            results_image_path = os.path.join(results_base_path, *original_image_subpath) + ".png"
+
+            source_image_url = "/".join([self.base_url, results_image_path])
+            results_no_alpha_image_path = os.path.join(self.no_alpha_dir, results_image_path)
+            source_no_alpha_image_url = "/".join([self.base_url, results_no_alpha_image_path]) if os.path.isfile(results_no_alpha_image_path) else ""
+
+            golden_image_path = os.path.join(golden_base_path, *original_image_subpath) + ".png"
+            golden_image_url = "/".join([golden_base_url, golden_image_path])
+
+            golden_no_alpha_image_path = os.path.join("nxdk_pgraph_tests_golden_results", *original_image_subpath) + ".png" if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER else golden_image_path
+            golden_no_alpha_image_path = os.path.join(self.no_alpha_dir, golden_no_alpha_image_path)
+            golden_no_alpha_image_url = "/".join([self.base_url, golden_no_alpha_image_path]) if os.path.isfile(golden_no_alpha_image_path) else ""
 
             ret.append(
                 TestCaseComparisonInfo(
                     test_name=test_name,
-                    source_image_url=f"{source_image_url}.png",
-                    golden_image_url=f"{golden_image_url}.png",
+                    source_image_url=source_image_url,
+                    source_no_alpha_image_url=source_no_alpha_image_url,
+                    golden_image_url=golden_image_url,
+                    golden_no_alpha_image_url=golden_no_alpha_image_url,
                     diff_image_url="/".join([self.base_url, image_file]),
                 )
             )
@@ -310,11 +323,13 @@ class ResultsScanner:
         results_dir: str,
         output_dir: str,
         base_url: str,
+        no_alpha_dir: str,
         run_identifier_to_comparison_results: dict[RunIdentifier, list[ComparisonInfo]],
     ) -> None:
         self.results_dir = results_dir
         self.output_dir = output_dir
         self.base_url = base_url
+        self.no_alpha_dir = no_alpha_dir
         self.run_identifier_to_comparison_results = run_identifier_to_comparison_results
 
     def _process_test_case_artifacts(
@@ -599,9 +614,12 @@ class PagesWriter:
 
         for fqname in comparison.summary.get("goldens_without_results", []):
             suite_name, test_name = self.split_fq_name(fqname)
+            raise NotImplementedError("TODO: Reconstruct golden no-alpha image URL")
+
             info = TestCaseComparisonInfo(
                 test_name=test_name,
                 source_image_url="",
+                source_no_alpha_image_url="",
                 golden_image_url=self.golden_url_for_fqtest(fqname, golden_base_url),
                 diff_image_url="",
             )
@@ -609,10 +627,12 @@ class PagesWriter:
 
         for fqname in comparison.summary.get("tests_without_goldens", []):
             suite_name, test_name = self.split_fq_name(fqname)
+            raise NotImplementedError("TODO: Reconstruct source no-alpha image URL")
             info = TestCaseComparisonInfo(
                 test_name=test_name,
                 source_image_url=self.results_url_for_fqtest(fqname),
                 golden_image_url="",
+                golden_no_alpha_image_url="",
                 diff_image_url="",
             )
             suite_to_results[suite_name].append(info)
@@ -797,6 +817,10 @@ def main():
         help="Directory including test outputs that will be processed",
     )
     parser.add_argument(
+        "no_alpha_dir",
+        help="Directory including images that have had their alpha channel removed",
+    )
+    parser.add_argument(
         "output_dir",
         help="Directory into which markdown files will be generated",
     )
@@ -830,11 +854,12 @@ def main():
 
     if args.comparison_dir:
         run_identifier_to_comparison_results = ComparisonScanner(
-            args.comparison_dir,
-            args.output_dir,
-            args.base_url,
-            args.results_dir,
-            args.hw_golden_base_url,
+            comparison_dir=args.comparison_dir,
+            output_dir=args.output_dir,
+            base_url=args.base_url,
+            results_dir=args.results_dir,
+            no_alpha_dir=args.no_alpha_dir,
+            hw_golden_base_url=args.hw_golden_base_url,
         ).process()
     else:
         run_identifier_to_comparison_results = {}
@@ -842,10 +867,11 @@ def main():
     logger.debug("Comparison files: %s", run_identifier_to_comparison_results)
 
     results = ResultsScanner(
-        args.results_dir,
-        args.output_dir,
-        args.base_url,
-        run_identifier_to_comparison_results,
+        results_dir=args.results_dir,
+        output_dir=args.output_dir,
+        base_url=args.base_url,
+        no_alpha_dir=args.no_alpha_dir,
+        run_identifier_to_comparison_results=run_identifier_to_comparison_results,
     ).process()
 
     if not args.templates_dir:

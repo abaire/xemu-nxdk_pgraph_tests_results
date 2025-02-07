@@ -1,11 +1,10 @@
-<html>
-<head>
-    <title>
+{% extends "base.html.j2" %}
+
+{% block title %}
         {{ suite_name }} : {{ source_identifier }} vs {{ golden_identifier }}
-    </title>
-    <link rel="stylesheet" href="{{ css_dir }}/site.css">
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
 
 <h1>{{ suite_name }} : {{ source_identifier }} vs {{ golden_identifier }}</h1>
 
@@ -26,25 +25,46 @@
             <div class="image-title" data-state="source"><a href="{{ result.source_image_url }}">Source</a></div>
             <div class="image-title" data-state="golden"><a href="{{ result.golden_image_url }}">Golden</a></div>
         </div>
-        <img src="{{ result.source_image_url }}" alt="Source image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison" data-state="source">
-        <img src="{{ result.golden_image_url }}" alt="Golden image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison" data-state="golden" style="display: none;">
+        <img src="{{ result.source_image_url }}"
+             alt="Source image for {{ suite_name }}::{{ result.test_name }}"
+             class="image-comparison"
+             data-state="source"
+             {% if result.no_alpha_source_image_url %}data-noalpha="{{ result.no_alpha_source_image_url }}"{% endif %}
+        >
+        <img src="{{ result.golden_image_url }}"
+             alt="Golden image for {{ suite_name }}::{{ result.test_name }}"
+             class="image-comparison"
+             data-state="golden"
+             style="display: none;"
+             {% if result.no_alpha_golden_image_url %}data-noalpha="{{ result.no_alpha_golden_image_url }}"{% endif %}
+        >
     </div>
     {% elif result.source_image_url %}
         <div class="image-pair-title-bar">
             <div class="image-title"><a href="{{ result.source_image_url }}">Source</a></div>
         </div>
-        <img src="{{ result.source_image_url }}" alt="Source image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison">
+        <img src="{{ result.source_image_url }}"
+             alt="Source image for {{ suite_name }}::{{ result.test_name }}"
+             class="image-comparison"
+             {% if result.no_alpha_source_image_url %}data-noalpha="{{ result.no_alpha_source_image_url }}"{% endif %}
+        >
     {% elif result.golden_image_url %}
         <div class="image-pair-title-bar">
             <div class="image-title"><a href="{{ result.golden_image_url }}">Golden</a><</div>
         </div>
-        <img src="{{ result.golden_image_url }}" alt="Golden image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison">
+        <img src="{{ result.golden_image_url }}"
+             alt="Golden image for {{ suite_name }}::{{ result.test_name }}"
+             class="image-comparison"
+             {% if result.no_alpha_golden_image_url %}data-noalpha="{{ result.no_alpha_golden_image_url }}"{% endif %}
+        >
     {% endif %}
 
     </div>
 
 {% endfor %}
 
-    <script src="{{ js_dir }}/script.js"></script>
-</body>
-</html>
+<div id="ignore-alpha-box">
+    <label><input type="checkbox" id="ignore-alpha"> Ignore Alpha</label>
+</div>
+
+{% endblock %}
