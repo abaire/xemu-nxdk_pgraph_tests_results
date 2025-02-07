@@ -1,42 +1,31 @@
-
 function enableImagePairs(document) {
     const imagePairs = document.querySelectorAll('.image-pair');
 
     imagePairs.forEach(pair => {
-        const images = pair.querySelectorAll('.image');
+        const images = pair.querySelectorAll('.image-comparison');
         const titles = pair.querySelectorAll('.image-title');
         let activeState = 'source';
 
-        function swapImagesAndTitles() {
-            const newState = activeState === 'source'? 'golden': 'source';
-
+        function applyActiveState(newState) {
             images.forEach(img => {
-                if (img.dataset.state === activeState) {
-                    img.style.display = 'none';
-                } else {
-                    img.style.display = 'block';
-                }
+                img.style.display = (img.dataset.state === newState) ? 'block' : 'none';
             });
 
             titles.forEach(title => {
-                if (title.dataset.state === activeState) {
-                    title.style.display = 'none';
-                } else {
-                    title.style.display = 'block';
-                }
+                title.style.fontWeight = (title.dataset.state === newState) ? 'bold' : 'normal';
             });
 
             activeState = newState;
         }
 
-        pair.addEventListener('click', swapImagesAndTitles);
+        function swapImagesAndTitles() {
+            const newState = activeState === 'source' ? 'golden' : 'source';
+            applyActiveState(newState);
+        }
 
-        document.addEventListener('keydown', (event) => {
-            if (event.key === ' ') {
-                if (document.activeElement === pair || pair.contains(document.activeElement)) {
-                    swapImagesAndTitles();
-                }
-            }
+        applyActiveState(activeState);
+        images.forEach(img => {
+            img.addEventListener('click', swapImagesAndTitles);
         });
     });
 }
@@ -45,18 +34,24 @@ function enableViewLinks(document) {
     const viewLinks = document.querySelectorAll('.view-link');
 
     viewLinks.forEach(link => {
-        const hoverImage = link.querySelector('.hover-image');
-        const imageUrl = link.dataset.imageUrl;
 
-        link.addEventListener('mouseover', () => {
-            hoverImage.src = imageUrl;
-            hoverImage.style.display = 'block';
-        });
+        const container = link.closest('.titled-image-container');
+        if (container) {
+            const hiddenImage = container.querySelector('.hidden-image');
+            if (hiddenImage) {
 
-        link.addEventListener('mouseout', () => {
-            hoverImage.style.display = 'none';
-            hoverImage.src = "";
-        });
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    hiddenImage.style.display = 'block';
+                    link.style.display = 'none';
+                });
+
+                hiddenImage.addEventListener('click', () => {
+                    hiddenImage.style.display = 'none';
+                    link.style.display = 'block';
+                });
+            }
+        }
     });
 }
 
