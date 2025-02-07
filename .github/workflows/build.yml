@@ -18,7 +18,7 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      wiki: ${{ steps.filter.outputs.wiki }}
+      site: ${{ steps.filter.outputs.site }}
       docker: ${{ steps.filter.outputs.docker }}
     steps:
       - uses: actions/checkout@v4
@@ -26,9 +26,10 @@ jobs:
         id: filter
         with:
           filters: |
-            wiki:
+            site:
               - '.github/workflows/*.yml'
-              - '.github/scripts/*'
+              - '.github/scripts/**'
+              - '.github/site/**'
               - 'results/**'
               - 'compare-results/**'
             scripts:
@@ -40,7 +41,7 @@ jobs:
     needs: [ find-changes ]
     name: Diff new results against Xbox hardware results
     runs-on: ubuntu-latest
-    if: needs.find-changes.outputs.wiki == 'true'
+    if: needs.find-changes.outputs.site == 'true'
     permissions:
       contents: write
     outputs:
@@ -79,12 +80,12 @@ jobs:
         run: |
           sha_new=$(git rev-parse HEAD)
           echo ${sha_new}
-          echo "name=new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
+          echo "new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
 
   BuildSite:
     runs-on: ubuntu-latest
     needs: [ find-changes, DiffAgainstHW ]
-    if: needs.find-changes.outputs.wiki == 'true'
+    if: needs.find-changes.outputs.site == 'true'
     permissions:
       contents: write
     outputs:
@@ -94,7 +95,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.DiffAgainstHW.outputs.sha }}
-          fetch-depth: '1'
+          fetch-depth: 1
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -103,12 +104,17 @@ jobs:
         run: |
           export PIP_BREAK_SYSTEM_PACKAGES=1
           pip3 install -r .github/scripts/requirements.txt
-      - name: Generate wiki content
+      - name: Generate site content
         run: |
           python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results -v
       - name: Commit changes
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
+          git fetch
+          git remote -v
+          git status
+          git checkout main
+          git pull
           git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
           git config --local user.name "$GITHUB_ACTOR via action"
           git add .
@@ -119,14 +125,14 @@ jobs:
         run: |
           sha_new=$(git rev-parse HEAD)
           echo ${sha_new}
-          echo "name=new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
+          echo "new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
 
 
 
   DeploySite:
     runs-on: ubuntu-latest
     needs: [ find-changes, BuildSite ]
-    if: needs.find-changes.outputs.wiki == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
       contents: read
       pages: write
@@ -136,11 +142,13 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Print site sha
+        run: echo "Site SHA is ${{ needs.BuildSite.outputs.sha }}"
       - name: Clone tree
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.BuildSite.outputs.sha }}
-          fetch-depth: '1'
+          fetch-depth: 1
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
