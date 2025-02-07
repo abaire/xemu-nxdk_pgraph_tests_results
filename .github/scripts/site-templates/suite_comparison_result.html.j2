@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>
+        {{ suite_name }} : {{ source_identifier }} vs {{ golden_identifier }}
+    </title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<h1>{{ suite_name }} : {{ source_identifier }} vs {{ golden_identifier }}</h1>
+
+{% for result in results | sort(attribute='test_name') %}
+    <h3>{{ result.test_name }}</h3>
+
+    {% if result.diff_image_url %}
+    <div class="image-container">
+    <img src="{{ result.diff_image_url }}" alt="Diff result for {{ suite_name }}::{{ result.test_name }}" class="inline-image">
+    </div>
+    {% endif %}
+
+    {% if result.source_image_url and result.golden_image_url %}
+    <div class="image-pair">
+        <div class="image-title" data-state="source">Source</div>
+        <img src="{{ result.source_image_url }}" alt="Source image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison active" data-state="source">
+        <div class="image-title" data-state="golden" style="display: none;">Golden</div>
+        <img src="{{ result.golden_image_url }}" alt="Golden image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison" data-state="golden" style="display: none;">
+    </div>
+    {% elif result.source_image_url %}
+        <div class="image-title">Source</div>
+        <img src="{{ result.source_image_url }}" alt="Source image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison active">
+    {% elif result.golden_image_url %}
+        <div class="image-title">Golden</div>
+        <img src="{{ result.golden_image_url }}" alt="Golden image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison active">
+    {% endif %}
+
+{% endfor %}
+
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -37,7 +37,7 @@ jobs:
               - 'execute.py'
 
   DiffAgainstHW:
-    needs: [find-changes]
+    needs: [ find-changes ]
     name: Diff new results against Xbox hardware results
     runs-on: ubuntu-latest
     if: needs.find-changes.outputs.wiki == 'true'
@@ -46,16 +46,16 @@ jobs:
     outputs:
       sha: ${{ steps.sha.outputs.new_head_commit }}
     steps:
-    - name: Clone tree
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: '1'
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'pip'
-    - name: Install requirements
-      run: |
+      - name: Clone tree
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '1'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install requirements
+        run: |
           sudo apt-get update
           sudo apt-get install -y \
             perceptualdiff
@@ -63,103 +63,91 @@ jobs:
           export PIP_BREAK_SYSTEM_PACKAGES=1
           pip3 install -r requirements.txt
           pip3 install -r .github/scripts/requirements.txt
-    - name: Generate new diffs
-      run: |
-        python3 .github/scripts/generate_missing_hw_diffs.py
-    - name: Commit changes
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
-        git config --local user.name "$GITHUB_ACTOR via action"
-        git add .
-        git diff-index --quiet HEAD || git commit -m "Auto generated diffs against HW results $GITHUB_RUN_NUMBER - $GITHUB_SHA"
-            git push
-    - name: get sha
-      id: sha
-      run: |
-        sha_new=$(git rev-parse HEAD)
-        echo ${sha_new}
-        echo "name=new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
+      - name: Generate new diffs
+        run: |
+          python3 .github/scripts/generate_missing_hw_diffs.py
+      - name: Commit changes
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR via action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Auto generated diffs against HW results $GITHUB_RUN_NUMBER - $GITHUB_SHA"
+              git push
+      - name: get sha
+        id: sha
+        run: |
+          sha_new=$(git rev-parse HEAD)
+          echo ${sha_new}
+          echo "name=new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
 
-  UpdateWiki:
-    name: Update wiki results pages
+  BuildSite:
     runs-on: ubuntu-latest
-    needs: [find-changes, DiffAgainstHW]
+    needs: [ find-changes, DiffAgainstHW ]
     if: needs.find-changes.outputs.wiki == 'true'
     permissions:
       contents: write
+    outputs:
+      sha: ${{ steps.sha.outputs.new_head_commit }}
     steps:
-    - name: Clone tree
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ needs.DiffAgainstHW.outputs.sha }}
-        fetch-depth: '1'
-        path: results
-    - name: Clone wiki
-      uses: actions/checkout@v4
-      with:
-        repository: ${{github.repository}}.wiki
-        path: wiki
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'pip'
-    - name: Install requirements
-      run: |
+      - name: Clone tree
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.DiffAgainstHW.outputs.sha }}
+          fetch-depth: '1'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install requirements
+        run: |
           export PIP_BREAK_SYSTEM_PACKAGES=1
-          pip3 install -r results/.github/scripts/requirements.txt
-    - name: Generate wiki content
-      run: |
-        cd results
-        python3 .github/scripts/generate_results_markdown.py results ../wiki --comparison-dir compare-results -v
-    - name: Commit changes
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        cd wiki
-        git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
-        git config --local user.name "$GITHUB_ACTOR via action"
-        git add .
-        git diff-index --quiet HEAD || git commit -m "Update from github action $GITHUB_RUN_NUMBER - $GITHUB_SHA"
-        git push
+          pip3 install -r .github/scripts/requirements.txt
+      - name: Generate wiki content
+        run: |
+          python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results -v
+      - name: Commit changes
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          cd wiki
+          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR via action"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Update from github action $GITHUB_RUN_NUMBER - $GITHUB_SHA"
+          git push
+      - name: get sha
+        id: sha
+        run: |
+          sha_new=$(git rev-parse HEAD)
+          echo ${sha_new}
+          echo "name=new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
 
 
-#  build-container:
-#    needs: [find-changes]
-#    name: Build and Publish Docker Image
-#    runs-on: ubuntu-latest
-#    if: needs.find-changes.outputs.docker == 'true'
-#    timeout-minutes: 20
-#    permissions:
-#      packages: write
-#    steps:
-#      - name: Clone Tree
-#        uses: actions/checkout@v4
-#        with:
-#          submodules: recursive
-#
-#      - name: Extract image metadata (tags, labels)
-#        id: meta
-#        uses: docker/metadata-action@v5
-#        with:
-#          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v1
-#
-#      - name: Login to GitHub Container Registry
-#        uses: docker/login-action@v3
-#        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-#        with:
-#          registry: ${{ env.REGISTRY }}
-#          username: ${{ github.actor }}
-#          password: ${{ secrets.GITHUB_TOKEN }}
-#
-#      - name: Build and push image
-#        uses: docker/build-push-action@v6
-#        with:
-#          context: .
-#          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-#          tags: |
-#            ${{ steps.meta.outputs.tags }}
-#            "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-#          labels: ${{ steps.meta.outputs.labels }}
+
+  DeploySite:
+    runs-on: ubuntu-latest
+    needs: [ find-changes, BuildSite ]
+    if: needs.find-changes.outputs.wiki == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Clone tree
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.BuildSite.outputs.sha }}
+          fetch-depth: '1'
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.github/site'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

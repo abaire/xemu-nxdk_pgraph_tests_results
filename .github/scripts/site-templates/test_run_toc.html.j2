@@ -1,0 +1,92 @@
+<html>
+<head>
+    <title>
+        {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }}
+    </title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+{% if machine_info %}
+<h1>Machine info</h1>
+<div class="code-snippet">
+{{ machine_info | join('\n') }}
+</div>
+{% endif %}
+
+{% if test_suites %}
+<h1>Results</h1>
+    <ul>
+        {% for suite_name, suite_page in test_suites | dictsort %}
+            <li><a href="{{ suite_page }}">{{ suite_name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if failed_tests %}
+<h1>Failed tests ({{ failed_tests | length }})</h1>
+{% for test_name, failure_infos in failed_tests | dictsort %}
+
+    <h2>{{ test_name }}</h2>
+{% for test_failure in failure_infos %}
+    <div class="code-snippet">
+{{ test_failure }}
+    </div>
+{% endfor %}
+
+{% endfor %}
+{% endif %}
+
+{% if flaky_tests %}
+<h1>Flaky tests ({{ flaky_tests | length }})</h1>
+{% for test_name, failure_infos in flaky_tests | dictsort %}
+
+<h2>{{ test_name }}</h2>
+{% for test_failure in failure_infos %}
+<div class="code-snippet">
+{{ test_failure }}
+</div>
+{% endfor %}
+
+{% endfor %}
+
+{% endif %}
+
+
+{% if comparisons %}
+<h1>Comparisons</h1>
+
+{% for comparison_name, comparison in comparisons | dictsort(reverse=True) %}
+    <h2><a href="{{ comparison.comparison_page }}">{{ comparison_name }}</a></h2>
+
+    <ul>
+    {% for name, page in comparison.results | dictsort %}
+        <li><a href="{{ page }}">{{ name }}</a></li>
+    {% endfor %}
+    </ul>
+
+    {% if comparison.missing_tests %}
+        <h3>Missing tests</h3>
+        <ul>
+        {% for name, page in comparison.missing_tests | dictsort %}
+            <li><a href="{{ page }}">{{ name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if comparison.extra_tests %}
+        <h3>Tests without goldens</h3>
+        <ul>
+        {% for name, page in comparison.extra_tests | dictsort %}
+            <li><a href="{{ page }}">{{ name }}</a></li>
+        {% endfor %}
+        </ul>
+
+    {% endif %}
+
+{% endfor %}
+
+{% endif %}
+
+</body>
+</html>

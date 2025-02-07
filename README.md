@@ -3,7 +3,7 @@ xemu-nxdk_pgraph_tests_results
 
 Output of abaire/nxdk_pgraph_tests on various versions of [xemu](xemu.app)
 
-[Browsable in the wiki](https://github.com/abaire/xemu-nxdk_pgraph_tests_results/wiki/Results)
+[Browsable on GitHub pages](https://https://abaire.github.io/xemu-nxdk_pgraph_tests_results/)
 
 *Note*: web-display of output may not always match the visible output from the
 tests.
