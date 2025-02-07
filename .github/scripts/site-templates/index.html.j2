@@ -10,7 +10,7 @@
 
     <ul>
         {% for info in page_infos | sort(attribute='page_name') %}
-            <li><a href="{{ info.page_path }}">{{ info.machine_info.platform }},
+            <li><a href="{{ info.page_path | urlencode }}">{{ info.machine_info.platform }},
                 GL: {{ info.machine_info.gl }},
                 Shader: {{ info.machine_info.glsl }}</a></li>
         {% endfor %}

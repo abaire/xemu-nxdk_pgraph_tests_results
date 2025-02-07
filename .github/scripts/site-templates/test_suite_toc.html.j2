@@ -3,13 +3,13 @@
     <title>
         {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }} - {{ suite_name }}
     </title>
-    <link rel="stylesheet" href="site.css">
+    <link rel="stylesheet" href="{{ css_dir }}/site.css">
 </head>
 <body>
 
 <h1>{{ suite_name }}</h1>
 
-<div class="suite-context">
+<div class="label-value-grid">
     <div class="label"><a href="https://xemu.app">xemu</a> version</div>
     <div class="value">{{ run_identifier.xemu_version }}</div>
 

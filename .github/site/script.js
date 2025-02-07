@@ -1,0 +1,66 @@
+
+function enableImagePairs(document) {
+    const imagePairs = document.querySelectorAll('.image-pair');
+
+    imagePairs.forEach(pair => {
+        const images = pair.querySelectorAll('.image');
+        const titles = pair.querySelectorAll('.image-title');
+        let activeState = 'source';
+
+        function swapImagesAndTitles() {
+            const newState = activeState === 'source'? 'golden': 'source';
+
+            images.forEach(img => {
+                if (img.dataset.state === activeState) {
+                    img.style.display = 'none';
+                } else {
+                    img.style.display = 'block';
+                }
+            });
+
+            titles.forEach(title => {
+                if (title.dataset.state === activeState) {
+                    title.style.display = 'none';
+                } else {
+                    title.style.display = 'block';
+                }
+            });
+
+            activeState = newState;
+        }
+
+        pair.addEventListener('click', swapImagesAndTitles);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === ' ') {
+                if (document.activeElement === pair || pair.contains(document.activeElement)) {
+                    swapImagesAndTitles();
+                }
+            }
+        });
+    });
+}
+
+function enableViewLinks(document) {
+    const viewLinks = document.querySelectorAll('.view-link');
+
+    viewLinks.forEach(link => {
+        const hoverImage = link.querySelector('.hover-image');
+        const imageUrl = link.dataset.imageUrl;
+
+        link.addEventListener('mouseover', () => {
+            hoverImage.src = imageUrl;
+            hoverImage.style.display = 'block';
+        });
+
+        link.addEventListener('mouseout', () => {
+            hoverImage.style.display = 'none';
+            hoverImage.src = "";
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    enableViewLinks(document);
+    enableImagePairs(document);
+});

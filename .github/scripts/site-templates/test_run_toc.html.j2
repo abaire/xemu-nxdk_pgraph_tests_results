@@ -3,7 +3,7 @@
     <title>
         {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }}
     </title>
-    <link rel="stylesheet" href="site.css">
+    <link rel="stylesheet" href="{{ css_dir }}/site.css">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
 <h1>Results</h1>
     <ul>
         {% for suite_name, suite_page in test_suites | dictsort %}
-            <li><a href="{{ suite_page }}">{{ suite_name }}</a></li>
+            <li><a href="{{ suite_page | urlencode }}">{{ suite_name }}</a></li>
         {% endfor %}
     </ul>
 {% endif %}
@@ -57,19 +57,28 @@
 <h1>Comparisons</h1>
 
 {% for comparison_name, comparison in comparisons | dictsort(reverse=True) %}
-    <h2><a href="{{ comparison.comparison_page }}">{{ comparison_name }}</a></h2>
+    <h2><a href="{{ comparison.comparison_page | urlencode }}">{{ comparison_name }}</a></h2>
 
+    <h3>Test suites with differences</h3>
     <ul>
     {% for name, page in comparison.results | dictsort %}
-        <li><a href="{{ page }}">{{ name }}</a></li>
+        <li><a href="{{ page | urlencode }}">{{ name }}</a></li>
     {% endfor %}
     </ul>
 
     {% if comparison.missing_tests %}
         <h3>Missing tests</h3>
         <ul>
-        {% for name, page in comparison.missing_tests | dictsort %}
-            <li><a href="{{ page }}">{{ name }}</a></li>
+        {% for name, image_url in comparison.missing_tests | dictsort %}
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="{{ image_url }}">{{ name }}</a></div>
+                    <div class="view-link" data-image-url="{{ image_url }}">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="{{ image_url }}" alt="Golden result for {{ name }}" class="hidden-image" style="display: none;">
+            </div>
         {% endfor %}
         </ul>
     {% endif %}
@@ -88,5 +97,6 @@
 
 {% endif %}
 
+    <script src="{{ js_dir }}/script.js"></script>
 </body>
 </html>

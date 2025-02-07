@@ -10,7 +10,6 @@
 .image-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
 }
 
 .image-container div {
@@ -20,51 +19,4 @@
 .image-container img {
     max-width: 300px;
     max-height: 300px;
-}
-
-.inline-image {
-    max-width: 1280px;
-    height: auto;
-}
-
-.suite-context {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 10px;
-}
-
-.label {
-    font-weight: bold;
-    text-align: right;
-    padding-right: 5px;
-}
-
-.value {
-}
-
-.image-pair {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
-
-.image-comparison {
-    position: absolute;
-    top: 20px;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transition: opacity 0.3s ease;
-}
-
-.image-title {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
 }

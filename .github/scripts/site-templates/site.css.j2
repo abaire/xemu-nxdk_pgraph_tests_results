@@ -17,6 +17,107 @@
 }
 
 .image-container img {
-    max-width: 300px;
-    max-height: 300px;
+    max-width: 1280px;
+    max-height: 720px;
+}
+
+.image-title {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.titled-image-container {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.title-and-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.image-title {
+    text-align: left;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+.view-link {
+    cursor: pointer;
+    display: block;
+}
+
+.hidden-image {
+    max-width: 1280px;
+    max-height: 720px;
+    display: none;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.label-value-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+}
+
+.label {
+    font-weight: bold;
+    text-align: right;
+}
+
+.value {
+}
+
+.label-value-grid > * {
+    padding: 2px 0;
+}
+
+.comparison-image-set {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 40px;
+}
+
+.comparison-image-set >.image-container {
+    margin-top: 0;
+}
+
+.comparison-image-set >.image-container:has(+.image-pair) {
+    margin-top: 40px;
+}
+
+@media (max-width: 1280px) {
+  .comparison-image-set {
+        flex-direction: column;
+    }
+
+  .image-pair-title-bar {
+        margin-left: 20px;
+    }
+  .image-pair {
+        margin-left: 20px;
+    }
+}
+
+.image-pair {
+}
+
+.image-pair-title-bar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+    height: 40px;
+}
+
+.image-comparison {
+    cursor: pointer;
 }

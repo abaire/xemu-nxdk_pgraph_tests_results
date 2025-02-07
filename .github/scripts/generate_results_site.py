@@ -508,6 +508,8 @@ class PagesWriter:
         self.results = results
         self.env = env
         self.output_dir = output_dir
+        self.css_output_dir = output_dir
+        self.js_output_dir = output_dir
         self.images_base_url = result_images_base_url
         self.hw_images_base_url = hw_golden_images_base_url
 
@@ -536,6 +538,8 @@ class PagesWriter:
                     pretty_machine_info=pretty_machine_info,
                     suite_name=suite.name,
                     results=result_infos,
+                    css_dir=os.path.relpath(self.css_output_dir, output_dir),
+                    js_dir=os.path.relpath(self.js_output_dir, output_dir),
                 )
             )
 
@@ -566,6 +570,8 @@ class PagesWriter:
                     golden_identifier=comparison.summary["golden_identifier"],
                     suite_name=suite_result.suite_name,
                     results=results,
+                    css_dir=os.path.relpath(self.css_output_dir, output_dir),
+                    js_dir=os.path.relpath(self.js_output_dir, output_dir),
                 )
             )
 
@@ -579,7 +585,8 @@ class PagesWriter:
         """Generates a page that renders all diffs between a pair of results, with links to per-suite diff pages."""
 
         index_template = self.env.get_template("comparison_result.html.j2")
-        output_dir = os.path.join(self.output_dir, comparison.identifier.path)
+        output_subdir = comparison.identifier.path
+        output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
 
         suite_to_results = defaultdict(
@@ -617,11 +624,16 @@ class PagesWriter:
                     golden_identifier=comparison.summary["golden_identifier"],
                     results={
                         suite.suite_name: {
-                            "url": self._comparison_suite_url(comparison, suite),
+                            "url": os.path.relpath(
+                                self._comparison_suite_url(comparison, suite),
+                                output_subdir,
+                            ),
                             "test_results": suite_to_results[suite.suite_name],
                         }
                         for suite in comparison.results
                     },
+                    css_dir=os.path.relpath(self.css_output_dir, output_dir),
+                    js_dir=os.path.relpath(self.js_output_dir, output_dir),
                 )
             )
 
@@ -640,28 +652,28 @@ class PagesWriter:
     def golden_url_for_fqtest(
         fully_qualified_test_name: str, golden_base_url: str
     ) -> str:
-        return (
-            "/".join(
-                [golden_base_url, *PagesWriter.split_fq_name(fully_qualified_test_name)]
-            )
-            + ".png"
+        path = "/".join(
+            [golden_base_url, *PagesWriter.split_fq_name(fully_qualified_test_name)]
         )
+        return f"{path}.png"
 
     def results_url_for_fqtest(self, fully_qualified_test_name: str) -> str:
-        return (
-            "/".join(
-                [self.images_base_url, *self.split_fq_name(fully_qualified_test_name)]
-            )
-            + ".png"
+        path = "/".join(
+            [self.images_base_url, *self.split_fq_name(fully_qualified_test_name)]
         )
+        return f"{path}.png"
 
     def _write_results_pages(self, run: ResultsInfo) -> None:
         index_template = self.env.get_template("test_run_toc.html.j2")
-        output_dir = os.path.join(self.output_dir, run.identifier.path)
+        output_subdir = run.identifier.path
+        output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
 
         result_urls = {
-            suite.name: self._suite_result_url(run, suite) for suite in run.results
+            suite.name: os.path.relpath(
+                self._suite_result_url(run, suite), output_subdir
+            )
+            for suite in run.results
         }
 
         all_failed_tests: dict[str, list[str]] = {}
@@ -682,19 +694,24 @@ class PagesWriter:
             )
 
             missing_tests: dict[str, str] = {
-                fqname: self.golden_url_for_fqtest(fqname, golden_base_url)
+                fqname.replace(":", " :: "): self.golden_url_for_fqtest(
+                    fqname, golden_base_url
+                )
                 for fqname in comparison.summary.get("goldens_without_results", [])
             }
             extra_tests: dict[str, str] = {
-                fqname: self.results_url_for_fqtest(fqname)
+                fqname.replace(":", " "): self.results_url_for_fqtest(fqname)
                 for fqname in comparison.summary.get("tests_without_goldens", [])
             }
 
             comparisons[comparison.golden_identifier] = {
-                "comparison_page": self._comparison_url(comparison),
+                "comparison_page": os.path.relpath(
+                    self._comparison_url(comparison), output_subdir
+                ),
                 "results": {
-                    suite_result.suite_name: self._comparison_suite_url(
-                        comparison, suite_result
+                    suite_result.suite_name: os.path.relpath(
+                        self._comparison_suite_url(comparison, suite_result),
+                        output_subdir,
                     )
                     for suite_result in comparison.results
                 },
@@ -715,6 +732,8 @@ class PagesWriter:
                     test_suites=result_urls,
                     failed_tests=all_failed_tests,
                     flaky_tests=all_flaky_tests,
+                    css_dir=os.path.relpath(self.css_output_dir, output_dir),
+                    js_dir=os.path.relpath(self.js_output_dir, output_dir),
                 )
             )
 
@@ -724,7 +743,8 @@ class PagesWriter:
         }
 
         index_template = self.env.get_template("index.html.j2")
-        with open(os.path.join(self.output_dir, "index.html"), "w") as outfile:
+        output_dir = self.output_dir
+        with open(os.path.join(output_dir, "index.html"), "w") as outfile:
             emulator_grouped_pages = defaultdict(list)
             for run_identifier, run in run_identifier_keyed_results.items():
                 pretty_machine_info = PrettyMachineInfo.parse(run)
@@ -736,17 +756,21 @@ class PagesWriter:
                     }
                 )
             outfile.write(
-                index_template.render(emulator_grouped_results=emulator_grouped_pages)
+                index_template.render(
+                    emulator_grouped_results=emulator_grouped_pages,
+                    css_dir=os.path.relpath(self.css_output_dir, output_dir),
+                    js_dir=os.path.relpath(self.js_output_dir, output_dir),
+                )
             )
 
     def _write_css(self) -> None:
         css_template = self.env.get_template("site.css.j2")
-        with open(os.path.join(self.output_dir, "site.css"), "w") as outfile:
+        with open(os.path.join(self.css_output_dir, "site.css"), "w") as outfile:
             outfile.write(css_template.render())
 
     def _write_js(self) -> None:
         css_template = self.env.get_template("script.js.j2")
-        with open(os.path.join(self.output_dir, "script.js"), "w") as outfile:
+        with open(os.path.join(self.js_output_dir, "script.js"), "w") as outfile:
             outfile.write(css_template.render())
 
     def write(self) -> int:
