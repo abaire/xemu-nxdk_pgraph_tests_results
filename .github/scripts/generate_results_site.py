@@ -145,7 +145,7 @@ class ComparisonScanner:
         golden_base_path = (
             ""
             if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER
-            else run_info["golden_identifier"].replace(":", "/")
+            else os.path.join(self.results_dir, run_info["golden_identifier"].replace(":", "/"))
         )
 
         ret: list[TestCaseComparisonInfo] = []
