@@ -1,0 +1,46 @@
+<html>
+<head>
+    <title>
+        {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }} - {{ suite_name }}
+    </title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<h1>{{ suite_name }}</h1>
+
+<div class="suite-context">
+    <div class="label"><a href="https://xemu.app">xemu</a> version</div>
+    <div class="value">{{ run_identifier.xemu_version }}</div>
+
+    <div class="label">Platform</div>
+    <div class="value">{{ pretty_machine_info.platform }}</div>
+
+    <div class="label">OpenGL info</div>
+    <div class="value">{{ pretty_machine_info.gl }}</div>
+
+    <div class="label">GLSL version</div>
+    <div class="value">{{ pretty_machine_info.glsl }}</div>
+</div>
+
+{% for test_name, info in results | dictsort %}
+    <h2>{{ test_name }}</h2>
+
+    {% if info.url %}
+<div class="image-container">
+        <img src="{{ info.url }}" alt="Test result for {{ suite_name }}::{{ test_name }}" class="inline-image">
+</div>
+    {% endif %}
+
+    {% if info.failures %}
+        <h3>Failures</h3>
+        {% for test_failure in info.failures %}
+        <div class="code-snippet">
+{{ test_failure }}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>nxdk_pgraph_tests results</title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+<h1>Test Results</h1>
+{% for emulator_version, page_infos in emulator_grouped_results | dictsort(reverse=true) %}
+    <h2>Emulator Version: {{ emulator_version }}</h2>
+
+    <ul>
+        {% for info in page_infos | sort(attribute='page_name') %}
+            <li><a href="{{ info.page_path }}">{{ info.machine_info.platform }},
+                GL: {{ info.machine_info.gl }},
+                Shader: {{ info.machine_info.glsl }}</a></li>
+        {% endfor %}
+    </ul>
+
+{% endfor %}
+</body>
+</html>

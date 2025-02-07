@@ -1,0 +1,837 @@
+#!/bin/env python3
+
+from __future__ import annotations
+
+import argparse
+import glob
+import json
+import logging
+import os
+import sys
+from collections import defaultdict
+from dataclasses import dataclass
+from typing import NamedTuple, Any
+
+from frozendict import frozendict, deepfreeze
+from jinja2 import Environment, FileSystemLoader
+
+logger = logging.getLogger(__name__)
+
+# Fully qualified comparison elements may be very long. This value is used to cap their length, switching to an MD5 if
+# needed.
+_MAX_NAME_COMPONENT_LENGTH = 24
+
+# Run identifier used for comparisons against the nxdk_pgraph_tests_golden_results from Xbox hardware.
+HW_GOLDEN_IDENTIFIER = "Xbox_Hardware"
+
+
+class RunIdentifier(NamedTuple):
+    """Holds components of a run identifier."""
+
+    run_identifier: tuple[str, ...]
+    xemu_version: str
+    platform_info: str
+    gl_info: str
+
+    @property
+    def path(self) -> str:
+        return str(os.path.join(*self.run_identifier))
+
+    def minimal_identifier(self) -> RunIdentifier:
+        """Returns a RunIdentifier that omits any extraneous components of the run_identifier member."""
+        return RunIdentifier(
+            run_identifier=(self.xemu_version, self.platform_info, self.gl_info),
+            xemu_version=self.xemu_version,
+            platform_info=self.platform_info,
+            gl_info=self.gl_info,
+        )
+
+    @classmethod
+    def parse(cls, run_identifier: str) -> RunIdentifier:
+        # results/Linux_foo/gl_version/glsl_version/xemu_version
+        components = run_identifier.split("/")
+        return cls(
+            run_identifier=tuple(components),
+            xemu_version=components[-4],
+            platform_info=components[-3],
+            gl_info=f"{components[-2]}:{components[-1]}",
+        )
+
+
+class TestCaseComparisonInfo(NamedTuple):
+    """Encapsulates information about differences in results for a single test case."""
+
+    test_name: str
+    source_image_url: str
+    golden_image_url: str
+    diff_image_url: str
+
+
+class TestSuiteComparisonInfo(NamedTuple):
+    """Encapsulates information about differences in results for tests within a single test suite."""
+
+    suite_name: str
+    test_cases: tuple[TestCaseComparisonInfo, ...]
+
+
+class ComparisonInfo(NamedTuple):
+    """"""
+
+    identifier: RunIdentifier
+    golden_identifier_component: str
+    golden_identifier: str
+    summary: frozendict[str, Any]
+    results: tuple[TestSuiteComparisonInfo, ...]
+
+    @classmethod
+    def parse(
+        cls,
+        run_identifier: str,
+        summary: dict[str, Any],
+        results: tuple[TestSuiteComparisonInfo, ...],
+    ) -> ComparisonInfo:
+        components = run_identifier.split("/")
+
+        return cls(
+            identifier=RunIdentifier(
+                run_identifier=tuple(components),
+                xemu_version=components[-4],
+                platform_info=components[-3],
+                gl_info=components[-2],
+            ),
+            golden_identifier_component=os.path.basename(run_identifier),
+            golden_identifier=summary.get("golden_identifier", "UNKNOWN"),
+            summary=deepfreeze(summary),
+            results=results,
+        )
+
+
+class ComparisonScanner:
+    """Scans and categorizes differences between test runs."""
+
+    def __init__(
+        self,
+        comparison_dir: str,
+        output_dir: str,
+        base_url: str,
+        results_dir: str,
+        hw_golden_base_url: str,
+    ) -> None:
+        self.comparison_dir = comparison_dir
+        self.output_dir = output_dir
+        self.base_url = base_url
+        self.results_dir = results_dir
+        self.hw_golden_base_url = hw_golden_base_url
+
+    def _process_test_case_artifacts(
+        self,
+        test_suite_dir: str,
+        suite_name: str,
+        run_info: dict[str, Any],
+        golden_base_url: str,
+    ) -> list[TestCaseComparisonInfo]:
+        """Processes the given test suite comparison results dir and generates TestCaseComparisonInfo for each diff."""
+
+        images = glob.glob(os.path.join(test_suite_dir, "*.png"))
+
+        if not images:
+            return []
+
+        # Restore the paths of the original images that were used to produce the diff image.
+        # TODO: Store this as metadata instead of relying on consistent locations.
+        results_base_path = os.path.join(
+            self.results_dir, run_info["result_identifier"].replace(":", "/")
+        )
+        golden_base_path = (
+            ""
+            if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER
+            else run_info["golden_identifier"].replace(":", "/")
+        )
+
+        ret: list[TestCaseComparisonInfo] = []
+
+        for image_file in images:
+            test_name = os.path.basename(image_file).replace("-diff.png", "")
+            fq_name = f"{suite_name}:{test_name}"
+
+            original_image_subpath = fq_name.split(":")
+            source_image_url = "/".join(
+                [self.base_url, results_base_path, *original_image_subpath]
+            )
+            golden_image_url = "/".join(
+                [golden_base_url, golden_base_path, *original_image_subpath]
+            )
+
+            ret.append(
+                TestCaseComparisonInfo(
+                    test_name=test_name,
+                    source_image_url=f"{source_image_url}.png",
+                    golden_image_url=f"{golden_image_url}.png",
+                    diff_image_url="/".join([self.base_url, image_file]),
+                )
+            )
+
+        return ret
+
+    def _process_test_suite(
+        self, run_identifier: str, test_suite_dir: str, run_info: dict[str, Any]
+    ) -> TestSuiteComparisonInfo | None:
+        golden_base_url = (
+            self.hw_golden_base_url
+            if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER
+            else self.base_url
+        )
+
+        suite_name = os.path.basename(test_suite_dir)
+
+        test_artifacts = self._process_test_case_artifacts(
+            test_suite_dir, suite_name, run_info, golden_base_url
+        )
+        if test_artifacts:
+            return TestSuiteComparisonInfo(
+                suite_name=suite_name, test_cases=tuple(test_artifacts)
+            )
+        return None
+
+    def _process_comparison_artifacts(
+        self, run_identifier_to_summary: dict[str, dict[str, Any]]
+    ) -> list[ComparisonInfo]:
+        """Processes the results for each comparison between pairs of results."""
+
+        run_identifier_to_suits: dict[str, list[TestSuiteComparisonInfo]] = defaultdict(
+            list
+        )
+
+        for root, dirnames, filenames in os.walk(self.comparison_dir):
+            if dirnames:
+                continue
+
+            if not filenames:
+                continue
+
+            run_identifier = os.path.dirname(root)
+            run_info = run_identifier_to_summary[run_identifier]
+            result = self._process_test_suite(run_identifier, root, run_info)
+            if result:
+                run_identifier_to_suits[run_identifier].append(result)
+
+        ret: list[ComparisonInfo] = []
+        for run_identifier, test_suites in run_identifier_to_suits.items():
+            run_info = run_identifier_to_summary[run_identifier]
+            ret.append(
+                ComparisonInfo.parse(run_identifier, run_info, tuple(test_suites))
+            )
+
+        return ret
+
+    def _process_summaries(self) -> dict[str, dict[str, Any]]:
+        """Discovers summary.json files, loads them, and returns a map of directory path to their content."""
+        summary_files = glob.glob(
+            "**/summary.json", root_dir=self.comparison_dir, recursive=True
+        )
+
+        def load_summary(subpath: str) -> tuple[str, dict[str, Any]]:
+            full_path = os.path.join(self.comparison_dir, subpath)
+            with open(full_path) as infile:
+                return os.path.dirname(full_path), json.load(infile)
+
+        return {
+            key: value
+            for key, value in [
+                load_summary(summary_file) for summary_file in summary_files
+            ]
+        }
+
+    def process(
+        self,
+    ) -> dict[RunIdentifier, list[ComparisonInfo]]:
+        """Processes the comparison directory into ComparisonInfo instances keyed by their emulator+platform+gl_info.
+
+        Results that have been compared to multiple goldens will map to a list of comparisons in arbitrary order.
+        """
+        run_identifier_to_summary = self._process_summaries()
+        ret: dict[RunIdentifier, list[ComparisonInfo]] = defaultdict(list)
+
+        for comparison in self._process_comparison_artifacts(run_identifier_to_summary):
+            ret[comparison.identifier.minimal_identifier()].append(comparison)
+
+        return ret
+
+
+# List of raw output from xemu related to machine information (xemu version, CPU, GL_VERSION, etc...)
+MachineInfo = list[str]
+
+# Dict of results information output by the test executor.
+ResultsSummary = dict[str, Any]
+
+
+@dataclass
+class TestResult:
+    """Contains information about the results of a specific test within a suite."""
+
+    name: str
+    artifact_url: str
+    info: frozendict[str, Any]
+
+
+@dataclass
+class SuiteResults:
+    """Contains information about the results of a specific suite within a run."""
+
+    name: str
+    test_results: tuple[TestResult, ...]
+    flaky_tests: frozendict[str, Any]
+    failed_tests: frozendict[str, Any]
+
+
+class ResultsInfo(NamedTuple):
+    """Contains information about the results for a specific emu+machine+driver."""
+
+    identifier: RunIdentifier
+    machine_info: MachineInfo
+    results: tuple[SuiteResults, ...]
+    comparisons: list[ComparisonInfo]
+
+    def get_machine_info_dict(self) -> dict[str, str]:
+        """Parses machine_info into a dict."""
+        ret: dict[str, str] = {}
+        for line in self.machine_info:
+            key, value = line.split(":", 1)
+            ret[key] = value.strip()
+
+        return ret
+
+
+class ResultsScanner:
+    """Scans and categorizes test results."""
+
+    def __init__(
+        self,
+        results_dir: str,
+        output_dir: str,
+        base_url: str,
+        run_identifier_to_comparison_results: dict[RunIdentifier, list[ComparisonInfo]],
+    ) -> None:
+        self.results_dir = results_dir
+        self.output_dir = output_dir
+        self.base_url = base_url
+        self.run_identifier_to_comparison_results = run_identifier_to_comparison_results
+
+    def _process_test_case_artifacts(
+        self, test_suite_dir: str, suite_name: str, result_summary: ResultsSummary
+    ) -> list[TestResult]:
+        """Processes the given test suite results dir and generates TestResult for each artifact."""
+
+        images = glob.glob(os.path.join(test_suite_dir, "*.png"))
+
+        if not images:
+            return []
+
+        ret: list[TestResult] = []
+
+        for image_file in images:
+            test_name = os.path.splitext(os.path.basename(image_file))[0]
+            fq_name = f"{suite_name}::{test_name}"
+            test_info = result_summary.get("passed", {}).get(fq_name)
+            if not test_info:
+                test_info = result_summary.get("flaky", {}).get(fq_name)
+
+            ret.append(
+                TestResult(
+                    name=test_name,
+                    artifact_url="/".join([self.base_url, image_file]),
+                    info=deepfreeze(test_info),
+                )
+            )
+
+        return ret
+
+    def _process_suite(
+        self, artifacts_path: str, suite_name: str, results_summary: ResultsSummary
+    ) -> SuiteResults | None:
+        test_artifacts = self._process_test_case_artifacts(
+            artifacts_path, suite_name, results_summary
+        )
+        if test_artifacts:
+            fq_prefix = f"{suite_name}::"
+            flaky_tests = {
+                key: value
+                for key, value in results_summary.get("flaky", {}).items()
+                if key.startswith(fq_prefix)
+            }
+            failed_tests = {
+                key: value
+                for key, value in results_summary.get("failed", {}).items()
+                if key.startswith(fq_prefix)
+            }
+
+            return SuiteResults(
+                name=suite_name,
+                test_results=tuple(test_artifacts),
+                flaky_tests=deepfreeze(flaky_tests),
+                failed_tests=deepfreeze(failed_tests),
+            )
+        return None
+
+    def _process_results(
+        self, run_id: str, machine_info: MachineInfo, results_summary: ResultsSummary
+    ) -> ResultsInfo:
+        suite_results: dict[str, SuiteResults] = {}
+
+        for root, dirnames, filenames in os.walk(run_id):
+            if dirnames:
+                continue
+
+            if not filenames:
+                continue
+
+            suite_name = os.path.basename(root)
+
+            result = self._process_suite(root, suite_name, results_summary)
+            if result:
+                suite_results[suite_name] = result
+
+        for failed in results_summary.get("failed", []):
+            suite, test = failed.split("::")
+            if suite not in suite_results:
+                suite_results[suite] = SuiteResults(
+                    name=suite, test_results=(), failed_tests=deepfreeze(failed)
+                )
+
+        run_identifier = RunIdentifier.parse(run_id)
+
+        return ResultsInfo(
+            identifier=run_identifier,
+            machine_info=machine_info,
+            results=tuple(list(suite_results.values())),
+            comparisons=self.run_identifier_to_comparison_results.get(
+                run_identifier.minimal_identifier(), []
+            ),
+        )
+
+    def _process_summaries(self) -> dict[str, tuple[MachineInfo, ResultsSummary]]:
+        """Discovers results.json and machine_info.txt files and returns a map of directory path to their contents."""
+        results_files = glob.glob(
+            "**/results.json", root_dir=self.results_dir, recursive=True
+        )
+
+        def load_results(subpath: str) -> tuple[str, ResultsSummary]:
+            full_path = os.path.join(self.results_dir, subpath)
+            with open(full_path) as infile:
+                return os.path.dirname(full_path), json.load(infile)
+
+        run_id_to_results: dict[str, ResultsSummary] = {
+            key: value
+            for key, value in [load_results(filename) for filename in results_files]
+        }
+
+        machine_info_files = glob.glob(
+            "**/machine_info.txt", root_dir=self.results_dir, recursive=True
+        )
+
+        def load_machine_info(subpath: str) -> tuple[str, MachineInfo]:
+            full_path = os.path.join(self.results_dir, subpath)
+            with open(full_path) as infile:
+                content = infile.read()
+                return os.path.dirname(full_path), content.split("\n")
+
+        run_id_to_machine_info: dict[str, MachineInfo] = {
+            key: value
+            for key, value in [
+                load_machine_info(filename) for filename in machine_info_files
+            ]
+        }
+
+        ret: dict[str, tuple[MachineInfo, ResultsSummary]] = {}
+        for run_id, machine_info in run_id_to_machine_info.items():
+            results_summary = run_id_to_results[run_id]
+            ret[run_id] = (machine_info, results_summary)
+
+        return ret
+
+    def process(self) -> dict[str, ResultsInfo]:
+        """Processes the results directory into {run_identifier: ResultsInfo}."""
+        run_identifier_to_summary = self._process_summaries()
+
+        return {
+            run_id: self._process_results(run_id, *info_and_summary)
+            for run_id, info_and_summary in run_identifier_to_summary.items()
+        }
+
+
+class PrettyMachineInfo(NamedTuple):
+    """Returns the nicest possible human-readable components for a ResultsInfo."""
+
+    platform: str
+    gl: str
+    glsl: str
+
+    @property
+    def flat_name(self) -> str:
+        return f"{self.platform}:{self.gl}:{self.glsl}"
+
+    @classmethod
+    def parse(cls, results_info: ResultsInfo) -> PrettyMachineInfo:
+        machine_info_dict = results_info.get_machine_info_dict()
+
+        cpu = machine_info_dict.get("CPU")
+        os = machine_info_dict.get("OS_Version")
+        gl_vendor = machine_info_dict.get("GL_VENDOR")
+        gl_renderer = machine_info_dict.get("GL_RENDERER")
+        gl_version = machine_info_dict.get("GL_VERSION")
+        glsl_version = machine_info_dict.get("GL_SHADING_LANGUAGE_VERSION")
+
+        run_identifier = results_info.identifier
+        platform = f"{os} - {cpu}" if cpu and os else run_identifier.platform_info
+        gl = (
+            f"{gl_vendor} - {gl_renderer} - {gl_version}"
+            if gl_vendor and gl_renderer and gl_version
+            else run_identifier.gl_info.split(":")[0]
+        )
+        if not glsl_version:
+            glsl_version = run_identifier.gl_info.split(":")[1]
+
+        return cls(platform=platform, gl=gl, glsl=glsl_version)
+
+
+class PagesWriter:
+    """Generates HTML output suitable for GitHub pages."""
+
+    def __init__(
+        self,
+        results: dict[str, ResultsInfo],
+        env: Environment,
+        output_dir: str,
+        result_images_base_url: str,
+        hw_golden_images_base_url: str,
+    ) -> None:
+        self.results = results
+        self.env = env
+        self.output_dir = output_dir
+        self.images_base_url = result_images_base_url
+        self.hw_images_base_url = hw_golden_images_base_url
+
+    @staticmethod
+    def _suite_result_url(run: ResultsInfo, suite: SuiteResults) -> str:
+        return os.path.join(run.identifier.path, suite.name, "index.html")
+
+    def _write_suite_page(self, run: ResultsInfo, suite: SuiteResults) -> None:
+        index_template = self.env.get_template("test_suite_toc.html.j2")
+        output_dir = os.path.join(self.output_dir, run.identifier.path, suite.name)
+        os.makedirs(output_dir, exist_ok=True)
+
+        pretty_machine_info = PrettyMachineInfo.parse(run)
+        result_infos: dict[str, dict[str, str]] = {}
+        for result in suite.test_results:
+            result_infos[result.name] = {"url": result.artifact_url}
+        for info in suite.flaky_tests.values():
+            result_infos.get(info["name"], {})["failures"] = info["failures"]
+        for info in suite.failed_tests.values():
+            result_infos[info["name"]] = {"url": None, "failures": info["failures"]}
+
+        with open(os.path.join(output_dir, "index.html"), "w") as outfile:
+            outfile.write(
+                index_template.render(
+                    run_identifier=run.identifier,
+                    pretty_machine_info=pretty_machine_info,
+                    suite_name=suite.name,
+                    results=result_infos,
+                )
+            )
+
+    @staticmethod
+    def _comparison_suite_url(
+        comparison: ComparisonInfo, suite_result: TestSuiteComparisonInfo
+    ) -> str:
+        return os.path.join(
+            comparison.identifier.path, f"{suite_result.suite_name}.html"
+        )
+
+    def _write_comparison_suite_page(
+        self,
+        comparison: ComparisonInfo,
+        suite_result: TestSuiteComparisonInfo,
+        results: list[TestCaseComparisonInfo],
+    ) -> None:
+        index_template = self.env.get_template("suite_comparison_result.html.j2")
+        output_dir = os.path.join(self.output_dir, comparison.identifier.path)
+        os.makedirs(output_dir, exist_ok=True)
+
+        with open(
+            os.path.join(output_dir, f"{suite_result.suite_name}.html"), "w"
+        ) as outfile:
+            outfile.write(
+                index_template.render(
+                    source_identifier=comparison.summary["result_identifier"],
+                    golden_identifier=comparison.summary["golden_identifier"],
+                    suite_name=suite_result.suite_name,
+                    results=results,
+                )
+            )
+
+    @staticmethod
+    def _comparison_url(comparison: ComparisonInfo) -> str:
+        return os.path.join(comparison.identifier.path, "index.html")
+
+    def _write_comparisons_page(
+        self, comparison: ComparisonInfo, golden_base_url: str
+    ) -> None:
+        """Generates a page that renders all diffs between a pair of results, with links to per-suite diff pages."""
+
+        index_template = self.env.get_template("comparison_result.html.j2")
+        output_dir = os.path.join(self.output_dir, comparison.identifier.path)
+        os.makedirs(output_dir, exist_ok=True)
+
+        suite_to_results = defaultdict(
+            list,
+            {
+                result.suite_name: list(result.test_cases)
+                for result in comparison.results
+            },
+        )
+
+        for fqname in comparison.summary.get("goldens_without_results", []):
+            suite_name, test_name = self.split_fq_name(fqname)
+            info = TestCaseComparisonInfo(
+                test_name=test_name,
+                source_image_url="",
+                golden_image_url=self.golden_url_for_fqtest(fqname, golden_base_url),
+                diff_image_url="",
+            )
+            suite_to_results[suite_name].append(info)
+
+        for fqname in comparison.summary.get("tests_without_goldens", []):
+            suite_name, test_name = self.split_fq_name(fqname)
+            info = TestCaseComparisonInfo(
+                test_name=test_name,
+                source_image_url=self.results_url_for_fqtest(fqname),
+                golden_image_url="",
+                diff_image_url="",
+            )
+            suite_to_results[suite_name].append(info)
+
+        with open(os.path.join(output_dir, "index.html"), "w") as outfile:
+            outfile.write(
+                index_template.render(
+                    source_identifier=comparison.summary["result_identifier"],
+                    golden_identifier=comparison.summary["golden_identifier"],
+                    results={
+                        suite.suite_name: {
+                            "url": self._comparison_suite_url(comparison, suite),
+                            "test_results": suite_to_results[suite.suite_name],
+                        }
+                        for suite in comparison.results
+                    },
+                )
+            )
+
+        for suite_results in comparison.results:
+            self._write_comparison_suite_page(
+                comparison, suite_results, suite_to_results[suite_results.suite_name]
+            )
+
+    @staticmethod
+    def split_fq_name(fully_qualified_test_name: str) -> tuple[str, str]:
+        """Splits a fully qualified test name into (suite, test_case)."""
+        split = fully_qualified_test_name.split(":", 1)
+        return split[0], split[1]
+
+    @staticmethod
+    def golden_url_for_fqtest(
+        fully_qualified_test_name: str, golden_base_url: str
+    ) -> str:
+        return (
+            "/".join(
+                [golden_base_url, *PagesWriter.split_fq_name(fully_qualified_test_name)]
+            )
+            + ".png"
+        )
+
+    def results_url_for_fqtest(self, fully_qualified_test_name: str) -> str:
+        return (
+            "/".join(
+                [self.images_base_url, *self.split_fq_name(fully_qualified_test_name)]
+            )
+            + ".png"
+        )
+
+    def _write_results_pages(self, run: ResultsInfo) -> None:
+        index_template = self.env.get_template("test_run_toc.html.j2")
+        output_dir = os.path.join(self.output_dir, run.identifier.path)
+        os.makedirs(output_dir, exist_ok=True)
+
+        result_urls = {
+            suite.name: self._suite_result_url(run, suite) for suite in run.results
+        }
+
+        all_failed_tests: dict[str, list[str]] = {}
+        all_flaky_tests: dict[str, list[str]] = {}
+        for suite in run.results:
+            self._write_suite_page(run, suite)
+            for name, info in suite.failed_tests.items():
+                all_failed_tests[name] = info.get("failures", [])
+            for name, info in suite.flaky_tests.items():
+                all_flaky_tests[name] = info.get("failures", [])
+
+        comparisons: dict[str, dict[str, str]] = {}
+        for comparison in run.comparisons:
+            golden_base_url = (
+                self.hw_images_base_url
+                if comparison.golden_identifier == HW_GOLDEN_IDENTIFIER
+                else self.images_base_url
+            )
+
+            missing_tests: dict[str, str] = {
+                fqname: self.golden_url_for_fqtest(fqname, golden_base_url)
+                for fqname in comparison.summary.get("goldens_without_results", [])
+            }
+            extra_tests: dict[str, str] = {
+                fqname: self.results_url_for_fqtest(fqname)
+                for fqname in comparison.summary.get("tests_without_goldens", [])
+            }
+
+            comparisons[comparison.golden_identifier] = {
+                "comparison_page": self._comparison_url(comparison),
+                "results": {
+                    suite_result.suite_name: self._comparison_suite_url(
+                        comparison, suite_result
+                    )
+                    for suite_result in comparison.results
+                },
+                "missing_tests": missing_tests,
+                "extra_tests": extra_tests,
+            }
+
+            self._write_comparisons_page(comparison, golden_base_url)
+
+        with open(os.path.join(output_dir, "index.html"), "w") as outfile:
+            pretty_machine_info = PrettyMachineInfo.parse(run)
+            outfile.write(
+                index_template.render(
+                    run_identifier=run.identifier,
+                    machine_info=run.machine_info,
+                    pretty_machine_info=pretty_machine_info,
+                    comparisons=comparisons,
+                    test_suites=result_urls,
+                    failed_tests=all_failed_tests,
+                    flaky_tests=all_flaky_tests,
+                )
+            )
+
+    def _write_top_level_index(self) -> None:
+        run_identifier_keyed_results = {
+            run.identifier: run for run in self.results.values()
+        }
+
+        index_template = self.env.get_template("index.html.j2")
+        with open(os.path.join(self.output_dir, "index.html"), "w") as outfile:
+            emulator_grouped_pages = defaultdict(list)
+            for run_identifier, run in run_identifier_keyed_results.items():
+                pretty_machine_info = PrettyMachineInfo.parse(run)
+                emulator_grouped_pages[run_identifier.xemu_version].append(
+                    {
+                        "page_path": f"{run_identifier.path}/index.html",
+                        "page_name": pretty_machine_info.flat_name,
+                        "machine_info": pretty_machine_info,
+                    }
+                )
+            outfile.write(
+                index_template.render(emulator_grouped_results=emulator_grouped_pages)
+            )
+
+    def _write_css(self) -> None:
+        css_template = self.env.get_template("site.css.j2")
+        with open(os.path.join(self.output_dir, "site.css"), "w") as outfile:
+            outfile.write(css_template.render())
+
+    def _write_js(self) -> None:
+        css_template = self.env.get_template("script.js.j2")
+        with open(os.path.join(self.output_dir, "script.js"), "w") as outfile:
+            outfile.write(css_template.render())
+
+    def write(self) -> int:
+        os.makedirs(self.output_dir, exist_ok=True)
+        self._write_css()
+        self._write_js()
+        self._write_top_level_index()
+        for run in self.results.values():
+            self._write_results_pages(run)
+
+        return 0
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        help="Enables verbose logging information",
+        action="store_true",
+    )
+    parser.add_argument(
+        "results_dir",
+        help="Directory including test outputs that will be processed",
+    )
+    parser.add_argument(
+        "output_dir",
+        help="Directory into which markdown files will be generated",
+    )
+    parser.add_argument(
+        "--base-url",
+        "-u",
+        default="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main",
+        help="Base URL at which the contents of the repository may be publicly accessed",
+    )
+    parser.add_argument(
+        "--hw-golden-base-url",
+        default="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main",
+        help="Base URL at which the contents of the golden images from Xbox hardware may be publicly accessed.",
+    )
+    parser.add_argument(
+        "--comparison-dir",
+        "-c",
+        help="Directory containing diff results that should be processed.",
+    )
+    parser.add_argument(
+        "--templates-dir",
+        help="Directory containing the templates used to render the site.",
+    )
+
+    args = parser.parse_args()
+
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(level=log_level)
+
+    os.makedirs(args.output_dir, exist_ok=True)
+
+    if args.comparison_dir:
+        run_identifier_to_comparison_results = ComparisonScanner(
+            args.comparison_dir,
+            args.output_dir,
+            args.base_url,
+            args.results_dir,
+            args.hw_golden_base_url,
+        ).process()
+    else:
+        run_identifier_to_comparison_results = {}
+
+    logger.debug("Comparison files: %s", run_identifier_to_comparison_results)
+
+    results = ResultsScanner(
+        args.results_dir,
+        args.output_dir,
+        args.base_url,
+        run_identifier_to_comparison_results,
+    ).process()
+
+    if not args.templates_dir:
+        args.templates_dir = os.path.join(os.path.dirname(__file__), "site-templates")
+
+    jinja_env = Environment(loader=FileSystemLoader(args.templates_dir))
+    return PagesWriter(
+        results, jinja_env, args.output_dir, args.base_url, args.hw_golden_base_url
+    ).write()
+
+
+if __name__ == "__main__":
+    sys.exit(main())
