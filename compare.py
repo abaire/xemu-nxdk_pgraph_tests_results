@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import glob
 import json
 import logging
 import os
@@ -13,7 +14,6 @@ from collections import defaultdict
 from typing import NamedTuple
 
 from git import Repo
-import lpips
 
 logger = logging.getLogger(__name__)
 
@@ -136,6 +136,8 @@ def _fetch_hw_goldens(output_dir: str):
 def _compare(
     results_info: ResultsInfo, golden_info: ResultsInfo, diff_threshold: float
 ) -> tuple[set[str], set[str], list[Difference]]:
+    import lpips
+
     loss_fn = lpips.LPIPS(net="alex")
 
     results_tests = results_info.get_flattened_tests()
@@ -239,6 +241,14 @@ def perform_comparison(
         diff.generate_difference_image(perceptualdiff, comparison_output_directory)
 
 
+def _discover_results(results_root: str) -> list[str]:
+    results_files = glob.glob(
+        "**/results.json", root_dir=results_root, recursive=True
+    )
+
+    return [os.path.join(results_root, os.path.dirname(file)) for file in results_files]
+
+
 def _process_arguments_and_run():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -250,6 +260,11 @@ def _process_arguments_and_run():
     parser.add_argument(
         "results",
         help="Path to the root of the results to compare against the golden results.",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List likely test result sets in the <results> directory."
     )
     parser.add_argument(
         "--output-dir",
@@ -280,6 +295,16 @@ def _process_arguments_and_run():
     )
 
     args = parser.parse_args()
+
+    if args.list:
+        local_results = _discover_results(args.results)
+        print("Discovered test runs:")
+        if not local_results:
+            print("  None")
+        else:
+            for result in sorted(local_results):
+                print(f"  {result}")
+        return 0
 
     log_level = logging.DEBUG if args.verbose else logging.INFO
     logging.basicConfig(level=log_level)
