@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 # needed.
 _MAX_NAME_COMPONENT_LENGTH = 24
 
+# Run identifier used for comparisons against the nxdk_pgraph_tests_golden_results from Xbox hardware.
+HW_GOLDEN_IDENTIFIER = "Xbox_Hardware"
 
 class RunIdentifier(NamedTuple):
     """Holds components of a run identifier."""
@@ -118,13 +120,17 @@ class ComparisonWriter:
         comparison_dir: str,
         output_dir: str,
         base_url: str,
+        results_dir: str,
+        hw_golden_base_url: str,
     ) -> None:
         self.comparison_dir = comparison_dir
         self.output_dir = output_dir
         self.base_url = base_url
+        self.results_dir = results_dir
+        self.hw_golden_base_url = hw_golden_base_url
 
     def generate_markdown_for_test_suite(
-        self, test_suite_dir: str, run_info: dict[str, Any]
+        self, test_suite_dir: str, run_info: dict[str, Any], golden_base_url: str
     ) -> tuple[str, str] | None:
         """Generates the markdown for the contents of a test suite page.
 
@@ -144,6 +150,11 @@ class ComparisonWriter:
 
         distance_dict = run_info["tests_with_differences"]
 
+        # Restore the paths of the original images that were used to produce the diff image.
+        # TODO: Store this as metadata instead of relying on consistent locations.
+        results_base_path = os.path.join(self.results_dir, run_info["result_identifier"].replace(":", "/"))
+        golden_base_path = "" if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER else run_info["golden_identifier"].replace(":", "/")
+
         for image_file in sorted(images):
             test_name = os.path.splitext(os.path.basename(image_file))[0]
             fq_name = f"{suite_name}:{test_name}"
@@ -151,6 +162,12 @@ class ComparisonWriter:
             distance = distance_dict.get(distance_name, "UNKNOWN")
             ret.append(f"## {test_name} - {distance}")
             ret.append(make_image_link(self.base_url, image_file))
+
+            original_image_subpath = distance_name.split(":")
+            source_image_url = "/".join([self.base_url, results_base_path, *original_image_subpath])
+            golden_image_url = "/".join([golden_base_url, golden_base_path, *original_image_subpath])
+
+            ret.append(f"[Source]({source_image_url}.png) [Golden]({golden_image_url}.png)")
 
         return suite_name, "\n".join(ret)
 
@@ -174,6 +191,8 @@ class ComparisonWriter:
             run_identifier = os.path.dirname(root)
             run_info = run_identifier_to_summary[run_identifier]
 
+            golden_base_url = self.hw_golden_base_url if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER else self.base_url
+
             active_name = short_name(run_info["result_identifier"])
             golden_name = short_name(run_info["golden_identifier"])
             suite_suffix = make_md_filename(os.path.basename(root))
@@ -183,7 +202,7 @@ class ComparisonWriter:
 
             output_filename = os.path.join(self.output_dir, raw_md_filename)
 
-            suite_name, content = self.generate_markdown_for_test_suite(root, run_info)
+            suite_name, content = self.generate_markdown_for_test_suite(root, run_info, golden_base_url)
             if content:
                 with open(output_filename, "w") as output_file:
                     output_file.write(content)
@@ -491,6 +510,11 @@ def main():
         help="Base URL at which the contents of the repository may be publicly accessed",
     )
     parser.add_argument(
+        "--hw-golden-base-url",
+        default="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main",
+        help="Base URL at which the contents of the golden images from Xbox hardware may be publicly accessed."
+    )
+    parser.add_argument(
         "--comparison-dir",
         "-c",
         help="Directory containing diff results that should be processed.",
@@ -505,7 +529,7 @@ def main():
 
     if args.comparison_dir:
         run_identifier_to_comparison_results = ComparisonWriter(
-            args.comparison_dir, args.output_dir, args.base_url
+            args.comparison_dir, args.output_dir, args.base_url, args.results_dir,  args.hw_golden_base_url
         ).process()
     else:
         run_identifier_to_comparison_results = {}
