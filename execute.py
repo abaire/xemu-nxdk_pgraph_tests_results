@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # ruff: noqa: T201 `print` found
 
@@ -274,8 +274,8 @@ def _build_macos_xemu_binary_paths(xemu_app_bundle_path: str) -> tuple[str, str]
     return xemu_binary, os.path.join(contents_path, "Resources")
 
 
-def _build_emulator_command(xemu_path: str) -> tuple[str, str]:
-    if platform.system() == "Darwin":
+def _build_emulator_command(xemu_path: str, *, no_bundle: bool = False) -> tuple[str, str]:
+    if platform.system() == "Darwin" and not no_bundle:
         xemu_path, portable_mode_config_path = _build_macos_xemu_binary_paths(xemu_path)
     else:
         portable_mode_config_path = os.path.dirname(xemu_path)
@@ -311,8 +311,9 @@ def run(
     hdd_path: str,
     *,
     overwrite_existing_outputs: bool,
+    no_bundle: bool = False,
 ):
-    emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path)
+    emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path, no_bundle=no_bundle)
     if not emulator_command:
         return 1
 
@@ -414,6 +415,9 @@ def _process_arguments_and_run():
         action="store_true",
         help="Run even if the expected outputs already exist.",
     )
+    parser.add_argument(
+        "--no-bundle", action="store_true", help="Suppress attempt to set DYLD_FALLBACK_LIBRARY_PATH on macOS."
+    )
 
     args = parser.parse_args()
 
@@ -456,6 +460,7 @@ def _process_arguments_and_run():
             xemu_path=xemu,
             hdd_path=hdd,
             overwrite_existing_outputs=overwrite_existing_outputs,
+            no_bundle=args.no_bundle,
         )
 
     if args.temp_path:
