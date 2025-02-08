@@ -17,11 +17,14 @@
 
         <div class="comparison-image-set">
 
-        {% if result.diff_image_url %}
         <div class="image-container">
+        {% if result.diff_image_url %}
         <img src="{{ result.diff_image_url }}" alt="Diff result for {{ suite_name }}::{{ result.test_name }}" class="inline-image">
-        </div>
+        {% else %}
+            <div class="missing-image">No source result</div>
         {% endif %}
+        </div>
+
 
         {% if result.source_image_url and result.golden_image_url %}
         <div class="image-pair">
@@ -33,15 +36,15 @@
             <img src="{{ result.golden_image_url }}" alt="Golden image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison" data-state="golden" style="display: none;">
         </div>
         {% elif result.source_image_url %}
-            <div class="image-pair-title-bar">
-                <div class="image-title"><a href="{{ result.source_image_url }}">Source</a></div>
-            </div>
-            <img src="{{ result.source_image_url }}" alt="Source image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison">
+        <div class="titled-image">
+            <div class="image-title"><a href="{{ result.source_image_url }}">Source</a> - No golden result</div>
+            <img src="{{ result.source_image_url }}" alt="Source image for {{ suite_name }}::{{ result.test_name }}">
+        </div>
         {% elif result.golden_image_url %}
-            <div class="image-pair-title-bar">
-                <div class="image-title"><a href="{{ result.golden_image_url }}">Golden</a><</div>
-            </div>
-            <img src="{{ result.golden_image_url }}" alt="Golden image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison">
+        <div class="titled-image">
+            <div class="image-title"><a href="{{ result.golden_image_url }}">Golden</a> - No source result</div>
+            <img src="{{ result.golden_image_url }}" alt="Golden image for {{ suite_name }}::{{ result.test_name }}">
+        </div>
         {% endif %}
 
         </div>
