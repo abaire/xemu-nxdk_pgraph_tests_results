@@ -56,8 +56,8 @@ install [perceptualdiff](https://github.com/myint/perceptualdiff)
 
 ### Compare to the latest [Xbox hardware goldens](https://github.com/abaire/nxdk_pgraph_tests_golden_results)
 
-*Note*: This repository contains a GitHub Action that will perform the hardware comparison on new results after
-they are merged to the `main` branch.
+*Note*: This repository contains a GitHub Action that will perform the hardware
+comparison on new results after they are merged to the `main` branch.
 
 ```shell
 ./compare.py <results_directory_created_by_execute>
@@ -83,3 +83,10 @@ git push origin my_new_results
 
 Then create a new pull request
 on [the GitHub project page](https://github.com/abaire/xemu-nxdk_pgraph_tests_results)
+
+# Running locally for xemu development purposes
+
+The `generate_local_site_for_custom_xemu_build.sh` script may be used to
+generate a local variant of
+the [deployed pages](https://abaire.github.io/xemu-nxdk_pgraph_tests_results/)
+that compares a developer build of xemu to the newest checked in results. 

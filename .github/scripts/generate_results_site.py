@@ -120,11 +120,13 @@ class ComparisonScanner:
         base_url: str,
         results_dir: str,
         hw_golden_base_url: str,
+        golden_results_dir: str = "",
     ) -> None:
         self.comparison_dir = comparison_dir
         self.output_dir = output_dir
         self.base_url = base_url
         self.results_dir = results_dir
+        self.golden_results_dir = golden_results_dir if golden_results_dir else results_dir
         self.hw_golden_base_url = hw_golden_base_url
 
     def _process_test_case_artifacts(
@@ -147,7 +149,7 @@ class ComparisonScanner:
         golden_base_path = (
             ""
             if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER
-            else os.path.join(self.results_dir, run_info["golden_identifier"].replace(":", "/"))
+            else os.path.join(self.golden_results_dir, run_info["golden_identifier"].replace(":", "/"))
         )
 
         ret: list[TestCaseComparisonInfo] = []
@@ -749,6 +751,10 @@ def main():
         "--templates-dir",
         help="Directory containing the templates used to render the site.",
     )
+    parser.add_argument(
+        "--golden-results-dir",
+        help="Overrides the directory containing non-hardware golden results. Defaults to <results_dir>."
+    )
 
     args = parser.parse_args()
 
@@ -764,6 +770,7 @@ def main():
             args.base_url,
             args.results_dir,
             args.hw_golden_base_url,
+            args.golden_results_dir,
         ).process()
     else:
         run_identifier_to_comparison_results = {}

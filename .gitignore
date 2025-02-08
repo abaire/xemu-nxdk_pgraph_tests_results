@@ -8,3 +8,6 @@
 !/cache/README.md
 /inputs/*
 !/inputs/README.md
+
+local/
+
