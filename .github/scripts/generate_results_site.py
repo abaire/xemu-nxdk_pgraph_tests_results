@@ -189,19 +189,13 @@ class ComparisonScanner:
         """Processes the results for each comparison between pairs of results."""
 
         run_identifier_to_suits: dict[str, list[TestSuiteComparisonInfo]] = defaultdict(list)
-
-        for root, dirnames, filenames in os.walk(self.comparison_dir):
-            if dirnames:
-                continue
-
-            if "summary.json" not in filenames:
-                continue
-
-            run_identifier = os.path.dirname(root)
-            run_info = run_identifier_to_summary[run_identifier]
-            result = self._process_test_suite(root, run_info)
-            if result:
-                run_identifier_to_suits[run_identifier].append(result)
+        for run_root, run_info in run_identifier_to_summary.items():
+            for item in os.listdir(run_root):
+                suite_path = os.path.join(run_root, item)
+                if os.path.isdir(suite_path):
+                    result = self._process_test_suite(suite_path, run_info)
+                    if result:
+                        run_identifier_to_suits[run_root].append(result)
 
         ret: list[ComparisonInfo] = []
         for run_identifier, test_suites in run_identifier_to_suits.items():
