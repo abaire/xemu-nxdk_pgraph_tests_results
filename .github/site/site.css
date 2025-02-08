@@ -107,6 +107,15 @@
     }
 }
 
+.missing-image {
+    display: flex;
+    width: 640px;
+    height: 480px;
+    align-items: center;
+    justify-content: center;
+    background: floralwhite;
+}
+
 .image-pair {
 }
 
