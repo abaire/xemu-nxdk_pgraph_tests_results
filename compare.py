@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# ruff: noqa: T201 `print` found
+
 from __future__ import annotations
 
 import argparse
@@ -12,8 +14,6 @@ import subprocess
 import sys
 from collections import defaultdict
 from typing import NamedTuple
-
-from git import Repo
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +43,9 @@ class ResultsInfo(NamedTuple):
         """Return a flattened set of test_suite::test_case."""
         ret = set()
         for suite_name, test_cases in self.test_suites.items():
-            suite_name = suite_name.replace(" ", "_")
-            for test_case in test_cases.keys():
-                ret.add(f"{suite_name}:{test_case}")
+            suite_dir_name = suite_name.replace(" ", "_")
+            for test_case in test_cases:
+                ret.add(f"{suite_dir_name}:{test_case}")
         return ret
 
     def find_result_images(self) -> ResultsInfo:
@@ -129,13 +129,13 @@ def _ensure_cache_path(cache_path: str) -> str:
 
 
 def _fetch_hw_goldens(output_dir: str):
+    from git import Repo
+
     logger.info("Cloning from %s", _HW_GOLDEN_GIT_URL)
     Repo.clone_from(_HW_GOLDEN_GIT_URL, output_dir, depth=1)
 
 
-def _compare(
-    results_info: ResultsInfo, golden_info: ResultsInfo, diff_threshold: float
-) -> tuple[set[str], set[str], list[Difference]]:
+def _compare(results_info: ResultsInfo, golden_info: ResultsInfo) -> tuple[set[str], set[str], list[Difference]]:
     import lpips
 
     loss_fn = lpips.LPIPS(net="alex")
@@ -149,9 +149,12 @@ def _compare(
     differences: list[Difference] = []
 
     logger.info("Comparing image files (this may take some time)...")
-    for test_suite, test_cases in results_info.test_suites.items():
+    for test_suite in sorted(results_info.test_suites.keys()):
+        print(test_suite)
+        test_cases = results_info.test_suites[test_suite]
         golden_suite = golden_info.test_suites.get(test_suite, {})
         for test_case, artifact in test_cases.items():
+            print(".", end="", flush=True)
             golden_artifact = golden_suite.get(test_case)
             if not golden_artifact:
                 continue
@@ -163,19 +166,14 @@ def _compare(
             distance = loss_fn(artifact_image, golden_image)
             distance_value = distance.item()
             logger.debug(
-                "LPIPS distance between %s and %s = %f",
+                "LPIPS distance between %s and %s = %G",
                 artifact,
                 golden_artifact,
                 distance_value,
             )
-            if distance_value <= diff_threshold:
-                continue
 
-            differences.append(
-                Difference(
-                    test_suite, test_case, artifact, golden_artifact, distance_value
-                )
-            )
+            differences.append(Difference(test_suite, test_case, artifact, golden_artifact, distance_value))
+        print("")
 
     return only_results, only_goldens, differences
 
@@ -204,9 +202,7 @@ def perform_comparison(
 
     logger.debug("Comparing %s to %s", results_info.run_identifier, against_name)
 
-    only_results, only_golden, diffs = _compare(
-        results_info, golden_info, diff_threshold
-    )
+    only_results, only_golden, diffs = _compare(results_info, golden_info)
 
     if not (only_results or only_golden or diffs):
         return
@@ -227,24 +223,25 @@ def perform_comparison(
         "golden_identifier": against_name,
         "tests_without_goldens": sorted(only_results),
         "goldens_without_results": sorted(only_golden),
-        "tests_with_differences": {
-            diff.fully_qualified_test_name: diff.distance for diff in diffs
-        },
+        "tests_with_differences": {diff.fully_qualified_test_name: diff.distance for diff in diffs},
     }
-    with open(
-        os.path.join(comparison_output_directory, "summary.json"), "w", encoding="utf-8"
-    ) as outfile:
+    with open(os.path.join(comparison_output_directory, "summary.json"), "w", encoding="utf-8") as outfile:
         json.dump(summary, outfile, ensure_ascii=True, indent=2, sort_keys=True)
 
-    for diff in diffs:
+    for diff in sorted(diffs, key=lambda x: f"{x.test_suite}:{x.test_case}"):
+        if diff.distance < diff_threshold:
+            logger.info(
+                "Not generating diff image for %s with distance %G below threshold",
+                diff.fully_qualified_test_name,
+                diff.distance,
+            )
+            continue
         logger.info("Generating diff image for %s", diff.fully_qualified_test_name)
         diff.generate_difference_image(perceptualdiff, comparison_output_directory)
 
 
 def _discover_results(results_root: str) -> list[str]:
-    results_files = glob.glob(
-        "**/results.json", root_dir=results_root, recursive=True
-    )
+    results_files = glob.glob("**/results.json", root_dir=results_root, recursive=True)
 
     return [os.path.join(results_root, os.path.dirname(file)) for file in results_files]
 
@@ -261,11 +258,7 @@ def _process_arguments_and_run():
         "results",
         help="Path to the root of the results to compare against the golden results.",
     )
-    parser.add_argument(
-        "--list",
-        action="store_true",
-        help="List likely test result sets in the <results> directory."
-    )
+    parser.add_argument("--list", action="store_true", help="List likely test result sets in the <results> directory.")
     parser.add_argument(
         "--output-dir",
         "-o",
@@ -278,9 +271,7 @@ def _process_arguments_and_run():
         "-a",
         help="Path to the root of the results to consider golden. Omit to test against the HW results repo.",
     )
-    parser.add_argument(
-        "--cache-path", "-C", default="cache", help="Path to persistent cache area."
-    )
+    parser.add_argument("--cache-path", "-C", default="cache", help="Path to persistent cache area.")
     parser.add_argument(
         "--perceptualdiff",
         default="perceptualdiff",
@@ -290,7 +281,7 @@ def _process_arguments_and_run():
         "--diff-threshold",
         "-t",
         type=float,
-        default=0.0,
+        default=0.00001,
         help="LPIPS distance threshold below which images are considered equal.",
     )
 

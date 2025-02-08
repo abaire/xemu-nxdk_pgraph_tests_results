@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import logging
 import os
 import platform
@@ -12,15 +13,15 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 from shutil import SameFileError
 from time import sleep
 from typing import Any
 from urllib.request import urlcleanup, urlretrieve
-import zipfile
 
 import nxdk_pgraph_test_runner
-from nxdk_pgraph_test_runner import Config
 import requests
+from nxdk_pgraph_test_runner import Config
 from nxdk_pgraph_test_runner.emulator_output import EmulatorOutput
 from nxdk_pgraph_test_runner.host_profile import HostProfile
 from nxdk_pgraph_test_runner.runner import get_output_directory
@@ -28,9 +29,7 @@ from nxdk_pgraph_test_runner.runner import get_output_directory
 logger = logging.getLogger(__name__)
 
 
-def _fetch_github_release_info(
-    api_url: str, tag: str = "latest"
-) -> dict[str, Any] | None:
+def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, Any] | None:
     full_url = f"{api_url}/releases/{tag}"
     try:
         response = requests.get(
@@ -48,9 +47,7 @@ def _fetch_github_release_info(
         return None
 
 
-def _download_artifact(
-    target_path: str, download_url: str, artifact_path_override: str | None = None
-) -> bool:
+def _download_artifact(target_path: str, download_url: str, artifact_path_override: str | None = None) -> bool:
     """Downloads an artifact from the given URL, if it does not already exist. Returns True if download was needed."""
     if os.path.exists(target_path):
         return False
@@ -81,9 +78,7 @@ def _download_artifact(
 def _download_tester_iso(output_dir: str, tag: str = "latest") -> str | None:
     logger.info("Fetching info on nxdk_pgraph_tests ISO at release tag %s...", tag)
 
-    release_info = _fetch_github_release_info(
-        "https://api.github.com/repos/abaire/nxdk_pgraph_tests", tag
-    )
+    release_info = _fetch_github_release_info("https://api.github.com/repos/abaire/nxdk_pgraph_tests", tag)
     if not release_info:
         return None
 
@@ -100,9 +95,7 @@ def _download_tester_iso(output_dir: str, tag: str = "latest") -> str | None:
         break
 
     if not download_url:
-        logger.error(
-            "Failed to fetch download URL for latest nxdk_pgraph_tests release"
-        )
+        logger.error("Failed to fetch download URL for latest nxdk_pgraph_tests release")
         return None
 
     target_file = os.path.join(output_dir, f"nxdk_pgraph_tests-{release_tag}.iso")
@@ -133,9 +126,7 @@ def _macos_extract_app(archive_file: str, target_app_bundle: str) -> None:
 
 def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
     logger.info("Fetching info on latest xemu at release tag %s...", tag)
-    release_info = _fetch_github_release_info(
-        "https://api.github.com/repos/xemu-project/xemu", tag
-    )
+    release_info = _fetch_github_release_info("https://api.github.com/repos/xemu-project/xemu", tag)
     if not release_info:
         return None
 
@@ -148,11 +139,7 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
     if system == "Linux":
         # xemu-v0.8.15-x86_64.AppImage
         def check_asset(asset_name: str) -> bool:
-            return (
-                asset_name.startswith("xemu-v")
-                and asset_name.endswith(".AppImage")
-                and "-dbg-" not in asset_name
-            )
+            return asset_name.startswith("xemu-v") and asset_name.endswith(".AppImage") and "-dbg-" not in asset_name
     elif system == "Darwin":
         # xemu-macos-universal-release.zip
         def check_asset(asset_name: str) -> bool:
@@ -171,9 +158,7 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
         break
 
     if not download_url:
-        logger.error(
-            "Failed to fetch download URL for latest nxdk_pgraph_tests release"
-        )
+        logger.error("Failed to fetch download URL for latest nxdk_pgraph_tests release")
         return None
 
     if system == "Linux":
@@ -187,9 +172,7 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
         raise NotImplementedError(msg)
 
     logger.debug("Xemu %s %s", target_file, download_url)
-    was_downloaded = _download_artifact(
-        target_file, download_url, artifact_path_override
-    )
+    was_downloaded = _download_artifact(target_file, download_url, artifact_path_override)
 
     if was_downloaded and system == "Darwin":
         _macos_extract_app(artifact_path_override, target_file)
@@ -200,9 +183,7 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
 def _download_xemu_hdd(output_dir: str, tag: str = "latest") -> str | None:
     logger.info("Fetching info on xemu_hdd at release tag %s...", tag)
 
-    release_info = _fetch_github_release_info(
-        "https://api.github.com/repos/xemu-project/xemu-hdd-image", tag
-    )
+    release_info = _fetch_github_release_info("https://api.github.com/repos/xemu-project/xemu-hdd-image", tag)
     if not release_info:
         return None
 
@@ -219,9 +200,7 @@ def _download_xemu_hdd(output_dir: str, tag: str = "latest") -> str | None:
         break
 
     if not download_url:
-        logger.error(
-            "Failed to fetch download URL for latest nxdk_pgraph_tests release"
-        )
+        logger.error("Failed to fetch download URL for latest nxdk_pgraph_tests release")
         return None
 
     target_file = os.path.join(output_dir, f"xemu_hdd-{release_tag}.qcow2")
@@ -301,19 +280,13 @@ def _build_emulator_command(xemu_path: str) -> tuple[str, str]:
     else:
         portable_mode_config_path = os.path.dirname(xemu_path)
 
-    return xemu_path + " -dvd_path {ISO}", os.path.join(
-        portable_mode_config_path, "xemu.toml"
-    )
+    return xemu_path + " -dvd_path {ISO}", os.path.join(portable_mode_config_path, "xemu.toml")
 
 
 def _determine_output_directory(results_path: str, emulator_command: str) -> str | None:
-    command = Config(emulator_command=emulator_command).build_emulator_command(
-        "__this_file_does_not_exist"
-    )
+    command = Config(emulator_command=emulator_command).build_emulator_command("__this_file_does_not_exist")
     try:
-        result = subprocess.run(
-            command, capture_output=True, text=True, check=True, timeout=1
-        )
+        result = subprocess.run(command, capture_output=True, text=True, check=True, timeout=1)
         stderr = result.stderr
     except subprocess.TimeoutExpired as err:
         stderr = err.stderr.decode()
@@ -321,9 +294,7 @@ def _determine_output_directory(results_path: str, emulator_command: str) -> str
         sleep(0.5)
 
     emulator_output = EmulatorOutput.parse(stdout=[], stderr=stderr.split("\n"))
-    output_directory = get_output_directory(
-        emulator_output.emulator_version, HostProfile()
-    )
+    output_directory = get_output_directory(emulator_output.emulator_version, HostProfile())
 
     return os.path.join(
         results_path,
@@ -338,6 +309,7 @@ def run(
     results_path: str,
     xemu_path: str,
     hdd_path: str,
+    *,
     overwrite_existing_outputs: bool,
 ):
     emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path)
@@ -354,13 +326,9 @@ def run(
         )
 
     if not overwrite_existing_outputs:
-        output_directory = _determine_output_directory(
-            results_path, emulator_command=emulator_command
-        )
+        output_directory = _determine_output_directory(results_path, emulator_command=emulator_command)
         if os.path.isdir(output_directory):
-            logger.warning(
-                "Output directory %s already exists, exiting", output_directory
-            )
+            logger.warning("Output directory %s already exists, exiting", output_directory)
             return 200
 
     config = Config(
@@ -405,9 +373,7 @@ def _process_arguments_and_run():
         help="Enables verbose logging information",
         action="store_true",
     )
-    parser.add_argument(
-        "--iso", "-I", help="Path to the nxdk_pgraph_tests.iso xiso file."
-    )
+    parser.add_argument("--iso", "-I", help="Path to the nxdk_pgraph_tests.iso xiso file.")
     parser.add_argument(
         "--pgraph-tag",
         metavar="github_release_tag",
@@ -434,12 +400,8 @@ def _process_arguments_and_run():
         default="inputs/mcpx.bin",
         help="Path to Xbox MCPX boot ROM image to use.",
     )
-    parser.add_argument(
-        "--cache-path", "-C", default="cache", help="Path to persistent cache area."
-    )
-    parser.add_argument(
-        "--temp-path", help="Temporary path used during execution of tests"
-    )
+    parser.add_argument("--cache-path", "-C", default="cache", help="Path to persistent cache area.")
+    parser.add_argument("--temp-path", help="Temporary path used during execution of tests")
     parser.add_argument(
         "--results-path",
         "-R",
@@ -469,33 +431,23 @@ def _process_arguments_and_run():
         logger.error("Invalid ISO path '%s'", iso)
         return 1
 
-    if args.xemu:
-        xemu = os.path.abspath(os.path.expanduser(args.xemu))
-    else:
-        xemu = _download_xemu(cache_path, args.xemu_tag)
+    xemu = os.path.abspath(os.path.expanduser(args.xemu)) if args.xemu else _download_xemu(cache_path, args.xemu_tag)
     if not xemu or not os.path.exists(xemu):
         logger.error("Invalid xemu path '%s'", xemu)
         return 1
 
-    if args.hdd:
-        hdd = os.path.abspath(os.path.expanduser(args.hdd))
-    else:
-        hdd = _download_xemu_hdd(cache_path)
+    hdd = os.path.abspath(os.path.expanduser(args.hdd)) if args.hdd else _download_xemu_hdd(cache_path)
     if not hdd or not os.path.isfile(hdd):
         logger.error("Invalid xemu_hdd path '%s'", hdd)
         return 1
 
-    def _copy_inputs_and_run(temp_path: str, overwrite_existing_outputs: bool) -> int:
+    def _copy_inputs_and_run(temp_path: str, *, overwrite_existing_outputs: bool) -> int:
         inputs_path = os.path.join(temp_path, "inputs")
         os.makedirs(inputs_path, exist_ok=True)
-        try:
+        with contextlib.suppress(SameFileError):
             shutil.copy(args.mcpx, os.path.join(inputs_path, "mcpx.bin"))
-        except SameFileError:
-            pass
-        try:
+        with contextlib.suppress(SameFileError):
             shutil.copy(args.bios, os.path.join(inputs_path, "bios.bin"))
-        except SameFileError:
-            pass
         return run(
             iso_path=iso,
             work_path=temp_path,
@@ -508,13 +460,11 @@ def _process_arguments_and_run():
 
     if args.temp_path:
         return _copy_inputs_and_run(
-            _ensure_path(args.temp_path), args.overwrite_existing_outputs
+            _ensure_path(args.temp_path), overwrite_existing_outputs=args.overwrite_existing_outputs
         )
-    else:
-        with tempfile.TemporaryDirectory() as temp_path:
-            return _copy_inputs_and_run(
-                _ensure_path(temp_path), args.overwrite_existing_outputs
-            )
+
+    with tempfile.TemporaryDirectory() as temp_path:
+        return _copy_inputs_and_run(_ensure_path(temp_path), overwrite_existing_outputs=args.overwrite_existing_outputs)
 
 
 if __name__ == "__main__":

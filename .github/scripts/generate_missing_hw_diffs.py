@@ -60,23 +60,16 @@ def find_result_dirs_without_hw_diffs(results_dir: str, output_dir: str) -> set[
     result_paths = _find_results_paths(results_dir)
 
     hw_comparison_paths = _find_hw_comparison_paths(output_dir)
-    source_paths = {
-        os.path.join(results_dir, _comparison_path_to_source_path(path))
-        for path in hw_comparison_paths
-    }
+    source_paths = {os.path.join(results_dir, _comparison_path_to_source_path(path)) for path in hw_comparison_paths}
 
     return result_paths - source_paths
 
 
-def generate_missing_hw_diffs(
-    results_dir: str, output_dir: str, compare_script: str
-) -> None:
-    results_missing_comparisons = find_result_dirs_without_hw_diffs(
-        results_dir, output_dir
-    )
+def generate_missing_hw_diffs(results_dir: str, output_dir: str, compare_script: str) -> None:
+    results_missing_comparisons = find_result_dirs_without_hw_diffs(results_dir, output_dir)
 
     for result in results_missing_comparisons:
-        subprocess.run([compare_script, result, "--verbose"])
+        subprocess.run([compare_script, result, "--verbose"], check=False)
 
 
 def main() -> int:
