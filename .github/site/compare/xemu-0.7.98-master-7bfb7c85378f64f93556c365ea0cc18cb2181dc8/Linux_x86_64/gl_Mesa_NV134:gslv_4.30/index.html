@@ -7,7 +7,7 @@
 <body>
 
     <div class="sidenav">
-    <a href="../../../../index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Home_%2885249%29_-_The_Noun_Project.svg" width="32" alt="Navigate to the top level" /></a>\
+    <a href="../../../../index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Home_%2885249%29_-_The_Noun_Project.svg" width="32" alt="Navigate to the top level" /></a>
     
       <a href="../../../../results/xemu-0.7.98-master-7bfb7c85378f64f93556c365ea0cc18cb2181dc8/Linux_x86_64/gl_Mesa_NV134:gslv_4.30/index.html#Xbox_Hardware"><img src="https://upload.wikimedia.org/wikipedia/commons/9/92/Arrow_chevron_up_in_sharp_solid_style.svg" width="32" alt="Navigate up one level" /></a>
     </div>
@@ -4889,6 +4889,10 @@
 
 
     <h2><a href="Antialiasing_tests.html">Antialiasing_tests</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/antialiasing_tests.h</div>
+    </div>
 
 
     
@@ -6757,6 +6761,10 @@
 
 
     <h2><a href="Blend_tests.html">Blend_tests</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/blend_tests.h</div>
+    </div>
 
 
     
@@ -6819,13 +6827,33 @@
 
 
     <h2><a href="Color_key.html">Color_key</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Tests NV097_SET_COLOR_KEY_COLOR (0x0AE0) and the NV097_SET_TEXTURE_CONTROL0_COLOR_KEY_MODE color key functions.</div>
+        
+            <div class="test-description-line">NV097_SET_TEXTURE_CONTROL0_COLOR_KEY_MODE is used to instruct the hardware what to do when a texel's value matches a color key. See ColorKeyMode for the supported modes.</div>
+        
+            <div class="test-description-line">NV097_SET_COLOR_KEY_COLOR is used to instruct the hardware which texels should have the color key mode applied.</div>
+        
+            <div class="test-description-line">Each test renders a series of quads, with each quad being divided into four subcomponents (NW = northwest/top left, etc...):</div>
+        
+            <div class="test-description-line">NW: Checkerboard alternating a color-keyed color and a light grey. NE: Checkerboard alternating a dark grey and an alpha-keyed color. SW: Checkerboard alternating the color-keyed color with alpha from the alpha key and the color keyed color with 0xFF alpha that matches none of the keys. SE: Checkerboard alternating a non-keyed color with alpha from the color key and a non-keyed color with alpha from the alpha key.</div>
+        </div>
+        
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/color_key_tests.h</div>
+    </div>
 
 
     
         <h3>FixedTex_Alpha</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.11441047489643097</div></div>
+            <div class="value">0.11441047489643097</div>
+            <div class="label">Description</div>
+            <div class="value">With the fixed function pipeline, zero out just the alpha channel for all places where the colorkey matches the value of a texel. RGB channels are unaffected. This should omit all texels that match the color key.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -6853,7 +6881,10 @@
         <h3>FixedTex_AlphaColor</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.11445751786231995</div></div>
+            <div class="value">0.11445751786231995</div>
+            <div class="label">Description</div>
+            <div class="value">With the fixed function pipeline, kill the texel completely for wherever the color key matches the value of a texel. This completely masks the texel rather than simply zero-ing out values. See IgnAlphaCh_FixedTex_AlphaColor. This should omit all texels that match the color key.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -6881,7 +6912,10 @@
         <h3>FixedTex_Color</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.11446528136730194</div></div>
+            <div class="value">0.11446528136730194</div>
+            <div class="label">Description</div>
+            <div class="value">With the fixed function pipeline, zero out the color and alpha channels for all places where the color key matches the value of a texel. Note that the Alpha channel is also set to zero. This should omit all texels that match the color key.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -6909,7 +6943,10 @@
         <h3>FixedTex_Disabled</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.006342430133372545</div></div>
+            <div class="value">0.006342430133372545</div>
+            <div class="label">Description</div>
+            <div class="value">With the fixed function pipeline, make no changes to any texel whose value matches the color key. This should render all texels as fully opaque with their original colors.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -6937,7 +6974,10 @@
         <h3>IgnAlphaCh_FixedTex_Alpha</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.006154266186058521</div></div>
+            <div class="value">0.006154266186058521</div>
+            <div class="label">Description</div>
+            <div class="value">With the fixed function pipeline, set the color key mode to clear just the alpha channel for matching texels. When rendering, set the final combiner to use an alpha value of 0xFF for all texels, forcing pixels to be rendered opaque despite matching the color key. This should render all texels fully opaque with their original colors, since the texel alpha is ignored during texturing.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -6965,7 +7005,10 @@
         <h3>IgnAlphaCh_FixedTex_AlphaColor</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.11599530279636383</div></div>
+            <div class="value">0.11599530279636383</div>
+            <div class="label">Description</div>
+            <div class="value">With the fixed function pipeline, kill the texel completely for wherever the color key matches the value of a texel. This completely masks the texel rather than simply zero-ing out values. When rendering, set the final combiner to use an alpha value of 0xFF for all texels. This omits killed texels even though the combiner sets them to fully opaque during texturing.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -6993,7 +7036,10 @@
         <h3>IgnAlphaCh_FixedTex_Color</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.0986560806632042</div></div>
+            <div class="value">0.0986560806632042</div>
+            <div class="label">Description</div>
+            <div class="value">With the fixed function pipeline, zero out the color and alpha channels for all places where the color key matches the value of a texel. When rendering, set the final combiner to use an alpha value of 0xFF for all texels, forcing pixels to be rendered opaque despite matching the color key. This should render matching texels as fully black, since their RGB values were zeroed out and the zeroed alpha channel is ignored.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7021,7 +7067,10 @@
         <h3>IgnAlphaCh_FixedTex_Disabled</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.006153085269033909</div></div>
+            <div class="value">0.006153085269033909</div>
+            <div class="label">Description</div>
+            <div class="value">With the fixed function pipeline, make no changes to any texel whose value matches the color key. When rendering, set the final combiner to use an alpha value of 0xFF for all texels. This should render all texels as fully opaque with their original colors.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7049,7 +7098,10 @@
         <h3>IgnAlphaCh_ProgTex_Alpha</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.0005586283514276147</div></div>
+            <div class="value">0.0005586283514276147</div>
+            <div class="label">Description</div>
+            <div class="value">With a programmable shader, set the color key mode to clear just the alpha channel for matching texels. When rendering, set the final combiner to use an alpha value of 0xFF for all texels, forcing pixels to be rendered opaque despite matching the color key. This should render all texels fully opaque with their original colors, since the texel alpha is ignored during texturing.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7077,7 +7129,10 @@
         <h3>IgnAlphaCh_ProgTex_AlphaColor</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.11719400435686111</div></div>
+            <div class="value">0.11719400435686111</div>
+            <div class="label">Description</div>
+            <div class="value">With a programmable shader, kill the texel completely for wherever the color key matches the value of a texel. This completely masks the texel rather than simply zero-ing out values. When rendering, set the final combiner to use an alpha value of 0xFF for all texels. This omits killed texels even though the combiner sets them to fully opaque during texturing.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7105,7 +7160,10 @@
         <h3>IgnAlphaCh_ProgTex_Color</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.09614556282758713</div></div>
+            <div class="value">0.09614556282758713</div>
+            <div class="label">Description</div>
+            <div class="value">With a programmable shader, zero out the color and alpha channels for all places where the color key matches the value of a texel. When rendering, set the final combiner to use an alpha value of 0xFF for all texels, forcing pixels to be rendered opaque despite matching the color key. This should render matching texels as fully black, since their RGB values were zeroed out and the zeroed alpha channel is ignored.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7133,7 +7191,10 @@
         <h3>IgnAlphaCh_ProgTex_Disabled</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.0005586292245425284</div></div>
+            <div class="value">0.0005586292245425284</div>
+            <div class="label">Description</div>
+            <div class="value">With a programmable shader, make no changes to any texel whose value matches the color key. When rendering, set the final combiner to use an alpha value of 0xFF for all texels. This should render all texels as fully opaque with their original colors.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7161,7 +7222,10 @@
         <h3>ProgTex_Alpha</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.11597549915313721</div></div>
+            <div class="value">0.11597549915313721</div>
+            <div class="label">Description</div>
+            <div class="value">With a programmable shader, zero out just the alpha channel for all places where the colorkey matches the value of a texel. RGB channels are unaffected. This should omit all texels that match the color key.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7189,7 +7253,10 @@
         <h3>ProgTex_AlphaColor</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.1160232424736023</div></div>
+            <div class="value">0.1160232424736023</div>
+            <div class="label">Description</div>
+            <div class="value">With a programmable shader, kill the texel completely for wherever the color key matches the value of a texel. This completely masks the texel rather than simply zero-ing out values. See IgnAlphaCh_FixedTex_AlphaColor. This should omit all texels that match the color key.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7217,7 +7284,10 @@
         <h3>ProgTex_Color</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.11597840487957001</div></div>
+            <div class="value">0.11597840487957001</div>
+            <div class="label">Description</div>
+            <div class="value">With a programmable shader, zero out the color and alpha channels for all places where the color key matches the value of a texel. Note that the Alpha channel is also set to zero. This should omit all texels that match the color key.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7245,7 +7315,10 @@
         <h3>ProgTex_Disabled</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.0005957636749371886</div></div>
+            <div class="value">0.0005957636749371886</div>
+            <div class="label">Description</div>
+            <div class="value">With a programmable shader, make no changes to any texel whose value matches the color key. This should render all texels as fully opaque with their original colors.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7273,7 +7346,10 @@
         <h3>UnsampledTex</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.04541626200079918</div></div>
+            <div class="value">0.04541626200079918</div>
+            <div class="label">Description</div>
+            <div class="value">Demonstrates that the color keys are independent of whether the associated texture stage is used in the final composition or not. With a programable shader, draw two quads with the color key mode set to kill matching texels. In both cases, the final color combiner only samples from texture 0. The left quad renders with the blue color key as key 0. The right quad enables the second texture stage, keeps key 0, and adds the magenta color key with an alpha value forced to 0xFF as key 1. The left image should have the blue color in the NW checkerboard killed. The right image should have the blue color in the NW checkerboard killed, but also the secondary blue color in the SW checkerboard killed. This is because the unsampled magenta texture's SW secondary color matches the magenta + 0xFF alpha enabled as a color key in the second operation. </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -7301,6 +7377,10 @@
 
 
     <h2><a href="Color_mask_blend.html">Color_mask_blend</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/color_mask_blend_tests.h</div>
+    </div>
 
 
     
@@ -7335,6 +7415,10 @@
 
 
     <h2><a href="Color_zeta_overlap.html">Color_zeta_overlap</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/color_zeta_overlap_tests.h</div>
+    </div>
 
 
     
@@ -7469,6 +7553,10 @@
 
 
     <h2><a href="Combiner.html">Combiner</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/combiner_tests.h</div>
+    </div>
 
 
     
@@ -25771,6 +25859,10 @@
 
 
     <h2><a href="Edge_flag.html">Edge_flag</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/edge_flag_tests.h</div>
+    </div>
 
 
     
@@ -25833,6 +25925,10 @@
 
 
     <h2><a href="Fog.html">Fog</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/fog_tests.h</div>
+    </div>
 
 
     
@@ -27509,6 +27605,10 @@
 
 
     <h2><a href="Front_face.html">Front_face</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/front_face_tests.h</div>
+    </div>
 
 
     
@@ -27739,6 +27839,10 @@
 
 
     <h2><a href="Image_blit.html">Image_blit</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/image_blit_tests.h</div>
+    </div>
 
 
     
@@ -27913,6 +28017,10 @@
 
 
     <h2><a href="Inline_array_size_mismatch.html">Inline_array_size_mismatch</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/inline_array_size_mismatch.h</div>
+    </div>
 
 
     
@@ -28737,6 +28845,10 @@
 
 
     <h2><a href="Lighting_Two_Sided.html">Lighting_Two_Sided</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/lighting_two_sided_tests.h</div>
+    </div>
 
 
     
@@ -28771,6 +28883,10 @@
 
 
     <h2><a href="Line_width.html">Line_width</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/line_width_tests.h</div>
+    </div>
 
 
     
@@ -30485,6 +30601,10 @@
 
 
     <h2><a href="Material_alpha.html">Material_alpha</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/material_alpha_tests.h</div>
+    </div>
 
 
     
@@ -30967,6 +31087,10 @@
 
 
     <h2><a href="Material_color.html">Material_color</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/material_color_tests.h</div>
+    </div>
 
 
     
@@ -31113,6 +31237,10 @@
 
 
     <h2><a href="Material_color_source.html">Material_color_source</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/material_color_source_tests.h</div>
+    </div>
 
 
     
@@ -31203,6 +31331,10 @@
 
 
     <h2><a href="Overlapping_draw_modes.html">Overlapping_draw_modes</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/overlapping_draw_modes_tests.h</div>
+    </div>
 
 
     
@@ -31523,6 +31655,10 @@
 
 
     <h2><a href="Shade_model.html">Shade_model</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/shade_model_tests.h</div>
+    </div>
 
 
     
@@ -35623,6 +35759,10 @@
 
 
     <h2><a href="Stencil.html">Stencil</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/stencil_tests.h</div>
+    </div>
 
 
     
@@ -35965,6 +36105,10 @@
 
 
     <h2><a href="Stipple_tests.html">Stipple_tests</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/stipple_tests.h</div>
+    </div>
 
 
     
@@ -36183,6 +36327,10 @@
 
 
     <h2><a href="Surface_clip.html">Surface_clip</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/surface_clip_tests.h</div>
+    </div>
 
 
     
@@ -36329,6 +36477,10 @@
 
 
     <h2><a href="Surface_pitch.html">Surface_pitch</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/surface_pitch_tests.h</div>
+    </div>
 
 
     
@@ -36363,6 +36515,10 @@
 
 
     <h2><a href="Texgen.html">Texgen</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texgen_tests.h</div>
+    </div>
 
 
     
@@ -36543,6 +36699,10 @@
 
 
     <h2><a href="Texture_border.html">Texture_border</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_border_tests.h</div>
+    </div>
 
 
     
@@ -36801,6 +36961,10 @@
 
 
     <h2><a href="Texture_cubemap.html">Texture_cubemap</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_cubemap_tests.h</div>
+    </div>
 
 
     
@@ -37429,6 +37593,10 @@
 
 
     <h2><a href="Texture_format.html">Texture_format</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_format_tests.h</div>
+    </div>
 
 
     
@@ -37547,6 +37715,10 @@
 
 
     <h2><a href="Texture_Framebuffer_Blit.html">Texture_Framebuffer_Blit</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_framebuffer_blit_tests.h</div>
+    </div>
 
 
     
@@ -37637,6 +37809,10 @@
 
 
     <h2><a href="Texture_Matrix.html">Texture_Matrix</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_matrix_tests.h</div>
+    </div>
 
 
     
@@ -37755,6 +37931,10 @@
 
 
     <h2><a href="Texture_render_target.html">Texture_render_target</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_render_target_tests.h</div>
+    </div>
 
 
     
@@ -38153,6 +38333,10 @@
 
 
     <h2><a href="Texture_shadow_comparator.html">Texture_shadow_comparator</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_shadow_comparator_tests.h</div>
+    </div>
 
 
     
@@ -42695,6 +42879,10 @@
 
 
     <h2><a href="Texture_signed_component_tests.html">Texture_signed_component_tests</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_signed_component_tests.h</div>
+    </div>
 
 
     
@@ -43229,6 +43417,10 @@
 
 
     <h2><a href="Vertex_shader_independence_tests.html">Vertex_shader_independence_tests</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/vertex_shader_independence_tests.h</div>
+    </div>
 
 
     
@@ -43263,6 +43455,10 @@
 
 
     <h2><a href="Vertex_shader_rounding_tests.html">Vertex_shader_rounding_tests</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/vertex_shader_rounding_tests.h</div>
+    </div>
 
 
     
@@ -44053,6 +44249,10 @@
 
 
     <h2><a href="Viewport.html">Viewport</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/viewport_tests.h</div>
+    </div>
 
 
     
@@ -44171,6 +44371,10 @@
 
 
     <h2><a href="Volume_texture.html">Volume_texture</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/volume_texture_tests.h</div>
+    </div>
 
 
     
@@ -44625,6 +44829,10 @@
 
 
     <h2><a href="W_param.html">W_param</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/w_param_tests.h</div>
+    </div>
 
 
     
@@ -44743,6 +44951,10 @@
 
 
     <h2><a href="Zero_stride.html">Zero_stride</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/zero_stride_tests.h</div>
+    </div>
 
 
     
