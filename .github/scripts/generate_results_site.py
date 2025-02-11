@@ -41,6 +41,7 @@ class TestSuiteDescriptor(NamedTuple):
     description: list[str]
     source_file: str
     source_file_line: int
+    test_descriptions: dict[str, str]
 
     @classmethod
     def from_obj(cls, obj: dict[str, Any]) -> TestSuiteDescriptor:
@@ -50,6 +51,7 @@ class TestSuiteDescriptor(NamedTuple):
             description=obj.get("description", []),
             source_file=obj.get("source_file", ""),
             source_file_line=obj.get("source_file_line", -1),
+            test_descriptions=obj.get("test_descriptions", {}),
         )
 
 
@@ -668,8 +670,9 @@ class PagesWriter:
             return f"{self.test_source_base_url}/{source_file_path}"
         return ""
 
-    def _write_suite_page(self, run: ResultsInfo, suite: SuiteResults) -> None:
-        index_template = self.env.get_template("test_suite_toc.html.j2")
+    def _write_test_suite_results_page(self, run: ResultsInfo, suite: SuiteResults) -> None:
+        """Generates a page for all of the test case results within a single test suite."""
+        index_template = self.env.get_template("test_suite_results.html.j2")
         output_subdir = os.path.join(RESULTS_SUBDIR, run.identifier.minimal_path, suite.name)
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
@@ -690,6 +693,7 @@ class PagesWriter:
                 "description": suite.descriptor.description,
                 "source_file": suite.descriptor.source_file,
                 "source_url": self._suite_source_url(suite.descriptor.source_file, suite.descriptor.source_file_line),
+                "test_descriptions": suite.descriptor.test_descriptions,
             }
 
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
@@ -708,7 +712,8 @@ class PagesWriter:
             )
 
     def _write_run_results_pages(self, run: ResultsInfo) -> None:
-        index_template = self.env.get_template("test_run_toc.html.j2")
+        """Generates a page containing links to all of the suites and comparisons for a specific xemu/platform/gl."""
+        index_template = self.env.get_template("test_run_results.html.j2")
         output_subdir = os.path.join(RESULTS_SUBDIR, run.identifier.minimal_path)
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
@@ -720,7 +725,7 @@ class PagesWriter:
         all_failed_tests: dict[str, list[str]] = {}
         all_flaky_tests: dict[str, list[str]] = {}
         for suite in run.results:
-            self._write_suite_page(run, suite)
+            self._write_test_suite_results_page(run, suite)
             for name, info in suite.failed_tests.items():
                 all_failed_tests[name] = info.get("failures", [])
             for name, info in suite.flaky_tests.items():

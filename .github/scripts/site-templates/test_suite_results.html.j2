@@ -44,7 +44,9 @@
 
 {% for test_name, info in results | dictsort -%}
 <h2>{{ test_name }}</h2>
-
+    {%- if descriptor and descriptor.test_descriptions[test_name]  %}
+        <div class="test-case-description">{{ descriptor.test_descriptions[test_name] }}</div>
+    {% endif -%}
     {%- if info.url %}
 <div class="image-container">
         <img src="{{ info.url }}" alt="Test result for {{ suite_name }}::{{ test_name }}" class="inline-image">
