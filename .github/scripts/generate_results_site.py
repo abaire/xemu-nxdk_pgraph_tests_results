@@ -55,6 +55,25 @@ class TestSuiteDescriptor(NamedTuple):
         )
 
 
+def _fuzzy_lookup_suite_descriptor(
+    descriptors: dict[str, TestSuiteDescriptor], suite_name: str
+) -> TestSuiteDescriptor | None:
+    """Attempts a permissive lookup of the given suite_name in the given set of `TestSuiteDescriptor`s"""
+
+    # Check for a perfect match.
+    ret = descriptors.get(suite_name)
+    if ret:
+        return ret
+
+    # Descriptor keys are generally of the form TestSuiteTests whereas the suite names tend to be "Test_suite".
+    camel_cased = "".join(element.title() for element in suite_name.split("_"))
+    ret = descriptors.get(camel_cased)
+    if ret:
+        return ret
+
+    return descriptors.get(f"{camel_cased}Tests")
+
+
 class TestSuiteDescriptorLoader:
     """Loads test suite descriptors from the nxdk_pgraph_tests project."""
 
@@ -251,7 +270,7 @@ class ComparisonScanner:
             return TestSuiteComparisonInfo(
                 suite_name=suite_name,
                 test_cases=tuple(test_artifacts),
-                descriptor=self.test_suite_descriptors.get(suite_name),
+                descriptor=_fuzzy_lookup_suite_descriptor(self.test_suite_descriptors, suite_name),
             )
         return None
 
@@ -394,6 +413,9 @@ class ResultsScanner:
 
         return ret
 
+    def _get_suite_descriptor(self, suite_name: str) -> TestSuiteDescriptor | None:
+        return _fuzzy_lookup_suite_descriptor(self.test_suite_descriptors, suite_name)
+
     def _process_suite(
         self, artifacts_path: str, suite_name: str, results_summary: ResultsSummary
     ) -> SuiteResults | None:
@@ -412,7 +434,7 @@ class ResultsScanner:
                 test_results=tuple(test_artifacts),
                 flaky_tests=deepfreeze(flaky_tests),
                 failed_tests=deepfreeze(failed_tests),
-                descriptor=self.test_suite_descriptors.get(suite_name),
+                descriptor=self._get_suite_descriptor(suite_name),
             )
         return None
 
@@ -440,7 +462,7 @@ class ResultsScanner:
                     test_results=(),
                     failed_tests=deepfreeze({fqname: failure}),
                     flaky_tests=frozendict(),
-                    descriptor=self.test_suite_descriptors.get(suite),
+                    descriptor=self._get_suite_descriptor(suite),
                 )
 
         run_identifier = RunIdentifier.parse(run_id)
@@ -622,7 +644,6 @@ class PagesWriter:
                 golden_image_url="",
                 diff_image_url="",
                 diff_distance=math.inf,
-                test_descriptions=self.results,
             )
             suite_to_results[suite_name].append(info)
 
