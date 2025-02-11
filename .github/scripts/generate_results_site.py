@@ -542,6 +542,9 @@ class PagesWriter:
     def _comparison_suite_url(comparison: ComparisonInfo, suite_result: TestSuiteComparisonInfo) -> str:
         return os.path.join(COMPARE_SUBDIR, comparison.identifier.minimal_path, f"{suite_result.suite_name}.html")
 
+    def _home_url(self, output_dir) -> str:
+        return f"{os.path.relpath(self.output_dir, output_dir)}/index.html"
+
     def _write_comparison_suite_page(
         self,
         comparison: ComparisonInfo,
@@ -549,11 +552,10 @@ class PagesWriter:
         results: list[TestCaseComparisonInfo],
         navigate_up_url: str,
     ) -> None:
+        """Generates a page that renders all diffs between a result set and golden for a particular test suite."""
         index_template = self.env.get_template("suite_comparison_result.html.j2")
         output_dir = os.path.join(self.output_dir, COMPARE_SUBDIR, comparison.identifier.minimal_path)
         os.makedirs(output_dir, exist_ok=True)
-
-        home_url = os.path.relpath(output_dir, self.output_dir)
 
         with open(os.path.join(output_dir, f"{suite_result.suite_name}.html"), "w") as outfile:
             outfile.write(
@@ -564,7 +566,7 @@ class PagesWriter:
                     results=results,
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
-                    home_url=home_url,
+                    home_url=self._home_url(output_dir),
                     navigate_up_url=navigate_up_url,
                 )
             )
@@ -581,7 +583,6 @@ class PagesWriter:
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
 
-        home_url = f"{os.path.relpath(self.output_dir, output_dir)}/index.html"
         navigate_up_url = f"{os.path.relpath(self.output_dir, output_dir)}/{RESULTS_SUBDIR}/{comparison.identifier.minimal_path}/index.html#{comparison.golden_identifier}"
 
         suite_to_results = defaultdict(
@@ -626,7 +627,7 @@ class PagesWriter:
                     },
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
-                    home_url=home_url,
+                    home_url=self._home_url(output_dir),
                     navigate_up_url=navigate_up_url,
                 )
             )
@@ -668,8 +669,6 @@ class PagesWriter:
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
 
-        home_url = f"{os.path.relpath(self.output_dir, output_dir)}/index.html"
-
         pretty_machine_info = PrettyMachineInfo.parse(run)
         result_infos: dict[str, dict[str, str]] = {}
         for result in suite.test_results:
@@ -698,7 +697,7 @@ class PagesWriter:
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                     descriptor=descriptor,
-                    home_url=home_url,
+                    home_url=self._home_url(output_dir),
                     navigate_up_url="../index.html",
                 )
             )
@@ -708,8 +707,6 @@ class PagesWriter:
         output_subdir = os.path.join(RESULTS_SUBDIR, run.identifier.minimal_path)
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
-
-        home_url = f"{os.path.relpath(self.output_dir, output_dir)}/index.html"
 
         result_urls = {
             suite.name: os.path.relpath(self._suite_result_url(run, suite), output_subdir) for suite in run.results
@@ -757,6 +754,7 @@ class PagesWriter:
 
             self._write_comparisons_page(comparison, golden_base_url)
 
+        home_url = self._home_url(output_dir),
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
             pretty_machine_info = PrettyMachineInfo.parse(run)
             outfile.write(
@@ -803,7 +801,10 @@ class PagesWriter:
     def _write_css(self) -> None:
         css_template = self.env.get_template("site.css.j2")
         with open(os.path.join(self.css_output_dir, "site.css"), "w") as outfile:
-            outfile.write(css_template.render())
+            outfile.write(css_template.render(
+                comparison_golden_outline_size=6,
+                title_bar_height=40,
+            ))
 
     def _write_js(self) -> None:
         css_template = self.env.get_template("script.js.j2")

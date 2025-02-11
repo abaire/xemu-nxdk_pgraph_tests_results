@@ -117,6 +117,12 @@
 }
 
 .image-pair {
+    outline-style: none;
+    outline-offset: {{ comparison_golden_outline_size }}px;
+}
+
+.image-pair-golden {
+    outline: {{ comparison_golden_outline_size }}px solid gold;
 }
 
 .image-pair-title-bar {
@@ -124,7 +130,7 @@
     align-items: center;
     width: 100%;
     overflow: hidden;
-    height: 40px;
+    height: {{ title_bar_height }}px;
 }
 
 .image-comparison {

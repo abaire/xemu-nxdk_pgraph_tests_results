@@ -15,6 +15,12 @@ function enableImagePairs(document) {
                 title.style.fontWeight = (title.dataset.state === newState) ? 'bold' : 'normal';
             });
 
+            if (newState === 'golden') {
+                pair.classList.add("image-pair-golden");
+            } else {
+                pair.classList.remove("image-pair-golden");
+            }
+
             activeState = newState;
         }
 
