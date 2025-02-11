@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 
 # ruff: noqa: C416 Unnecessary dict comprehension
 # ruff: noqa: C414 Unnecessary list call
@@ -10,6 +10,7 @@ import argparse
 import glob
 import json
 import logging
+import math
 import os
 import sys
 from collections import defaultdict
@@ -28,6 +29,59 @@ _MAX_NAME_COMPONENT_LENGTH = 24
 # Run identifier used for comparisons against the nxdk_pgraph_tests_golden_results from Xbox hardware.
 HW_GOLDEN_IDENTIFIER = "Xbox_Hardware"
 
+COMPARE_SUBDIR = "compare"
+RESULTS_SUBDIR = "results"
+
+
+class TestSuiteDescriptor(NamedTuple):
+    """Describes one of the nxdk_pgraph_tests test suites."""
+
+    suite_name: str
+    class_name: str
+    description: list[str]
+    source_file: str
+    source_file_line: int
+
+    @classmethod
+    def from_obj(cls, obj: dict[str, Any]) -> TestSuiteDescriptor:
+        return cls(
+            suite_name=obj.get("suite", "").replace(" ", "_"),
+            class_name=obj.get("class", ""),
+            description=obj.get("description", []),
+            source_file=obj.get("source_file", ""),
+            source_file_line=obj.get("source_file_line", -1),
+        )
+
+
+class TestSuiteDescriptorLoader:
+    """Loads test suite descriptors from the nxdk_pgraph_tests project."""
+
+    def __init__(self, registry_url: str):
+        self.registry_url = registry_url
+
+    def _load_registry(self) -> dict[str, Any] | None:
+        import requests
+
+        try:
+            response = requests.get(self.registry_url, timeout=30)
+            response.raise_for_status()
+            return json.loads(response.content)
+        except requests.exceptions.RequestException:
+            logger.exception("Failed to load descriptor from '%s'", self.registry_url)
+            return None
+
+    def process(self) -> dict[str, TestSuiteDescriptor]:
+        """Loads the test suite descriptors from the nxdk_pgraph_tests project."""
+
+        registry = self._load_registry()
+        if not registry:
+            return {}
+
+        return {
+            descriptor.suite_name: descriptor
+            for descriptor in [TestSuiteDescriptor.from_obj(item) for item in registry.get("test_suites", [])]
+        }
+
 
 class RunIdentifier(NamedTuple):
     """Holds components of a run identifier."""
@@ -40,6 +94,11 @@ class RunIdentifier(NamedTuple):
     @property
     def path(self) -> str:
         return str(os.path.join(*self.run_identifier))
+
+    @property
+    def minimal_path(self) -> str:
+        """Returns a path consisting of 'xemu/platform/gl'"""
+        return self.minimal_identifier().path
 
     def minimal_identifier(self) -> RunIdentifier:
         """Returns a RunIdentifier that omits any extraneous components of the run_identifier member."""
@@ -69,6 +128,7 @@ class TestCaseComparisonInfo(NamedTuple):
     source_image_url: str
     golden_image_url: str
     diff_image_url: str
+    diff_distance: float
 
 
 class TestSuiteComparisonInfo(NamedTuple):
@@ -168,6 +228,7 @@ class ComparisonScanner:
                     source_image_url=f"{source_image_url}.png",
                     golden_image_url=f"{golden_image_url}.png",
                     diff_image_url=f"{self.base_url}/{image_file}",
+                    diff_distance=run_info["tests_with_differences"].get(fq_name, math.inf),
                 )
             )
 
@@ -257,6 +318,7 @@ class SuiteResults:
     test_results: tuple[TestResult, ...]
     flaky_tests: frozendict[str, Any]
     failed_tests: frozendict[str, Any]
+    descriptor: TestSuiteDescriptor | None
 
 
 class ResultsInfo(NamedTuple):
@@ -286,11 +348,13 @@ class ResultsScanner:
         output_dir: str,
         base_url: str,
         run_identifier_to_comparison_results: dict[RunIdentifier, list[ComparisonInfo]],
+        test_suite_descriptors: dict[str, TestSuiteDescriptor],
     ) -> None:
         self.results_dir = results_dir
         self.output_dir = output_dir
         self.base_url = base_url
         self.run_identifier_to_comparison_results = run_identifier_to_comparison_results
+        self.test_suite_descriptors = test_suite_descriptors
 
     def _process_test_case_artifacts(
         self, test_suite_dir: str, suite_name: str, result_summary: ResultsSummary
@@ -339,6 +403,7 @@ class ResultsScanner:
                 test_results=tuple(test_artifacts),
                 flaky_tests=deepfreeze(flaky_tests),
                 failed_tests=deepfreeze(failed_tests),
+                descriptor=self.test_suite_descriptors.get(suite_name),
             )
         return None
 
@@ -362,7 +427,11 @@ class ResultsScanner:
             suite, test = fqname.split("::")
             if suite not in suite_results:
                 suite_results[suite] = SuiteResults(
-                    name=suite, test_results=(), failed_tests=deepfreeze({fqname: failure}), flaky_tests=frozendict()
+                    name=suite,
+                    test_results=(),
+                    failed_tests=deepfreeze({fqname: failure}),
+                    flaky_tests=frozendict(),
+                    descriptor=self.test_suite_descriptors.get(suite),
                 )
 
         run_identifier = RunIdentifier.parse(run_id)
@@ -461,59 +530,34 @@ class PagesWriter:
         output_dir: str,
         result_images_base_url: str,
         hw_golden_images_base_url: str,
+        test_source_base_url: str,
     ) -> None:
         self.results = results
         self.env = env
-        self.output_dir = output_dir
-        self.css_output_dir = output_dir
-        self.js_output_dir = output_dir
-        self.images_base_url = result_images_base_url
-        self.hw_images_base_url = hw_golden_images_base_url
-
-    @staticmethod
-    def _suite_result_url(run: ResultsInfo, suite: SuiteResults) -> str:
-        return os.path.join(run.identifier.path, suite.name, "index.html")
-
-    def _write_suite_page(self, run: ResultsInfo, suite: SuiteResults) -> None:
-        index_template = self.env.get_template("test_suite_toc.html.j2")
-        output_dir = os.path.join(self.output_dir, run.identifier.path, suite.name)
-        os.makedirs(output_dir, exist_ok=True)
-
-        pretty_machine_info = PrettyMachineInfo.parse(run)
-        result_infos: dict[str, dict[str, str]] = {}
-        for result in suite.test_results:
-            result_infos[result.name] = {"url": result.artifact_url}
-        for info in suite.flaky_tests.values():
-            result_infos.get(info["name"], {})["failures"] = info["failures"]
-        if isinstance(suite.failed_tests, str):
-            pass
-        for info in suite.failed_tests.values():
-            result_infos[info["name"]] = {"url": None, "failures": info["failures"]}
-
-        with open(os.path.join(output_dir, "index.html"), "w") as outfile:
-            outfile.write(
-                index_template.render(
-                    run_identifier=run.identifier,
-                    pretty_machine_info=pretty_machine_info,
-                    suite_name=suite.name,
-                    results=result_infos,
-                    css_dir=os.path.relpath(self.css_output_dir, output_dir),
-                    js_dir=os.path.relpath(self.js_output_dir, output_dir),
-                )
-            )
+        self.output_dir = output_dir.rstrip("/")
+        self.css_output_dir = output_dir.rstrip("/")
+        self.js_output_dir = output_dir.rstrip("/")
+        self.images_base_url = result_images_base_url.rstrip("/")
+        self.hw_images_base_url = hw_golden_images_base_url.rstrip("/")
+        self.test_source_base_url = test_source_base_url.rstrip("/")
 
     @staticmethod
     def _comparison_suite_url(comparison: ComparisonInfo, suite_result: TestSuiteComparisonInfo) -> str:
-        return os.path.join(comparison.identifier.path, f"{suite_result.suite_name}.html")
+        return os.path.join(COMPARE_SUBDIR, comparison.identifier.minimal_path, f"{suite_result.suite_name}.html")
+
+    def _home_url(self, output_dir) -> str:
+        return f"{os.path.relpath(self.output_dir, output_dir)}/index.html"
 
     def _write_comparison_suite_page(
         self,
         comparison: ComparisonInfo,
         suite_result: TestSuiteComparisonInfo,
         results: list[TestCaseComparisonInfo],
+        navigate_up_url: str,
     ) -> None:
+        """Generates a page that renders all diffs between a result set and golden for a particular test suite."""
         index_template = self.env.get_template("suite_comparison_result.html.j2")
-        output_dir = os.path.join(self.output_dir, comparison.identifier.path)
+        output_dir = os.path.join(self.output_dir, COMPARE_SUBDIR, comparison.identifier.minimal_path)
         os.makedirs(output_dir, exist_ok=True)
 
         with open(os.path.join(output_dir, f"{suite_result.suite_name}.html"), "w") as outfile:
@@ -525,20 +569,24 @@ class PagesWriter:
                     results=results,
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
+                    home_url=self._home_url(output_dir),
+                    navigate_up_url=navigate_up_url,
                 )
             )
 
     @staticmethod
     def _comparison_url(comparison: ComparisonInfo) -> str:
-        return os.path.join(comparison.identifier.path, "index.html")
+        return os.path.join(COMPARE_SUBDIR, comparison.identifier.minimal_path, "index.html")
 
     def _write_comparisons_page(self, comparison: ComparisonInfo, golden_base_url: str) -> None:
         """Generates a page that renders all diffs between a pair of results, with links to per-suite diff pages."""
 
         index_template = self.env.get_template("comparison_result.html.j2")
-        output_subdir = comparison.identifier.path
+        output_subdir = os.path.join(COMPARE_SUBDIR, comparison.identifier.minimal_path)
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
+
+        navigate_up_url = f"{os.path.relpath(self.output_dir, output_dir)}/{RESULTS_SUBDIR}/{comparison.identifier.minimal_path}/index.html#{comparison.golden_identifier}"
 
         suite_to_results = defaultdict(
             list,
@@ -552,6 +600,7 @@ class PagesWriter:
                 source_image_url="",
                 golden_image_url=self.golden_url_for_fqtest(fqname, golden_base_url),
                 diff_image_url="",
+                diff_distance=math.inf,
             )
             suite_to_results[suite_name].append(info)
 
@@ -562,6 +611,7 @@ class PagesWriter:
                 source_image_url=self.results_url_for_fqtest(fqname),
                 golden_image_url="",
                 diff_image_url="",
+                diff_distance=math.inf,
             )
             suite_to_results[suite_name].append(info)
 
@@ -582,11 +632,15 @@ class PagesWriter:
                     },
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
+                    home_url=self._home_url(output_dir),
+                    navigate_up_url=navigate_up_url,
                 )
             )
 
         for suite_results in comparison.results:
-            self._write_comparison_suite_page(comparison, suite_results, suite_to_results[suite_results.suite_name])
+            self._write_comparison_suite_page(
+                comparison, suite_results, suite_to_results[suite_results.suite_name], navigate_up_url
+            )
 
     @staticmethod
     def split_fq_name(fully_qualified_test_name: str) -> tuple[str, str]:
@@ -603,9 +657,59 @@ class PagesWriter:
         path = "/".join([self.images_base_url, *self.split_fq_name(fully_qualified_test_name)])
         return f"{path}.png"
 
-    def _write_results_pages(self, run: ResultsInfo) -> None:
+    @staticmethod
+    def _suite_result_url(run: ResultsInfo, suite: SuiteResults) -> str:
+        return os.path.join(RESULTS_SUBDIR, run.identifier.minimal_path, suite.name, "index.html")
+
+    def _suite_source_url(self, source_file_path: str, source_line: int) -> str:
+        if self.test_source_base_url and source_file_path:
+            if source_line >= 0:
+                return f"{self.test_source_base_url}/{source_file_path}#L{source_line}"
+            return f"{self.test_source_base_url}/{source_file_path}"
+        return ""
+
+    def _write_suite_page(self, run: ResultsInfo, suite: SuiteResults) -> None:
+        index_template = self.env.get_template("test_suite_toc.html.j2")
+        output_subdir = os.path.join(RESULTS_SUBDIR, run.identifier.minimal_path, suite.name)
+        output_dir = os.path.join(self.output_dir, output_subdir)
+        os.makedirs(output_dir, exist_ok=True)
+
+        pretty_machine_info = PrettyMachineInfo.parse(run)
+        result_infos: dict[str, dict[str, str]] = {}
+        for result in suite.test_results:
+            result_infos[result.name] = {"url": result.artifact_url}
+        for info in suite.flaky_tests.values():
+            result_infos.get(info["name"], {})["failures"] = info["failures"]
+        for info in suite.failed_tests.values():
+            result_infos[info["name"]] = {"url": None, "failures": info["failures"]}
+
+        if not suite.descriptor:
+            descriptor = None
+        else:
+            descriptor = {
+                "description": suite.descriptor.description,
+                "source_file": suite.descriptor.source_file,
+                "source_url": self._suite_source_url(suite.descriptor.source_file, suite.descriptor.source_file_line),
+            }
+
+        with open(os.path.join(output_dir, "index.html"), "w") as outfile:
+            outfile.write(
+                index_template.render(
+                    run_identifier=run.identifier,
+                    pretty_machine_info=pretty_machine_info,
+                    suite_name=suite.name,
+                    results=result_infos,
+                    css_dir=os.path.relpath(self.css_output_dir, output_dir),
+                    js_dir=os.path.relpath(self.js_output_dir, output_dir),
+                    descriptor=descriptor,
+                    home_url=self._home_url(output_dir),
+                    navigate_up_url="../index.html",
+                )
+            )
+
+    def _write_run_results_pages(self, run: ResultsInfo) -> None:
         index_template = self.env.get_template("test_run_toc.html.j2")
-        output_subdir = run.identifier.path
+        output_subdir = os.path.join(RESULTS_SUBDIR, run.identifier.minimal_path)
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
 
@@ -650,10 +754,12 @@ class PagesWriter:
                 },
                 "missing_tests": missing_tests,
                 "extra_tests": extra_tests,
+                "golden_identifier": comparison.golden_identifier,
             }
 
             self._write_comparisons_page(comparison, golden_base_url)
 
+        home_url = self._home_url(output_dir),
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
             pretty_machine_info = PrettyMachineInfo.parse(run)
             outfile.write(
@@ -667,6 +773,8 @@ class PagesWriter:
                     flaky_tests=all_flaky_tests,
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
+                    home_url=home_url,
+                    navigate_up_url=home_url,
                 )
             )
 
@@ -675,13 +783,14 @@ class PagesWriter:
 
         index_template = self.env.get_template("index.html.j2")
         output_dir = self.output_dir
+
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
             emulator_grouped_pages = defaultdict(list)
             for run_identifier, run in run_identifier_keyed_results.items():
                 pretty_machine_info = PrettyMachineInfo.parse(run)
                 emulator_grouped_pages[run_identifier.xemu_version].append(
                     {
-                        "page_path": f"{run_identifier.path}/index.html",
+                        "page_path": f"{RESULTS_SUBDIR}/{run_identifier.minimal_path}/index.html",
                         "page_name": pretty_machine_info.flat_name,
                         "machine_info": pretty_machine_info,
                     }
@@ -697,7 +806,10 @@ class PagesWriter:
     def _write_css(self) -> None:
         css_template = self.env.get_template("site.css.j2")
         with open(os.path.join(self.css_output_dir, "site.css"), "w") as outfile:
-            outfile.write(css_template.render())
+            outfile.write(css_template.render(
+                comparison_golden_outline_size=6,
+                title_bar_height=40,
+            ))
 
     def _write_js(self) -> None:
         css_template = self.env.get_template("script.js.j2")
@@ -710,7 +822,7 @@ class PagesWriter:
         self._write_js()
         self._write_top_level_index()
         for run in self.results.values():
-            self._write_results_pages(run)
+            self._write_run_results_pages(run)
 
         return 0
 
@@ -753,7 +865,17 @@ def main():
     )
     parser.add_argument(
         "--golden-results-dir",
-        help="Overrides the directory containing non-hardware golden results. Defaults to <results_dir>."
+        help="Overrides the directory containing non-hardware golden results. Defaults to <results_dir>.",
+    )
+    parser.add_argument(
+        "--test-descriptor-registry-url",
+        default="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests/pages_doxygen/xml/nxdk_pgraph_tests_registry.json",
+        help="URL at which the JSON test suite registry for nxdk_pgraph_tests may be publicly accessed.",
+    )
+    parser.add_argument(
+        "--test-source-browser-base-url",
+        default="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen",
+        help="Base URL from which the test suite source files may be publicly accessed.",
     )
 
     args = parser.parse_args()
@@ -762,6 +884,12 @@ def main():
     logging.basicConfig(level=log_level)
 
     os.makedirs(args.output_dir, exist_ok=True)
+
+    test_suite_descriptors = (
+        TestSuiteDescriptorLoader(args.test_descriptor_registry_url).process()
+        if args.test_descriptor_registry_url
+        else {}
+    )
 
     if args.comparison_dir:
         run_identifier_to_comparison_results = ComparisonScanner(
@@ -780,13 +908,19 @@ def main():
         args.output_dir,
         args.base_url,
         run_identifier_to_comparison_results,
+        test_suite_descriptors,
     ).process()
 
     if not args.templates_dir:
         args.templates_dir = os.path.join(os.path.dirname(__file__), "site-templates")
 
     jinja_env = Environment(loader=FileSystemLoader(args.templates_dir))
-    return PagesWriter(results, jinja_env, args.output_dir, args.base_url, args.hw_golden_base_url).write()
+    jinja_env.globals["sidenav_width"] = 48
+    jinja_env.globals["sidenav_icon_width"] = 32
+
+    return PagesWriter(
+        results, jinja_env, args.output_dir, args.base_url, args.hw_golden_base_url, args.test_source_browser_base_url
+    ).write()
 
 
 if __name__ == "__main__":

@@ -1,17 +1,16 @@
-<html>
-<head>
-    <title>
-        {{ suite_name }} : {{ source_identifier }} vs {{ golden_identifier }}
-    </title>
-    <link rel="stylesheet" href="{{ css_dir }}/site.css">
-</head>
-<body>
+{% extends "base.html.j2" %}
+
+{% block title -%}
+    {{ suite_name }} : {{ source_identifier }} vs {{ golden_identifier }}
+{%- endblock %}
+
+{% block content -%}
 
 <h1>{{ suite_name }} : {{ source_identifier }} vs {{ golden_identifier }}</h1>
 
 {% for result in results | sort(attribute='test_name') %}
     <h3>{{ result.test_name }}</h3>
-
+    <div class="diff_distance">Difference {{ result.diff_distance }}</div>
     <div class="comparison-image-set">
 
     <div class="image-container">
@@ -45,8 +44,6 @@
 
     </div>
 
-{% endfor %}
+{%- endfor -%}
 
-    <script src="{{ js_dir }}/script.js"></script>
-</body>
-</html>
+{%- endblock %}

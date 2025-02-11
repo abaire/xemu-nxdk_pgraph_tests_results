@@ -1,9 +1,11 @@
-<html>
-<head>
-    <title>nxdk_pgraph_tests results</title>
-    <link rel="stylesheet" href="site.css">
-</head>
-<body>
+{% extends "base.html.j2" %}
+
+{% block title %}
+    nxdk_pgraph_tests results
+{% endblock %}
+
+{% block content -%}
+
 <h1>Test Results</h1>
 {% for emulator_version, page_infos in emulator_grouped_results | dictsort(reverse=true) %}
     <h2>Emulator Version: {{ emulator_version }}</h2>
@@ -16,6 +18,5 @@
         {% endfor %}
     </ul>
 
-{% endfor %}
-</body>
-</html>
+{%- endfor -%}
+{%- endblock %}
