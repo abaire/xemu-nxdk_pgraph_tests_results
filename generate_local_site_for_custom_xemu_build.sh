@@ -11,6 +11,8 @@ local_compare_results_dir=local/compare
 readonly local_compare_results_dir
 local_site_dir=local/site
 readonly local_site_dir
+local_binary_dir=local/xemu
+readonly local_binary_dir
 
 if [[ $# -lt 1 ]]; then
   echo "Usage: $0 <path_to_xemu_repo>"
@@ -26,20 +28,35 @@ if [[ ! -d "${xemu_dir}" ]]; then
 fi
 
 xemu_binary="${xemu_dir}/build/qemu-system-i386"
-readonly xemu_binary
 
 if [[ ! -x "${xemu_binary}" ]]; then
   echo "Invalid xemu repository root - missing ${xemu_binary}. Did you forget to build?"
   exit 1
 fi
 
+# Avoid leaving/modifying xemu.toml files owned by the user by copying to a local cache dir.
+mkdir -p "${local_binary_dir}"
+cp "${xemu_binary}" "${local_binary_dir}/"
+xemu_binary="${local_binary_dir}/qemu-system-i386"
+
+readonly xemu_binary
+
 if [[ "$(uname)" == "Darwin" ]]; then
   app_bundle="${xemu_dir}/dist/xemu.app"
+  if [[ ! -d "${app_bundle}" ]]; then
+    echo "Missing xemu.app bundle at ${app_bundle}. Did you forget to build?"
+    exit 1
+  fi
+
+  cp -R "${app_bundle}" "${local_binary_dir}/"
+  app_bundle="${local_binary_dir}/xemu.app"
   readonly app_bundle
+
   library_path="${app_bundle}/Contents/Libraries/$(uname -m)"
   readonly library_path
   if [[ ! -d "${library_path}" ]]; then
-    echo "Missing xemu.app bundle in ${app_bundle}. Cannot set DYLD_FALLBACK_LIBRARY_PATH, xemu will probably fail."
+    echo "Missing libraries for $(uname -m) in ${app_bundle}. Cannot set DYLD_FALLBACK_LIBRARY_PATH, xemu will fail."
+    exit 1
   fi
 
   export DYLD_FALLBACK_LIBRARY_PATH="${library_path}:DYLD_FALLBACK_LIBRARY_PATH"
