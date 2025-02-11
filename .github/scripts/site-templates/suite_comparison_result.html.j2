@@ -10,7 +10,7 @@
 
 {% for result in results | sort(attribute='test_name') %}
     <h3>{{ result.test_name }}</h3>
-
+    <div class="diff_distance">Difference {{ result.diff_distance }}</div>
     <div class="comparison-image-set">
 
     <div class="image-container">

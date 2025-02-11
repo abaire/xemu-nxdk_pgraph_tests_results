@@ -10,6 +10,7 @@ import argparse
 import glob
 import json
 import logging
+import math
 import os
 import sys
 from collections import defaultdict
@@ -127,6 +128,7 @@ class TestCaseComparisonInfo(NamedTuple):
     source_image_url: str
     golden_image_url: str
     diff_image_url: str
+    diff_distance: float
 
 
 class TestSuiteComparisonInfo(NamedTuple):
@@ -226,6 +228,7 @@ class ComparisonScanner:
                     source_image_url=f"{source_image_url}.png",
                     golden_image_url=f"{golden_image_url}.png",
                     diff_image_url=f"{self.base_url}/{image_file}",
+                    diff_distance=run_info["tests_with_differences"].get(fq_name, math.inf),
                 )
             )
 
@@ -597,6 +600,7 @@ class PagesWriter:
                 source_image_url="",
                 golden_image_url=self.golden_url_for_fqtest(fqname, golden_base_url),
                 diff_image_url="",
+                diff_distance=math.inf,
             )
             suite_to_results[suite_name].append(info)
 
@@ -607,6 +611,7 @@ class PagesWriter:
                 source_image_url=self.results_url_for_fqtest(fqname),
                 golden_image_url="",
                 diff_image_url="",
+                diff_distance=math.inf,
             )
             suite_to_results[suite_name].append(info)
 
