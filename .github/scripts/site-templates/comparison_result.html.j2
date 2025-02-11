@@ -11,8 +11,40 @@
 {% for suite_name, info in results | dictsort %}
     <h2><a href="{{ info.url | urlencode }}">{{ suite_name }}</a></h2>
 
+    {%- if info.descriptor and (info.descriptor.description or info.descriptor.source_file) %}
+    <div class="label-value-grid">
+        {%- if info.descriptor.description %}
+        <div class="label">Description</div>
+        <div class="value">
+        {%- for line in info.descriptor.description %}
+            <div class="test-description-line">{{ line }}</div>
+        {% endfor -%}
+        </div>
+        {% endif -%}
+
+        {%- if info.descriptor.source_file %}
+        <div class="label">Suite class def</div>
+        <div class="value">
+            {%- if info.descriptor.source_url %}<a href="{{ info.descriptor.source_url }}">{% endif -%}
+            {{ info.descriptor.source_file }}
+            {%- if info.descriptor.source_url %}</a>{% endif -%}
+        </div>
+        {%- endif %}
+    </div>
+    {%- endif %}
+
+
     {% for result in info.test_results | sort(attribute='test_name') %}
         <h3>{{ result.test_name }}</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">{{ result.diff_distance }}</div>
+
+        {%- if info.descriptor and info.descriptor.test_descriptions[result.test_name]  %}
+            <div class="label">Description</div>
+            <div class="value">{{ info.descriptor.test_descriptions[result.test_name] }}</div>
+        {% endif -%}
+        </div>
 
         <div class="comparison-image-set">
 

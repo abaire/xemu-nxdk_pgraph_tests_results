@@ -138,6 +138,7 @@ class TestSuiteComparisonInfo(NamedTuple):
 
     suite_name: str
     test_cases: tuple[TestCaseComparisonInfo, ...]
+    descriptor: TestSuiteDescriptor | None
 
 
 class ComparisonInfo(NamedTuple):
@@ -182,6 +183,7 @@ class ComparisonScanner:
         base_url: str,
         results_dir: str,
         hw_golden_base_url: str,
+        test_suite_descriptors: dict[str, TestSuiteDescriptor],
         golden_results_dir: str = "",
     ) -> None:
         self.comparison_dir = comparison_dir
@@ -190,6 +192,7 @@ class ComparisonScanner:
         self.results_dir = results_dir
         self.golden_results_dir = golden_results_dir if golden_results_dir else results_dir
         self.hw_golden_base_url = hw_golden_base_url
+        self.test_suite_descriptors = test_suite_descriptors
 
     def _process_test_case_artifacts(
         self,
@@ -245,7 +248,11 @@ class ComparisonScanner:
 
         test_artifacts = self._process_test_case_artifacts(test_suite_dir, suite_name, run_info, golden_base_url)
         if test_artifacts:
-            return TestSuiteComparisonInfo(suite_name=suite_name, test_cases=tuple(test_artifacts))
+            return TestSuiteComparisonInfo(
+                suite_name=suite_name,
+                test_cases=tuple(test_artifacts),
+                descriptor=self.test_suite_descriptors.get(suite_name),
+            )
         return None
 
     def _process_comparison_artifacts(
@@ -573,6 +580,7 @@ class PagesWriter:
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                     home_url=self._home_url(output_dir),
                     navigate_up_url=navigate_up_url,
+                    descriptor=self._pack_descriptor(suite_result.descriptor),
                 )
             )
 
@@ -590,7 +598,7 @@ class PagesWriter:
 
         navigate_up_url = f"{os.path.relpath(self.output_dir, output_dir)}/{RESULTS_SUBDIR}/{comparison.identifier.minimal_path}/index.html#{comparison.golden_identifier}"
 
-        suite_to_results = defaultdict(
+        suite_to_results: dict[str, list[TestCaseComparisonInfo]] = defaultdict(
             list,
             {result.suite_name: list(result.test_cases) for result in comparison.results},
         )
@@ -614,6 +622,7 @@ class PagesWriter:
                 golden_image_url="",
                 diff_image_url="",
                 diff_distance=math.inf,
+                test_descriptions=self.results,
             )
             suite_to_results[suite_name].append(info)
 
@@ -629,6 +638,7 @@ class PagesWriter:
                                 output_subdir,
                             ),
                             "test_results": suite_to_results[suite.suite_name],
+                            "descriptor": suite.descriptor,
                         }
                         for suite in comparison.results
                     },
@@ -670,6 +680,16 @@ class PagesWriter:
             return f"{self.test_source_base_url}/{source_file_path}"
         return ""
 
+    def _pack_descriptor(self, descriptor: TestSuiteDescriptor | None) -> dict[str, Any] | None:
+        if not descriptor:
+            return None
+        return {
+            "description": descriptor.description,
+            "source_file": descriptor.source_file,
+            "source_url": self._suite_source_url(descriptor.source_file, descriptor.source_file_line),
+            "test_descriptions": descriptor.test_descriptions,
+        }
+
     def _write_test_suite_results_page(self, run: ResultsInfo, suite: SuiteResults) -> None:
         """Generates a page for all of the test case results within a single test suite."""
         index_template = self.env.get_template("test_suite_results.html.j2")
@@ -686,16 +706,6 @@ class PagesWriter:
         for info in suite.failed_tests.values():
             result_infos[info["name"]] = {"url": None, "failures": info["failures"]}
 
-        if not suite.descriptor:
-            descriptor = None
-        else:
-            descriptor = {
-                "description": suite.descriptor.description,
-                "source_file": suite.descriptor.source_file,
-                "source_url": self._suite_source_url(suite.descriptor.source_file, suite.descriptor.source_file_line),
-                "test_descriptions": suite.descriptor.test_descriptions,
-            }
-
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
             outfile.write(
                 index_template.render(
@@ -705,7 +715,7 @@ class PagesWriter:
                     results=result_infos,
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
-                    descriptor=descriptor,
+                    descriptor=self._pack_descriptor(suite.descriptor),
                     home_url=self._home_url(output_dir),
                     navigate_up_url="../index.html",
                 )
@@ -764,7 +774,7 @@ class PagesWriter:
 
             self._write_comparisons_page(comparison, golden_base_url)
 
-        home_url = self._home_url(output_dir),
+        home_url = self._home_url(output_dir)
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
             pretty_machine_info = PrettyMachineInfo.parse(run)
             outfile.write(
@@ -811,10 +821,12 @@ class PagesWriter:
     def _write_css(self) -> None:
         css_template = self.env.get_template("site.css.j2")
         with open(os.path.join(self.css_output_dir, "site.css"), "w") as outfile:
-            outfile.write(css_template.render(
-                comparison_golden_outline_size=6,
-                title_bar_height=40,
-            ))
+            outfile.write(
+                css_template.render(
+                    comparison_golden_outline_size=6,
+                    title_bar_height=40,
+                )
+            )
 
     def _write_js(self) -> None:
         css_template = self.env.get_template("script.js.j2")
@@ -903,6 +915,7 @@ def main():
             args.base_url,
             args.results_dir,
             args.hw_golden_base_url,
+            test_suite_descriptors,
             args.golden_results_dir,
         ).process()
     else:
