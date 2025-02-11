@@ -15,12 +15,30 @@ local_binary_dir=local/xemu
 readonly local_binary_dir
 
 if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <path_to_xemu_repo>"
+  echo "Usage: $0 <path_to_xemu_repo> [--use-vulkan]"
   exit 1
 fi
 
 xemu_dir="${1}"
 readonly xemu_dir
+
+use_vulkan=""
+
+shift
+set +u
+while [ ! -z "${1}" ]; do
+  case "${1}" in
+  '--use-vulkan'*)
+    use_vulkan="--use-vulkan"
+    shift
+    ;;
+  *)
+    echo "Ignoring unknown option '${1}'"
+    break
+    ;;
+  esac
+done
+set -u
 
 if [[ ! -d "${xemu_dir}" ]]; then
   echo "Invalid xemu repository root"
@@ -82,6 +100,7 @@ function execute_tests() {
     --no-bundle
     -R "${local_results_dir}"
     -f
+    "${use_vulkan}"
   )
 
   echo "Executing tests: ${command[*]}"
