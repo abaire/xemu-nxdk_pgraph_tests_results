@@ -75,7 +75,7 @@ jobs:
           git config --local user.name "$GITHUB_ACTOR via action"
           git add .
           git diff-index --quiet HEAD || git commit -m "Auto generated diffs against HW results $GITHUB_RUN_NUMBER - $GITHUB_SHA"
-              git push
+          git push
       - name: get sha
         id: sha
         run: |

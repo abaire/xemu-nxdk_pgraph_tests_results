@@ -1,11 +1,10 @@
-<html>
-<head>
-    <title>
-        {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }} - {{ suite_name }}
-    </title>
-    <link rel="stylesheet" href="{{ css_dir }}/site.css">
-</head>
-<body>
+{% extends "base.html.j2" %}
+
+{% block title -%}
+    {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }} - {{ suite_name }}
+{%- endblock %}
+
+{% block content -%}
 
 <h1>{{ suite_name }}</h1>
 
@@ -21,26 +20,43 @@
 
     <div class="label">GLSL version</div>
     <div class="value">{{ pretty_machine_info.glsl }}</div>
+
+{%- if descriptor %}
+    {%- if descriptor.description %}
+    <div class="label">Description</div>
+    <div class="value">
+    {%- for line in descriptor.description %}
+        <div class="test-description-line">{{ line }}</div>
+    {% endfor -%}
+    </div>
+    {% endif -%}
+
+    {%- if descriptor.source_file %}
+    <div class="label">Suite class def</div>
+    <div class="value">
+        {%- if descriptor.source_url %}<a href="{{ descriptor.source_url }}">{% endif -%}
+        {{ descriptor.source_file }}
+        {%- if descriptor.source_url %}</a>{% endif -%}
+    </div>
+    {%- endif %}
+{%- endif %}
 </div>
 
-{% for test_name, info in results | dictsort %}
-    <h2>{{ test_name }}</h2>
+{% for test_name, info in results | dictsort -%}
+<h2>{{ test_name }}</h2>
 
-    {% if info.url %}
+    {%- if info.url %}
 <div class="image-container">
         <img src="{{ info.url }}" alt="Test result for {{ suite_name }}::{{ test_name }}" class="inline-image">
 </div>
-    {% endif %}
+    {% endif -%}
 
-    {% if info.failures %}
+    {%- if info.failures -%}
         <h3>Failures</h3>
         {% for test_failure in info.failures %}
-        <div class="code-snippet">
-{{ test_failure }}
-        </div>
-        {% endfor %}
+        <div class="code-snippet">{{ test_failure }}</div>
+        {% endfor -%}
     {% endif %}
-{% endfor %}
+{% endfor -%}
 
-</body>
-</html>
+{%- endblock %}

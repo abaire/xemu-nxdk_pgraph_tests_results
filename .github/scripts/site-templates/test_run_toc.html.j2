@@ -1,11 +1,10 @@
-<html>
-<head>
-    <title>
-        {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }}
-    </title>
-    <link rel="stylesheet" href="{{ css_dir }}/site.css">
-</head>
-<body>
+{% extends "base.html.j2" %}
+
+{% block title -%}
+    {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }}
+{%- endblock %}
+
+{% block content -%}
 
 {% if machine_info %}
 <h1>Machine info</h1>
@@ -57,7 +56,7 @@
 <h1>Comparisons</h1>
 
 {% for comparison_name, comparison in comparisons | dictsort(reverse=True) %}
-    <h2><a href="{{ comparison.comparison_page | urlencode }}">{{ comparison_name }}</a></h2>
+    <h2 id="{{ comparison.golden_identifier }}"><a href="{{ comparison.comparison_page | urlencode }}">{{ comparison_name }}</a></h2>
 
     <h3>Test suites with differences</h3>
     <ul>
@@ -97,6 +96,4 @@
 
 {% endif %}
 
-    <script src="{{ js_dir }}/script.js"></script>
-</body>
-</html>
+{%- endblock -%}
