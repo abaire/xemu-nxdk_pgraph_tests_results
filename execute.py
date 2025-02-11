@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 
 def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, Any] | None:
-    full_url = f"{api_url}/releases/{tag}"
+    full_url = f"{api_url}/releases/latest" if not tag or tag == "latest" else f"{api_url}/releases"
     try:
         response = requests.get(
             full_url,
@@ -41,10 +41,15 @@ def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, A
             timeout=15,
         )
         response.raise_for_status()
-        return response.json()
+        release_info = response.json()
+
     except requests.exceptions.RequestException:
         logger.exception("Failed to retrieve information from %s", full_url)
         return None
+
+    if isinstance(release_info, list):
+        release_info = _filter_release_info_by_tag(release_info, tag)
+    return release_info
 
 
 def _download_artifact(target_path: str, download_url: str, artifact_path_override: str | None = None) -> bool:
@@ -73,6 +78,13 @@ def _download_artifact(target_path: str, download_url: str, artifact_path_overri
     urlcleanup()
 
     return True
+
+
+def _filter_release_info_by_tag(release_infos: list[dict[str, Any]], tag: str) -> dict[str, Any] | None:
+    for info in release_infos:
+        if info.get("tag_name") == tag:
+            return info
+    return None
 
 
 def _download_tester_iso(output_dir: str, tag: str = "latest") -> str | None:
@@ -231,32 +243,35 @@ def _generate_xemu_toml(
     flashrom_path: str,
     eeprom_path: str,
     hdd_path: str,
+    *,
+    use_vulkan: bool = False,
 ) -> None:
+    content = [
+        "[general]",
+        "show_welcome = false",
+        "skip_boot_anim = true",
+        "",
+        "[general.updates]",
+        "check = false",
+        "",
+        "[net]",
+        "enable = true",
+        "",
+        "[sys]",
+        "mem_limit = '64'",
+        "",
+        "[sys.files]",
+        f"bootrom_path = '{bootrom_path}'",
+        f"flashrom_path = '{flashrom_path}'",
+        f"eeprom_path = '{eeprom_path}'",
+        f"hdd_path = '{hdd_path}'",
+    ]
+
+    if use_vulkan:
+        content.extend(["", "[display]", "renderer = 'VULKAN'"])
+
     with open(file_path, "w") as outfile:
-        outfile.write(
-            "\n".join(
-                [
-                    "[general]",
-                    "show_welcome = false",
-                    "skip_boot_anim = true",
-                    "",
-                    "[general.updates]",
-                    "check = false",
-                    "",
-                    "[net]",
-                    "enable = true",
-                    "",
-                    "[sys]",
-                    "mem_limit = '64'",
-                    "",
-                    "[sys.files]",
-                    f"bootrom_path = '{bootrom_path}'",
-                    f"flashrom_path = '{flashrom_path}'",
-                    f"eeprom_path = '{eeprom_path}'",
-                    f"hdd_path = '{hdd_path}'",
-                ]
-            )
-        )
+        outfile.write("\n".join(content))
 
 
 def _build_macos_xemu_binary_paths(xemu_app_bundle_path: str) -> tuple[str, str]:
@@ -312,6 +327,7 @@ def run(
     *,
     overwrite_existing_outputs: bool,
     no_bundle: bool = False,
+    use_vulkan: bool = False,
 ):
     emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path, no_bundle=no_bundle)
     if not emulator_command:
@@ -324,6 +340,7 @@ def run(
             flashrom_path=os.path.join(inputs_path, "bios.bin"),
             eeprom_path=os.path.join(inputs_path, "eeprom.bin"),
             hdd_path=hdd_path,
+            use_vulkan=use_vulkan,
         )
 
     if not overwrite_existing_outputs:
@@ -418,6 +435,7 @@ def _process_arguments_and_run():
     parser.add_argument(
         "--no-bundle", action="store_true", help="Suppress attempt to set DYLD_FALLBACK_LIBRARY_PATH on macOS."
     )
+    parser.add_argument("--use-vulkan", action="store_true", help="Use the Vulkan renderer instead of OpenGL.")
 
     args = parser.parse_args()
 
@@ -461,6 +479,7 @@ def _process_arguments_and_run():
             hdd_path=hdd,
             overwrite_existing_outputs=overwrite_existing_outputs,
             no_bundle=args.no_bundle,
+            use_vulkan=args.use_vulkan,
         )
 
     if args.temp_path:
