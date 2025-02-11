@@ -531,12 +531,12 @@ class PrettyMachineInfo(NamedTuple):
     def parse(cls, results_info: ResultsInfo) -> PrettyMachineInfo:
         machine_info_dict = results_info.get_machine_info_dict()
 
-        cpu = machine_info_dict.get("CPU")
-        os = machine_info_dict.get("OS_Version")
-        gl_vendor = machine_info_dict.get("GL_VENDOR")
-        gl_renderer = machine_info_dict.get("GL_RENDERER")
-        gl_version = machine_info_dict.get("GL_VERSION")
-        glsl_version = machine_info_dict.get("GL_SHADING_LANGUAGE_VERSION")
+        cpu = machine_info_dict.get("CPU").replace("/", "-")
+        os = machine_info_dict.get("OS_Version").replace("/", "-")
+        gl_vendor = machine_info_dict.get("GL_VENDOR").replace("/", "-")
+        gl_renderer = machine_info_dict.get("GL_RENDERER").replace("/", "-")
+        gl_version = machine_info_dict.get("GL_VERSION").replace("/", "-")
+        glsl_version = machine_info_dict.get("GL_SHADING_LANGUAGE_VERSION").replace("/", "-")
 
         run_identifier = results_info.identifier
         platform = f"{os} - {cpu}" if cpu and os else run_identifier.platform_info
