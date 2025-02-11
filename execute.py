@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import json
 import logging
 import os
 import platform
@@ -343,11 +344,10 @@ def run(
             use_vulkan=use_vulkan,
         )
 
-    if not overwrite_existing_outputs:
-        output_directory = _determine_output_directory(results_path, emulator_command=emulator_command)
-        if os.path.isdir(output_directory):
-            logger.warning("Output directory %s already exists, exiting", output_directory)
-            return 200
+    output_directory = _determine_output_directory(results_path, emulator_command=emulator_command)
+    if not overwrite_existing_outputs and os.path.isdir(output_directory):
+        logger.error("Output directory %s already exists, exiting", output_directory)
+        return 200
 
     config = Config(
         work_dir=work_path,
@@ -360,7 +360,12 @@ def run(
         test_failure_retries=2,
     )
 
-    return nxdk_pgraph_test_runner.entrypoint(config)
+    ret = nxdk_pgraph_test_runner.entrypoint(config)
+    if os.path.isdir(output_directory):
+        with open(os.path.join(output_directory, "renderer.json"), "w") as outfile:
+            json.dump({"vulkan": use_vulkan}, outfile)
+
+    return ret
 
 
 def _ensure_path(path: str) -> str:
