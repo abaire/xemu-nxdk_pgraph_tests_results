@@ -325,6 +325,9 @@ class ComparisonScanner:
 # List of raw output from xemu related to machine information (xemu version, CPU, GL_VERSION, etc...)
 MachineInfo = list[str]
 
+# Dict of information about the renderer pipeline used when executing xemu.
+RendererInfo = dict[str, str]
+
 # Dict of results information output by the test executor.
 ResultsSummary = dict[str, Any]
 
@@ -354,6 +357,7 @@ class ResultsInfo(NamedTuple):
 
     identifier: RunIdentifier
     machine_info: MachineInfo
+    renderer_info: RendererInfo
     results: tuple[SuiteResults, ...]
     comparisons: list[ComparisonInfo]
 
@@ -470,6 +474,7 @@ class ResultsScanner:
         return ResultsInfo(
             identifier=run_identifier,
             machine_info=machine_info,
+            renderer_info=results_summary.get("renderer_info"),
             results=tuple(list(suite_results.values())),
             comparisons=self.run_identifier_to_comparison_results.get(run_identifier.minimal_identifier(), []),
         )
@@ -486,6 +491,14 @@ class ResultsScanner:
         run_id_to_results: dict[str, ResultsSummary] = {
             key: value for key, value in [load_results(filename) for filename in results_files]
         }
+
+        for run_id, results_summary in run_id_to_results.items():
+            renderer_info_file = os.path.join(run_id, "renderer.json")
+            if os.path.isfile(renderer_info_file):
+                with open(renderer_info_file) as infile:
+                    results_summary["renderer_info"] = json.load(infile)
+            else:
+                results_summary["renderer_info"] = {"vulkan": False}
 
         machine_info_files = glob.glob("**/machine_info.txt", root_dir=self.results_dir, recursive=True)
 
@@ -522,10 +535,15 @@ class PrettyMachineInfo(NamedTuple):
     platform: str
     gl: str
     glsl: str
+    renderer: str
 
     @property
     def flat_name(self) -> str:
-        return f"{self.platform}:{self.gl}:{self.glsl}"
+        return f"{self.platform} {self.renderer} {self.gl} {self.glsl}"
+
+    @property
+    def gl_info(self) -> str:
+        return f"{self.gl} - GLSL version {self.glsl}"
 
     @classmethod
     def parse(cls, results_info: ResultsInfo) -> PrettyMachineInfo:
@@ -547,8 +565,9 @@ class PrettyMachineInfo(NamedTuple):
         )
         if not glsl_version:
             glsl_version = run_identifier.gl_info.split(":")[1]
+        renderer = "Vulkan" if results_info.renderer_info.get("vulkan") else "OpenGL"
 
-        return cls(platform=platform, gl=gl, glsl=glsl_version)
+        return cls(platform=platform, gl=gl, glsl=glsl_version, renderer=renderer)
 
 
 class PagesWriter:
@@ -821,13 +840,14 @@ class PagesWriter:
         output_dir = self.output_dir
 
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
-            emulator_grouped_pages = defaultdict(list)
+            emulator_grouped_pages = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
             for run_identifier, run in run_identifier_keyed_results.items():
                 pretty_machine_info = PrettyMachineInfo.parse(run)
-                emulator_grouped_pages[run_identifier.xemu_version].append(
+                emulator_grouped_pages[run_identifier.xemu_version][pretty_machine_info.platform][
+                    pretty_machine_info.renderer
+                ].append(
                     {
-                        "page_path": f"{RESULTS_SUBDIR}/{run_identifier.minimal_path}/index.html",
-                        "page_name": pretty_machine_info.flat_name,
+                        "results_url": f"{RESULTS_SUBDIR}/{run_identifier.minimal_path}/index.html",
                         "machine_info": pretty_machine_info,
                     }
                 )

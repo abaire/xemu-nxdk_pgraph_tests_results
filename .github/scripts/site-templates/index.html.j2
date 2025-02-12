@@ -6,17 +6,30 @@
 
 {% block content -%}
 
-<h1>Test Results</h1>
-{% for emulator_version, page_infos in emulator_grouped_results | dictsort(reverse=true) %}
-    <h2>Emulator Version: {{ emulator_version }}</h2>
+    <h1>Test Results</h1>
+    {% for emulator_version, platforms in emulator_grouped_results | dictsort(reverse=true) -%}
+        <h2>{{ emulator_version }}</h2>
+        <ul>
+        {%- for platform, renderers in platforms | dictsort %}
+            <li>
+                {{ platform }}
+                <ul>
+                {%- for renderer, gl_infos in renderers | dictsort %}
+                    <li>
+                        {{ renderer }}
+                        <ul>
+                            {% for info in gl_infos | sort(attribute="machine_info.gl_info") %}
+                                <li>
+                                    <a href="{{ info.results_url | urlencode }}">{{ info.machine_info.gl_info }}</a>
+                                </li>
+                            {% endfor -%}
+                        </ul>
+                    </li>
+                {% endfor -%}
+                </ul>
+            </li>
+        {% endfor -%}
+        </ul>
 
-    <ul>
-        {% for info in page_infos | sort(attribute='page_name') %}
-            <li><a href="{{ info.page_path | urlencode }}">{{ info.machine_info.platform }},
-                GL: {{ info.machine_info.gl }},
-                Shader: {{ info.machine_info.glsl }}</a></li>
-        {% endfor %}
-    </ul>
-
-{%- endfor -%}
+    {%- endfor -%}
 {%- endblock %}

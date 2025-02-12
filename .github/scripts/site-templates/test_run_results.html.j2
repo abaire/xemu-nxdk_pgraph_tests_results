@@ -1,10 +1,13 @@
 {% extends "base.html.j2" %}
 
 {% block title -%}
-    {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }}
+    {{ run_identifier.xemu_version }}: {{ pretty_machine_info.platform }}, {{ pretty_machine_info.renderer }} GL: {{ pretty_machine_info.gl }}, Shader: {{ pretty_machine_info.glsl }}
 {%- endblock %}
 
 {% block content -%}
+
+<h1>{{ run_identifier.xemu_version }}</h1>
+<h2>{{ pretty_machine_info.platform }} - {{ pretty_machine_info.renderer }}</h2>
 
 {% if machine_info %}
 <h1>Machine info</h1>
