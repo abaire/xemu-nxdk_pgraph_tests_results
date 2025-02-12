@@ -309,7 +309,7 @@ def _process_arguments_and_run():
         hw_golden_root = os.path.join(cache_path, "nxdk_pgraph_tests_golden_results")
         if not os.path.isdir(hw_golden_root):
             _fetch_hw_goldens(hw_golden_root)
-        golden_dir = hw_golden_root
+        golden_dir = os.path.join(hw_golden_root, "results")
     else:
         golden_dir = args.against
 
