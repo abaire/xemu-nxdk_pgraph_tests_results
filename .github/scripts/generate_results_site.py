@@ -659,7 +659,7 @@ class PagesWriter:
             suite_name, test_name = self.split_fq_name(fqname)
             info = TestCaseComparisonInfo(
                 test_name=test_name,
-                source_image_url=self.results_url_for_fqtest(fqname),
+                source_image_url=self.results_url_for_fqtest(comparison.identifier, fqname),
                 golden_image_url="",
                 diff_image_url="",
                 diff_distance=math.inf,
@@ -705,8 +705,15 @@ class PagesWriter:
         path = "/".join([golden_base_url, *PagesWriter.split_fq_name(fully_qualified_test_name)])
         return f"{path}.png"
 
-    def results_url_for_fqtest(self, fully_qualified_test_name: str) -> str:
-        path = "/".join([self.images_base_url, *self.split_fq_name(fully_qualified_test_name)])
+    def results_url_for_fqtest(self, run: RunIdentifier, fully_qualified_test_name: str) -> str:
+        path = "/".join(
+            [
+                self.images_base_url,
+                RESULTS_SUBDIR,
+                run.minimal_path.replace(":", "/"),
+                *self.split_fq_name(fully_qualified_test_name),
+            ]
+        )
         return f"{path}.png"
 
     @staticmethod
@@ -794,7 +801,7 @@ class PagesWriter:
                 for fqname in comparison.summary.get("goldens_without_results", [])
             }
             extra_tests: dict[str, str] = {
-                fqname.replace(":", " "): self.results_url_for_fqtest(fqname)
+                fqname.replace(":", " "): self.results_url_for_fqtest(run.identifier, fqname)
                 for fqname in comparison.summary.get("tests_without_goldens", [])
             }
 
@@ -909,7 +916,7 @@ def main():
     )
     parser.add_argument(
         "--hw-golden-base-url",
-        default="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main",
+        default="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results",
         help="Base URL at which the contents of the golden images from Xbox hardware may be publicly accessed.",
     )
     parser.add_argument(

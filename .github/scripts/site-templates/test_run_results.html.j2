@@ -25,53 +25,53 @@
     </ul>
 {% endif %}
 
-{% if failed_tests %}
+{%- if failed_tests %}
 <h1>Failed tests ({{ failed_tests | length }})</h1>
-{% for test_name, failure_infos in failed_tests | dictsort %}
+{%- for test_name, failure_infos in failed_tests | dictsort %}
 
     <h2>{{ test_name }}</h2>
-{% for test_failure in failure_infos %}
+{%- for test_failure in failure_infos %}
     <div class="code-snippet">
 {{ test_failure }}
     </div>
-{% endfor %}
+{% endfor -%}
 
-{% endfor %}
-{% endif %}
+{% endfor -%}
+{% endif -%}
 
-{% if flaky_tests %}
+{%- if flaky_tests %}
 <h1>Flaky tests ({{ flaky_tests | length }})</h1>
-{% for test_name, failure_infos in flaky_tests | dictsort %}
+{%- for test_name, failure_infos in flaky_tests | dictsort %}
 
 <h2>{{ test_name }}</h2>
-{% for test_failure in failure_infos %}
+{%- for test_failure in failure_infos %}
 <div class="code-snippet">
 {{ test_failure }}
 </div>
-{% endfor %}
+{% endfor -%}
 
-{% endfor %}
+{% endfor -%}
 
-{% endif %}
+{% endif -%}
 
 
-{% if comparisons %}
+{%- if comparisons %}
 <h1>Comparisons</h1>
 
-{% for comparison_name, comparison in comparisons | dictsort(reverse=True) %}
+{%- for comparison_name, comparison in comparisons | dictsort(reverse=True) %}
     <h2 id="{{ comparison.golden_identifier }}"><a href="{{ comparison.comparison_page | urlencode }}">{{ comparison_name }}</a></h2>
 
     <h3>Test suites with differences</h3>
     <ul>
-    {% for name, page in comparison.results | dictsort %}
+    {%- for name, page in comparison.results | dictsort %}
         <li><a href="{{ page | urlencode }}">{{ name }}</a></li>
-    {% endfor %}
+    {% endfor -%}
     </ul>
 
-    {% if comparison.missing_tests %}
+    {%- if comparison.missing_tests %}
         <h3>Missing tests</h3>
         <ul>
-        {% for name, image_url in comparison.missing_tests | dictsort %}
+        {%- for name, image_url in comparison.missing_tests | dictsort %}
             <div class="titled-image-container">
                 <div class="title-and-link">
                     <div class="image-title"><a href="{{ image_url }}">{{ name }}</a></div>
@@ -81,22 +81,30 @@
                 </div>
                 <img src="{{ image_url }}" alt="Golden result for {{ name }}" class="hidden-image" style="display: none;">
             </div>
-        {% endfor %}
+        {% endfor -%}
         </ul>
-    {% endif %}
+    {% endif -%}
 
-    {% if comparison.extra_tests %}
+    {%- if comparison.extra_tests %}
         <h3>Tests without goldens</h3>
         <ul>
-        {% for name, page in comparison.extra_tests | dictsort %}
-            <li><a href="{{ page }}">{{ name }}</a></li>
-        {% endfor %}
+        {%- for name, image_url in comparison.extra_tests | dictsort %}
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="{{ image_url }}">{{ name }}</a></div>
+                    <div class="view-link" data-image-url="{{ image_url }}">
+                        <sub>[<a href="">view result image</a>]</sub>
+                    </div>
+                </div>
+                <img src="{{ image_url }}" alt="Result for {{ name }}" class="hidden-image" style="display: none;">
+            </div>
+        {% endfor -%}
         </ul>
 
-    {% endif %}
+    {% endif -%}
 
-{% endfor %}
+{% endfor -%}
 
-{% endif %}
+{% endif -%}
 
 {%- endblock -%}
