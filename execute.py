@@ -307,7 +307,7 @@ def _build_emulator_command(xemu_path: str, *, no_bundle: bool = False) -> tuple
     return xemu_path + " -dvd_path {ISO}", os.path.join(portable_mode_config_path, "xemu.toml")
 
 
-def _determine_output_directory(results_path: str, emulator_command: str) -> str | None:
+def _determine_output_directory(results_path: str, emulator_command: str, *, is_vulkan: bool) -> str | None:
     command = Config(emulator_command=emulator_command).build_emulator_command("__this_file_does_not_exist")
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True, timeout=1)
@@ -318,7 +318,7 @@ def _determine_output_directory(results_path: str, emulator_command: str) -> str
         sleep(0.5)
 
     emulator_output = EmulatorOutput.parse(stdout=[], stderr=stderr.split("\n"))
-    output_directory = get_output_directory(emulator_output.emulator_version, HostProfile())
+    output_directory = get_output_directory(emulator_output.emulator_version, HostProfile(), is_vulkan=is_vulkan)
 
     return os.path.join(
         results_path,
@@ -351,7 +351,9 @@ def run(
         use_vulkan=use_vulkan,
     )
 
-    output_directory = _determine_output_directory(results_path, emulator_command=emulator_command)
+    output_directory = _determine_output_directory(
+        results_path, emulator_command=emulator_command, is_vulkan=use_vulkan
+    )
     if not overwrite_existing_outputs and os.path.isdir(output_directory):
         logger.error("Output directory %s already exists, exiting", output_directory)
         return 200
