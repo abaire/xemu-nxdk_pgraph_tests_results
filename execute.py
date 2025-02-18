@@ -339,15 +339,14 @@ def run(
     if not emulator_command:
         return 1
 
-    if not os.path.isfile(portable_mode_config_path):
-        _generate_xemu_toml(
-            portable_mode_config_path,
-            bootrom_path=os.path.join(inputs_path, "mcpx.bin"),
-            flashrom_path=os.path.join(inputs_path, "bios.bin"),
-            eeprom_path=os.path.join(inputs_path, "eeprom.bin"),
-            hdd_path=hdd_path,
-            use_vulkan=use_vulkan,
-        )
+    _generate_xemu_toml(
+        portable_mode_config_path,
+        bootrom_path=os.path.join(inputs_path, "mcpx.bin"),
+        flashrom_path=os.path.join(inputs_path, "bios.bin"),
+        eeprom_path=os.path.join(inputs_path, "eeprom.bin"),
+        hdd_path=hdd_path,
+        use_vulkan=use_vulkan,
+    )
 
     output_directory = _determine_output_directory(results_path, emulator_command=emulator_command)
     if not overwrite_existing_outputs and os.path.isdir(output_directory):
