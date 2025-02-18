@@ -152,7 +152,9 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
     if system == "Linux":
         # xemu-v0.8.15-x86_64.AppImage
         def check_asset(asset_name: str) -> bool:
-            return asset_name.startswith("xemu-v") and asset_name.endswith(".AppImage") and "-dbg-" not in asset_name
+            if not asset_name.startswith("xemu-v") or "-dbg-" in asset_name:
+                return False
+            return asset_name.endswith(".AppImage") and platform.machine() in asset_name
     elif system == "Darwin":
         # xemu-macos-universal-release.zip
         def check_asset(asset_name: str) -> bool:
@@ -187,8 +189,11 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
     logger.debug("Xemu %s %s", target_file, download_url)
     was_downloaded = _download_artifact(target_file, download_url, artifact_path_override)
 
-    if was_downloaded and system == "Darwin":
-        _macos_extract_app(artifact_path_override, target_file)
+    if was_downloaded:
+        if system == "Linux":
+            os.chmod(target_file, 0o700)
+        elif system == "Darwin":
+            _macos_extract_app(artifact_path_override, target_file)
 
     return target_file
 
@@ -358,6 +363,7 @@ def run(
         ftp_ip_override="10.0.2.2",
         xbox_artifact_path=r"c:\nxdk_pgraph_tests",
         test_failure_retries=2,
+        network_config={"config_automatic": True},
     )
 
     ret = nxdk_pgraph_test_runner.entrypoint(config)
