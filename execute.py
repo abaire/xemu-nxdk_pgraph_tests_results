@@ -191,7 +191,7 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
 
     if was_downloaded:
         if system == "Linux":
-            os.chmod(target_file, 0o770)
+            os.chmod(target_file, 0o700)
         elif system == "Darwin":
             _macos_extract_app(artifact_path_override, target_file)
 
@@ -363,6 +363,7 @@ def run(
         ftp_ip_override="10.0.2.2",
         xbox_artifact_path=r"c:\nxdk_pgraph_tests",
         test_failure_retries=2,
+        network_config={"config_automatic": True},
     )
 
     ret = nxdk_pgraph_test_runner.entrypoint(config)
