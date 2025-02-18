@@ -296,10 +296,13 @@ def _build_macos_xemu_binary_paths(xemu_app_bundle_path: str) -> tuple[str, str]
 
 
 def _build_emulator_command(xemu_path: str, *, no_bundle: bool = False) -> tuple[str, str]:
+    portable_mode_config_path = os.path.dirname(xemu_path)
+
     if platform.system() == "Darwin" and not no_bundle:
         xemu_path, portable_mode_config_path = _build_macos_xemu_binary_paths(xemu_path)
-    else:
-        portable_mode_config_path = os.path.dirname(xemu_path)
+    elif platform.system() == "Linux" and xemu_path.endswith("AppImage"):
+        # AppImages need to have the xemu.toml file within their home dir.
+        portable_mode_config_path = os.path.join(f"{xemu_path}.home", ".local", "share", "xemu", "xemu")
 
     return xemu_path + " -dvd_path {ISO}", os.path.join(portable_mode_config_path, "xemu.toml")
 
