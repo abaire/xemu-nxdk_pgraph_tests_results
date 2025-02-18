@@ -3,6 +3,7 @@
 # ruff: noqa: C416 Unnecessary dict comprehension
 # ruff: noqa: C414 Unnecessary list call
 # ruff: noqa: S701: By default, jinja2 sets `autoescape` to `False`.
+# ruff: noqa: PLR2004 Magic value used in comparison
 
 from __future__ import annotations
 
@@ -365,8 +366,14 @@ class ResultsInfo(NamedTuple):
         """Parses machine_info into a dict."""
         ret: dict[str, str] = {}
         for line in self.machine_info:
-            key, value = line.split(":", 1)
-            ret[key] = value.strip()
+            dict_entry = line.split(":", 1)
+            if len(dict_entry) == 2:
+                key, value = dict_entry
+                value = value.strip()
+                if value:
+                    ret[key] = value
+            elif line.startswith("- VK"):
+                ret[line[2:]] = line
 
         return ret
 
@@ -549,12 +556,12 @@ class PrettyMachineInfo(NamedTuple):
     def parse(cls, results_info: ResultsInfo) -> PrettyMachineInfo:
         machine_info_dict = results_info.get_machine_info_dict()
 
-        cpu = machine_info_dict.get("CPU").replace("/", "-")
-        os = machine_info_dict.get("OS_Version").replace("/", "-")
-        gl_vendor = machine_info_dict.get("GL_VENDOR").replace("/", "-")
-        gl_renderer = machine_info_dict.get("GL_RENDERER").replace("/", "-")
-        gl_version = machine_info_dict.get("GL_VERSION").replace("/", "-")
-        glsl_version = machine_info_dict.get("GL_SHADING_LANGUAGE_VERSION").replace("/", "-")
+        cpu = machine_info_dict.get("CPU", "").replace("/", "-")
+        os = machine_info_dict.get("OS_Version", "").replace("/", "-")
+        gl_vendor = machine_info_dict.get("GL_VENDOR", "").replace("/", "-")
+        gl_renderer = machine_info_dict.get("GL_RENDERER", "").replace("/", "-")
+        gl_version = machine_info_dict.get("GL_VERSION", "").replace("/", "-")
+        glsl_version = machine_info_dict.get("GL_SHADING_LANGUAGE_VERSION", "").replace("/", "-")
 
         run_identifier = results_info.identifier
         platform = f"{os} - {cpu}" if cpu and os else run_identifier.platform_info
