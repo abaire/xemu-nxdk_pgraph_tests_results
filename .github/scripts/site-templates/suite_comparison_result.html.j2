@@ -8,8 +8,8 @@
 
 <h1>{{ suite_name }} : {{ source_identifier }} vs {{ golden_identifier }}</h1>
 
-{%- if descriptor and (descriptor.description or descriptor.source_file) %}
 <div class="label-value-grid">
+{%- if descriptor and (descriptor.description or descriptor.source_file) %}
     {%- if descriptor.description %}
     <div class="label">Description</div>
     <div class="value">
@@ -18,7 +18,6 @@
     {% endfor -%}
     </div>
     {% endif -%}
-
     {%- if descriptor.source_file %}
     <div class="label">Suite class def</div>
     <div class="value">
@@ -27,8 +26,12 @@
         {%- if descriptor.source_url %}</a>{% endif -%}
     </div>
     {%- endif %}
-</div>
 {%- endif %}
+{%- if golden_suite_url %}
+    <div class="label">Golden results</div>
+    <div class="value"><a href="{{ golden_suite_url }}">{{ golden_suite_url }}</a></div>
+{%- endif %}
+</div>
 
 
 {% for result in results | sort(attribute='test_name') %}

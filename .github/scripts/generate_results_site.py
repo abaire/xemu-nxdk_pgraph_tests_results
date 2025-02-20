@@ -588,6 +588,7 @@ class PagesWriter:
         result_images_base_url: str,
         hw_golden_images_base_url: str,
         test_source_base_url: str,
+        hw_golden_browser_base_url: str,
     ) -> None:
         self.results = results
         self.env = env
@@ -597,13 +598,17 @@ class PagesWriter:
         self.images_base_url = result_images_base_url.rstrip("/")
         self.hw_images_base_url = hw_golden_images_base_url.rstrip("/")
         self.test_source_base_url = test_source_base_url.rstrip("/")
+        self.hw_golden_browser_base_url = hw_golden_browser_base_url.rstrip("/")
 
     @staticmethod
     def _comparison_suite_url(comparison: ComparisonInfo, suite_result: TestSuiteComparisonInfo) -> str:
         return os.path.join(COMPARE_SUBDIR, comparison.identifier.minimal_path, f"{suite_result.suite_name}.html")
 
-    def _home_url(self, output_dir) -> str:
+    def _home_url(self, output_dir: str) -> str:
         return f"{os.path.relpath(self.output_dir, output_dir)}/index.html"
+
+    def _golden_suite_url(self, suite_name: str) -> str:
+        return f"{self.hw_golden_browser_base_url}/{suite_name}/index.html"
 
     def _write_comparison_suite_page(
         self,
@@ -627,6 +632,7 @@ class PagesWriter:
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                     home_url=self._home_url(output_dir),
+                    golden_suite_url=self._golden_suite_url(suite_result.suite_name),
                     navigate_up_url=navigate_up_url,
                     descriptor=self._pack_descriptor(suite_result.descriptor),
                 )
@@ -949,6 +955,11 @@ def main():
         default="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen",
         help="Base URL from which the test suite source files may be publicly accessed.",
     )
+    parser.add_argument(
+        "--hw-golden-browser-base-url",
+        default="https://abaire.github.io/nxdk_pgraph_tests_golden_results/results",
+        help="URL at which the test suite pages containing golden images from Xbox hardware may be publicly accessed.",
+    )
 
     args = parser.parse_args()
 
@@ -992,7 +1003,13 @@ def main():
     jinja_env.globals["sidenav_icon_width"] = 32
 
     return PagesWriter(
-        results, jinja_env, args.output_dir, args.base_url, args.hw_golden_base_url, args.test_source_browser_base_url
+        results,
+        jinja_env,
+        args.output_dir,
+        args.base_url,
+        args.hw_golden_base_url,
+        args.test_source_browser_base_url,
+        args.hw_golden_browser_base_url,
     ).write()
 
 
