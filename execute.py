@@ -128,12 +128,34 @@ def _macos_extract_app(archive_file: str, target_app_bundle: str) -> None:
             for file_info in zip_ref.infolist():
                 if file_info.filename.startswith("xemu.app"):
                     zip_ref.extract(file_info, app_bundle_directory)
+                    return
 
     except FileNotFoundError:
         logger.exception("Archive not found when extracting xemu app bundle")
         raise
     except zipfile.BadZipFile:
         logger.exception("Invalid zip archive when extracting xemu app bundle")
+        raise
+
+
+def _windows_extract_app(archive_file: str, target_executable: str) -> None:
+    """Extracts xemu.exe from the given archive."""
+
+    try:
+        with zipfile.ZipFile(archive_file, "r") as zip_ref:
+            for file_info in zip_ref.infolist():
+                if file_info.filename == "xemu.exe":
+                    target_dir = os.path.dirname(target_executable)
+                    zip_ref.extract(file_info, target_dir)
+                    if os.path.basename(target_executable) != "xemu.exe":
+                        os.rename(os.path.join(target_dir, "xemu.exe"), target_executable)
+                    return
+
+    except FileNotFoundError:
+        logger.exception("Archive not found when extracting xemu.exe")
+        raise
+    except zipfile.BadZipFile:
+        logger.exception("Invalid zip archive when extracting xemu.exe")
         raise
 
 
@@ -159,6 +181,15 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
         # xemu-macos-universal-release.zip
         def check_asset(asset_name: str) -> bool:
             return asset_name == "xemu-macos-universal-release.zip"
+    elif system == "Windows":
+        # xemu-win-x86_64-release.zip
+        def check_asset(asset_name: str) -> bool:
+            if not asset_name.startswith("xemu-win-") or not asset_name.endswith("release.zip"):
+                return False
+            platform_name = platform.machine()
+            if platform_name == "AMD64":
+                platform_name = "x86_64"
+            return platform_name.lower() in asset_name
     else:
         msg = f"System '{system} not supported"
         raise NotImplementedError(msg)
@@ -182,6 +213,9 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
     elif system == "Darwin":
         target_file = os.path.join(output_dir, f"xemu-macos-{release_tag}", "xemu.app")
         artifact_path_override = f"{target_file}.zip"
+    elif system == "Windows":
+        target_file = os.path.join(output_dir, "xemu.exe")
+        artifact_path_override = f"{target_file}.zip"
     else:
         msg = f"System '{system} not supported"
         raise NotImplementedError(msg)
@@ -194,6 +228,8 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
             os.chmod(target_file, 0o700)
         elif system == "Darwin":
             _macos_extract_app(artifact_path_override, target_file)
+        elif system == "Windows":
+            _windows_extract_app(artifact_path_override, target_file)
 
     return target_file
 
@@ -298,11 +334,19 @@ def _build_macos_xemu_binary_paths(xemu_app_bundle_path: str) -> tuple[str, str]
 def _build_emulator_command(xemu_path: str, *, no_bundle: bool = False) -> tuple[str, str]:
     portable_mode_config_path = os.path.dirname(xemu_path)
 
-    if platform.system() == "Darwin" and not no_bundle:
-        xemu_path, portable_mode_config_path = _build_macos_xemu_binary_paths(xemu_path)
-    elif platform.system() == "Linux" and xemu_path.endswith("AppImage"):
-        # AppImages need to have the xemu.toml file within their home dir.
-        portable_mode_config_path = os.path.join(f"{xemu_path}.home", ".local", "share", "xemu", "xemu")
+    system = platform.system()
+    if system == "Darwin":
+        if not no_bundle:
+            xemu_path, portable_mode_config_path = _build_macos_xemu_binary_paths(xemu_path)
+    elif system == "Linux":
+        if xemu_path.endswith("AppImage"):
+            # AppImages need to have the xemu.toml file within their home dir.
+            portable_mode_config_path = os.path.join(f"{xemu_path}.home", ".local", "share", "xemu", "xemu")
+    elif system == "Windows":
+        pass
+    else:
+        msg = f"Platform {system} not supported."
+        raise NotImplementedError(msg)
 
     return xemu_path + " -dvd_path {ISO}", os.path.join(portable_mode_config_path, "xemu.toml")
 
@@ -313,7 +357,9 @@ def _determine_output_directory(results_path: str, emulator_command: str, *, is_
         result = subprocess.run(command, capture_output=True, text=True, check=True, timeout=1)
         stderr = result.stderr
     except subprocess.TimeoutExpired as err:
-        stderr = err.stderr.decode()
+        # Windows Python 3.13 returns a string rather than bytes.
+        stderr = err.stderr.decode() if isinstance(err.stderr, bytes) else err.stderr
+
         # Give tne GL subsystem time to settle after the hard kill. Prevents deadlock in get_output_directory.
         sleep(0.5)
 
