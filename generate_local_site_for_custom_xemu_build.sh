@@ -53,6 +53,7 @@ if [[ ! -x "${xemu_binary}" ]]; then
 fi
 
 # Avoid leaving/modifying xemu.toml files owned by the user by copying to a local cache dir.
+rm -rf "${local_binary_dir}"
 mkdir -p "${local_binary_dir}"
 cp "${xemu_binary}" "${local_binary_dir}/"
 xemu_binary="${local_binary_dir}/qemu-system-i386"
@@ -104,12 +105,12 @@ function execute_tests() {
   )
 
   echo "Executing tests: ${command[*]}"
-  output=$("${command[@]}" 2>&1)
+  output=$(${command[*]} 2>&1)
   exit_result=$?
   set -e
 
   if [[ ${exit_result} && ${exit_result} -ne 200 ]]; then
-    echo "Test result generation failed"
+    echo "Test result generation failed with code ${exit_result}"
     echo "${output}"
     exit ${exit_result}
   fi
@@ -183,5 +184,7 @@ function build_site() {
 
 execute_tests
 compare_results
+
+rm -rf "${local_site_dir}"
 build_site
 

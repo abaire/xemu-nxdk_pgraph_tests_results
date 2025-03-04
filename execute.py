@@ -362,6 +362,11 @@ def _determine_output_directory(results_path: str, emulator_command: str, *, is_
 
         # Give tne GL subsystem time to settle after the hard kill. Prevents deadlock in get_output_directory.
         sleep(0.5)
+    except subprocess.CalledProcessError as err:
+        stderr = err.stderr.decode() if isinstance(err.stderr, bytes) else err.stderr
+        logger.error(stderr)
+        logger.exception(err)
+        raise
 
     emulator_output = EmulatorOutput.parse(stdout=[], stderr=stderr.split("\n"))
     output_directory = get_output_directory(emulator_output.emulator_version, HostProfile(), is_vulkan=is_vulkan)
