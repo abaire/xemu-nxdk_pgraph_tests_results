@@ -32,25 +32,39 @@ logger = logging.getLogger(__name__)
 
 def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, Any] | None:
     full_url = f"{api_url}/releases/latest" if not tag or tag == "latest" else f"{api_url}/releases"
-    try:
-        response = requests.get(
-            full_url,
-            headers={
-                "Accept": "application/vnd.github+json",
-                "X-GitHub-Api-Version": "2022-11-28",
-            },
-            timeout=15,
-        )
-        response.raise_for_status()
-        release_info = response.json()
 
-    except requests.exceptions.RequestException:
-        logger.exception("Failed to retrieve information from %s", full_url)
-        return None
+    def fetch_and_filter(url: str):
+        try:
+            response = requests.get(
+                url,
+                headers={
+                    "Accept": "application/vnd.github+json",
+                    "X-GitHub-Api-Version": "2022-11-28",
+                },
+                timeout=15,
+            )
+            response.raise_for_status()
+            release_info = response.json()
 
-    if isinstance(release_info, list):
-        release_info = _filter_release_info_by_tag(release_info, tag)
-    return release_info
+        except requests.exceptions.RequestException:
+            logger.exception("Failed to retrieve information from %s", url)
+            return None
+
+        if isinstance(release_info, list):
+            release_info = _filter_release_info_by_tag(release_info, tag)
+        if release_info:
+            return release_info
+
+        if not response.links:
+            return None
+
+        next_link = response.links.get("next", {}).get("url")
+        if not next_link:
+            return None
+        next_link = next_link + "&per_page=60"
+        return fetch_and_filter(next_link)
+
+    return fetch_and_filter(full_url)
 
 
 def _download_artifact(target_path: str, download_url: str, artifact_path_override: str | None = None) -> bool:
@@ -126,9 +140,12 @@ def _macos_extract_app(archive_file: str, target_app_bundle: str) -> None:
             os.makedirs(app_bundle_directory, exist_ok=True)
 
             for file_info in zip_ref.infolist():
-                if file_info.filename.startswith("xemu.app"):
+                if file_info.filename.startswith("xemu.app/") and not file_info.is_dir():
                     zip_ref.extract(file_info, app_bundle_directory)
-                    return
+
+            if not os.path.isfile(os.path.join(app_bundle_directory, "xemu.app", "Contents", "MacOS", "xemu")):
+                msg = f"xemu archive was downloaded at '{archive_file}' but app bundle could not be extracted"
+                raise ValueError(msg)
 
     except FileNotFoundError:
         logger.exception("Archive not found when extracting xemu app bundle")
@@ -160,7 +177,7 @@ def _windows_extract_app(archive_file: str, target_executable: str) -> None:
 
 
 def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
-    logger.info("Fetching info on latest xemu at release tag %s...", tag)
+    logger.info("Fetching info on xemu at release tag %s...", tag)
     release_info = _fetch_github_release_info("https://api.github.com/repos/xemu-project/xemu", tag)
     if not release_info:
         return None
@@ -364,8 +381,8 @@ def _determine_output_directory(results_path: str, emulator_command: str, *, is_
         sleep(0.5)
     except subprocess.CalledProcessError as err:
         stderr = err.stderr.decode() if isinstance(err.stderr, bytes) else err.stderr
-        logger.error(stderr)
-        logger.exception(err)
+        logger.error(stderr)  # noqa: TRY400 Use `logging.exception` instead of `logging.error`
+        logger.exception(err)  # noqa: TRY401 Redundant exception object included in `logging.exception` call
         raise
 
     emulator_output = EmulatorOutput.parse(stdout=[], stderr=stderr.split("\n"))
@@ -520,12 +537,18 @@ def _process_arguments_and_run():
         return 1
 
     xemu = os.path.abspath(os.path.expanduser(args.xemu)) if args.xemu else _download_xemu(cache_path, args.xemu_tag)
-    if not xemu or not os.path.exists(xemu):
+    if not xemu:
+        logger.error("Failed to download xemu")
+        return 1
+    if not os.path.exists(xemu):
         logger.error("Invalid xemu path '%s'", xemu)
         return 1
 
     hdd = os.path.abspath(os.path.expanduser(args.hdd)) if args.hdd else _download_xemu_hdd(cache_path)
-    if not hdd or not os.path.isfile(hdd):
+    if not hdd:
+        logger.error("Failed to download xemu_hdd")
+        return 1
+    if not os.path.isfile(hdd):
         logger.error("Invalid xemu_hdd path '%s'", hdd)
         return 1
 
