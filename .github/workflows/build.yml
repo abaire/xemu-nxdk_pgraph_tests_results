@@ -18,6 +18,7 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
+      archive_results: ${{ steps.filter.outputs.archive_results }}
       site: ${{ steps.filter.outputs.site }}
       docker: ${{ steps.filter.outputs.docker }}
     steps:
@@ -26,6 +27,9 @@ jobs:
         id: filter
         with:
           filters: |
+            archive_results:
+              - '.github/workflows/*.yml'
+              - 'results/**'
             site:
               - '.github/workflows/*.yml'
               - '.github/scripts/**'
@@ -36,6 +40,80 @@ jobs:
               - '.github/workflows/*.yml'
               - 'compare.py'
               - 'execute.py'
+
+  PackageResultsArtifact:
+    needs: [ find-changes ]
+    name: Package the newest results into a build artifact
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || needs.find-changes.outputs.archive_results == 'true'
+    outputs:
+      xemu_info: ${{ steps.archive_results.outputs.xemu_info }}
+      artifact: ${{ steps.archive_results.outputs.release_archive }}
+    steps:
+      - name: Clone tree
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '1'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Archive newest results
+        id: archive_results
+        run: |
+          newest_official_result="$(python3 .github/scripts/get_latest_results_directory.py)"
+          if [[ $? ]]; then
+            echo "Archiving xemu results from ${newest_official_result}"
+            xemu_info="${newest_official_result##results/}"
+            artifact_name="${xemu_info}_results.tgz"
+            tar -czf "${artifact_name}" "${newest_official_result}"
+
+            echo "xemu_info=${xemu_info}" >> $GITHUB_OUTPUT 
+            echo "release_archive=${artifact_name}" >> $GITHUB_OUTPUT
+          fi
+      - name: Upload artifact
+        if: ${{ steps.archive_results.outputs.release_archive }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.archive_results.outputs.release_archive }}
+          path: ${{ steps.archive_results.outputs.release_archive }}
+
+  CreateRelease:
+    needs: [ PackageResultsArtifact ]
+    name: Create a release with the new build artifact
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (needs.PackageResultsArtifact.outputs.artifact != '' && github.ref == 'refs/heads/main' && github.event_name == 'push')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.PackageResultsArtifact.outputs.artifact }}
+          path: .
+      - name: Finishme
+        run: |
+          echo "Release artifact is ${{ needs.PackageResultsArtifact.outputs.artifact }}"
+
+      - name: Calculate version
+        id: calculate-version
+        run: |
+          echo "version=${{ needs.PackageResultsArtifact.outputs.xemu_info }}__$(date +'%Y-%m-%d_%H-%M-%S-%N')"
+          echo "version=${{ needs.PackageResultsArtifact.outputs.xemu_info }}__$(date +'%Y-%m-%d_%H-%M-%S-%N')" >> $GITHUB_OUTPUT
+      - name: Create tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ steps.calculate-version.outputs.version }}
+      - name: Create release
+        uses: softprops/action-gh-release@v2.2.1
+        with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          name: "xemu results ${{ steps.tag_version.outputs.new_version }}"
+          prerelease: false
+          draft: false
+          make_latest: true
+          files: ${{ needs.PackageResultsArtifact.outputs.artifact }}
 
   DiffAgainstHW:
     needs: [ find-changes ]
