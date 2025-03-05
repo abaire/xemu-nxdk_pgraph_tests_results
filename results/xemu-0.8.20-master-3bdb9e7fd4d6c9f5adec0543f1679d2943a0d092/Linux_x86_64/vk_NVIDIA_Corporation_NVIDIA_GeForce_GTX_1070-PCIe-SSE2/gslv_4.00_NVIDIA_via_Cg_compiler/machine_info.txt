@@ -8,7 +8,7 @@ CPU: Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz
 OS_Version: Ubuntu 24.04.2 LTS
 GL_VENDOR: NVIDIA Corporation
 GL_RENDERER: NVIDIA GeForce GTX 1070/PCIe/SSE2
-GL_VERSION: 4.0.0 NVIDIA 570.86.15
+GL_VERSION: 4.0.0 NVIDIA 570.124.06
 GL_SHADING_LANGUAGE_VERSION: 4.00 NVIDIA via Cg compiler
 Enabled instance extensions:
 - VK_KHR_surface
@@ -22,7 +22,7 @@ Available physical devices:
 - llvmpipe (LLVM 19.1.1, 256 bits)
 Selected physical device: NVIDIA GeForce GTX 1070
 - Vendor: 10de, Device: 1b81
-- Driver Version: 570.344.960
+- Driver Version: 570.496.384
 Enabled device extensions:
 - VK_KHR_external_semaphore
 - VK_KHR_external_memory
