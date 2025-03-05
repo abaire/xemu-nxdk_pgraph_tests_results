@@ -329,6 +329,7 @@ def _generate_xemu_toml(
     if use_vulkan:
         content.extend(["", "[display]", "renderer = 'VULKAN'"])
 
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, "w") as outfile:
         outfile.write("\n".join(content))
 
