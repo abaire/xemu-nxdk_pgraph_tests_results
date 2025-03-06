@@ -118,7 +118,7 @@ jobs:
     if: needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
       contents: write
-    timeout-minutes: 45
+    timeout-minutes: 60
     outputs:
       sha: ${{ steps.sha.outputs.new_head_commit }}
     steps:
