@@ -97,12 +97,15 @@ class Difference(NamedTuple):
     def difference_filename(self) -> str:
         return f"{os.path.join(self.test_suite, self.test_case)}-diff.png"
 
-    def generate_difference_image(self, perceptualdiff: str, output_path: str) -> None:
-        """Generates a diff image in the given output_path using perceptualdiff."""
+    def generate_difference_image(self, perceptualdiff: str, output_path: str) -> tuple[int, str, str]:
+        """Generates a diff image in the given output_path using perceptualdiff.
+
+        Returns tuple[ExitCode, STDOUT, STDERR]
+        """
         target_filename = os.path.join(output_path, self.difference_filename)
         target_dir = os.path.dirname(target_filename)
         os.makedirs(target_dir, exist_ok=True)
-        subprocess.run(
+        result = subprocess.run(
             [
                 perceptualdiff,
                 "-output",
@@ -113,6 +116,8 @@ class Difference(NamedTuple):
             check=False,
             capture_output=True,
         )
+
+        return result.returncode, result.stdout.decode(), result.stderr.decode()
 
 
 def _ensure_path(path: str) -> str:
@@ -135,7 +140,7 @@ def _fetch_hw_goldens(output_dir: str):
     Repo.clone_from(_HW_GOLDEN_GIT_URL, output_dir, depth=1)
 
 
-def _compare(results_info: ResultsInfo, golden_info: ResultsInfo) -> tuple[set[str], set[str], list[Difference]]:
+def _compare_lpips(results_info: ResultsInfo, golden_info: ResultsInfo) -> tuple[set[str], set[str], list[Difference]]:
     import lpips
 
     loss_fn = lpips.LPIPS(net="alex")
@@ -178,12 +183,45 @@ def _compare(results_info: ResultsInfo, golden_info: ResultsInfo) -> tuple[set[s
     return only_results, only_goldens, differences
 
 
+def _compare_perceptualdiff(
+    results_info: ResultsInfo, golden_info: ResultsInfo, perceptualdiff: str, comparison_output_directory: str
+) -> tuple[set[str], set[str], list[Difference]]:
+    results_tests = results_info.get_flattened_tests()
+    golden_tests = golden_info.get_flattened_tests()
+
+    only_results = results_tests - golden_tests
+    only_goldens = golden_tests - results_tests
+
+    differences: list[Difference] = []
+    logger.info("Comparing image files (this may take some time)...")
+    for test_suite in sorted(results_info.test_suites.keys()):
+        print(test_suite)
+        test_cases = results_info.test_suites[test_suite]
+        golden_suite = golden_info.test_suites.get(test_suite, {})
+        for test_case, artifact in test_cases.items():
+            print(".", end="", flush=True)
+            golden_artifact = golden_suite.get(test_case)
+            if not golden_artifact:
+                continue
+
+            diff = Difference(test_suite, test_case, artifact, golden_artifact, -1)
+            result, stdout, stderr = diff.generate_difference_image(perceptualdiff, comparison_output_directory)
+            if not result:
+                continue
+            differences.append(diff)
+        print("")
+
+    return only_results, only_goldens, differences
+
+
 def perform_comparison(
     results_path: str,
     golden_path: str,
     output_dir: str,
     perceptualdiff: str,
     diff_threshold: float,
+    *,
+    use_lpips: bool = True,
 ) -> None:
     results_info = ResultsInfo.parse(results_path)
 
@@ -202,11 +240,6 @@ def perform_comparison(
 
     logger.debug("Comparing %s to %s", results_info.run_identifier, against_name)
 
-    only_results, only_golden, diffs = _compare(results_info, golden_info)
-
-    if not (only_results or only_golden or diffs):
-        return
-
     comparison_output_directory = os.path.join(
         output_dir,
         results_info.output_subdirectory,
@@ -215,6 +248,28 @@ def perform_comparison(
     if os.path.isdir(comparison_output_directory):
         shutil.rmtree(comparison_output_directory)
     os.makedirs(comparison_output_directory, exist_ok=True)
+
+    if use_lpips:
+        only_results, only_golden, diffs = _compare_lpips(results_info, golden_info)
+        if not (only_results or only_golden or diffs):
+            return
+
+        for diff in sorted(diffs, key=lambda x: f"{x.test_suite}:{x.test_case}"):
+            if diff.distance < diff_threshold:
+                logger.info(
+                    "Not generating diff image for %s with distance %G below threshold",
+                    diff.fully_qualified_test_name,
+                    diff.distance,
+                )
+                continue
+            logger.info("Generating diff image for %s", diff.fully_qualified_test_name)
+            diff.generate_difference_image(perceptualdiff, comparison_output_directory)
+    else:
+        only_results, only_golden, diffs = _compare_perceptualdiff(
+            results_info, golden_info, perceptualdiff, comparison_output_directory
+        )
+        if not (only_results or only_golden or diffs):
+            return
 
     logger.debug("Writing output to %s", comparison_output_directory)
 
@@ -227,17 +282,6 @@ def perform_comparison(
     }
     with open(os.path.join(comparison_output_directory, "summary.json"), "w", encoding="utf-8") as outfile:
         json.dump(summary, outfile, ensure_ascii=True, indent=2, sort_keys=True)
-
-    for diff in sorted(diffs, key=lambda x: f"{x.test_suite}:{x.test_case}"):
-        if diff.distance < diff_threshold:
-            logger.info(
-                "Not generating diff image for %s with distance %G below threshold",
-                diff.fully_qualified_test_name,
-                diff.distance,
-            )
-            continue
-        logger.info("Generating diff image for %s", diff.fully_qualified_test_name)
-        diff.generate_difference_image(perceptualdiff, comparison_output_directory)
 
 
 def _discover_results(results_root: str) -> list[str]:
@@ -284,6 +328,11 @@ def _process_arguments_and_run():
         default=0.00001,
         help="LPIPS distance threshold below which images are considered equal.",
     )
+    parser.add_argument(
+        "-no-lpips",
+        action="store_false",
+        help="Do not use LPIPS to pre-filter diffs before perceptualdiff.",
+    )
 
     args = parser.parse_args()
 
@@ -320,11 +369,7 @@ def _process_arguments_and_run():
     os.makedirs(args.output_dir, exist_ok=True)
 
     perform_comparison(
-        args.results,
-        golden_dir,
-        args.output_dir,
-        args.perceptualdiff,
-        args.diff_threshold,
+        args.results, golden_dir, args.output_dir, args.perceptualdiff, args.diff_threshold, use_lpips=not args.no_lpips
     )
 
     return 0

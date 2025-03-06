@@ -8,6 +8,7 @@ import sys
 
 XEMU_VERSION_RE = re.compile(r"results/xemu-(\d+)\.(\d+)\.(\d+)-master.*")
 
+
 def main() -> int:
     results = glob.glob("results/*")
 
@@ -53,6 +54,7 @@ def main() -> int:
 
     print(latest_path)
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
