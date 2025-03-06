@@ -57,7 +57,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
       - name: Archive newest results
         id: archive_results
         run: |
@@ -90,10 +89,6 @@ jobs:
         with:
           name: ${{ needs.PackageResultsArtifact.outputs.artifact }}
           path: .
-      - name: Finishme
-        run: |
-          echo "Release artifact is ${{ needs.PackageResultsArtifact.outputs.artifact }}"
-
       - name: Calculate version
         id: calculate-version
         run: |
