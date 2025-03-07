@@ -67,12 +67,14 @@ def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, A
     return fetch_and_filter(full_url)
 
 
-def _download_artifact(target_path: str, download_url: str, artifact_path_override: str | None = None) -> bool:
+def _download_artifact(
+    target_path: str, download_url: str, artifact_path_override: str | None = None, *, force_download: bool = False
+) -> bool:
     """Downloads an artifact from the given URL, if it does not already exist. Returns True if download was needed."""
-    if os.path.exists(target_path):
+    if os.path.exists(target_path) and not force_download:
         return False
 
-    if artifact_path_override and os.path.exists(artifact_path_override):
+    if artifact_path_override and os.path.exists(artifact_path_override) and not force_download:
         return True
 
     if not download_url.startswith("https://"):
@@ -238,7 +240,20 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
         raise NotImplementedError(msg)
 
     logger.debug("Xemu %s %s", target_file, download_url)
-    was_downloaded = _download_artifact(target_file, download_url, artifact_path_override)
+
+    tag_info_file_path = os.path.join(output_dir, "xemu-tag.info")
+
+    requested_version = release_info.get("tag_name")
+    if not requested_version or not os.path.isfile(tag_info_file_path):
+        force_download = True
+    else:
+        with open(tag_info_file_path) as tag_info_file:
+            cached_tag = tag_info_file.readline()
+            force_download = cached_tag != requested_version
+
+    was_downloaded = _download_artifact(
+        target_file, download_url, artifact_path_override, force_download=force_download
+    )
 
     if was_downloaded:
         if system == "Linux":
@@ -247,6 +262,9 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
             _macos_extract_app(artifact_path_override, target_file)
         elif system == "Windows":
             _windows_extract_app(artifact_path_override, target_file)
+
+        with open(tag_info_file_path, "w") as tag_info_file:
+            tag_info_file.write(requested_version)
 
     return target_file
 
