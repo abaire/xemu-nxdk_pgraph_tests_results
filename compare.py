@@ -9,6 +9,7 @@ import glob
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -18,6 +19,7 @@ from typing import NamedTuple
 logger = logging.getLogger(__name__)
 
 _HW_GOLDEN_GIT_URL = "https://github.com/abaire/nxdk_pgraph_tests_golden_results.git"
+PERCEPTUALDIFF_DIFFERENCE_RE = re.compile(r"(\d+) pixels are different")
 
 
 class ResultsInfo(NamedTuple):
@@ -208,6 +210,13 @@ def _compare_perceptualdiff(
             result, stdout, stderr = diff.generate_difference_image(perceptualdiff, comparison_output_directory)
             if not result:
                 continue
+
+            diff_score = -1
+            for line in stdout.split("\n"):
+                match = PERCEPTUALDIFF_DIFFERENCE_RE.match(line)
+                if match:
+                    diff_score = match.group(1)
+            diff = Difference(test_suite, test_case, artifact, golden_artifact, diff_score)
             differences.append(diff)
         print("")
 
