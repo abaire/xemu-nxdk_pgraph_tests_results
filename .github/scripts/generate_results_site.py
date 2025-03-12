@@ -359,6 +359,7 @@ class ResultsInfo(NamedTuple):
     identifier: RunIdentifier
     machine_info: MachineInfo
     renderer_info: RendererInfo
+    runner_info: dict[str, str]
     results: tuple[SuiteResults, ...]
     comparisons: list[ComparisonInfo]
 
@@ -482,6 +483,7 @@ class ResultsScanner:
             identifier=run_identifier,
             machine_info=machine_info,
             renderer_info=results_summary.get("renderer_info"),
+            runner_info=results_summary.get("runner_info"),
             results=tuple(list(suite_results.values())),
             comparisons=self.run_identifier_to_comparison_results.get(run_identifier.minimal_identifier(), []),
         )
@@ -506,6 +508,14 @@ class ResultsScanner:
                     results_summary["renderer_info"] = json.load(infile)
             else:
                 results_summary["renderer_info"] = {"vulkan": False}
+
+            runner_info_file = os.path.join(run_id, "runner.json")
+            if os.path.isfile(runner_info_file):
+                with open(runner_info_file) as infile:
+                    results_summary["runner_info"] = json.load(infile)
+            else:
+                results_summary["runner_info"] = {"iso": "UNKNOWN"}
+
 
         machine_info_files = glob.glob("**/machine_info.txt", root_dir=self.results_dir, recursive=True)
 
@@ -778,6 +788,7 @@ class PagesWriter:
                     descriptor=self._pack_descriptor(suite.descriptor),
                     home_url=self._home_url(output_dir),
                     navigate_up_url="../index.html",
+                    runner_info=run.runner_info,
                 )
             )
 
@@ -850,6 +861,7 @@ class PagesWriter:
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                     home_url=home_url,
                     navigate_up_url=home_url,
+                    runner_info=run.runner_info,
                 )
             )
 
