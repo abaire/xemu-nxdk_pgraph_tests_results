@@ -41,35 +41,45 @@
 </div>
 
 <h2 id="AAOnThenOffCPUWrite">AAOnThenOffCPUWrite</h2>
-        <div class="test-case-description">Configure the framebuffer surface with some antialiasing mode, clear, change the mode, modify the framebuffer by writing directly to VRAM, then render. Used to reproduce xemu-project/xemu#652.</div>
+        <div class="test-case-description">
+        <p>Configure the framebuffer surface with some antialiasing mode, clear, change the mode, modify the framebuffer by writing directly to VRAM, then render. Used to reproduce xemu-project/xemu#652.</p>
+        </div>
     
 <div class="image-container">
         <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Antialiasing_tests/AAOnThenOffCPUWrite.png" alt="Test result for Antialiasing_tests::AAOnThenOffCPUWrite" class="inline-image">
 </div>
     
 <h2 id="CPUWriteIgnoresSurfaceConfig">CPUWriteIgnoresSurfaceConfig</h2>
-        <div class="test-case-description">This test verifies that direct writes to VRAM bypass any surface configuration. It sets up a texture surface with antialiasing enabled, then writes directly to texture memory and renders the texture to the screen. It is expected that antialiasing has no effect.</div>
+        <div class="test-case-description">
+        <p>This test verifies that direct writes to VRAM bypass any surface configuration. It sets up a texture surface with antialiasing enabled, then writes directly to texture memory and renders the texture to the screen. It is expected that antialiasing has no effect.</p>
+        </div>
     
 <div class="image-container">
         <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Antialiasing_tests/CPUWriteIgnoresSurfaceConfig.png" alt="Test result for Antialiasing_tests::CPUWriteIgnoresSurfaceConfig" class="inline-image">
 </div>
     
 <h2 id="CreateSurfaceWithCenter1">CreateSurfaceWithCenter1</h2>
-        <div class="test-case-description">Tests rendering with NV097_SET_SURFACE_FORMAT_ANTI_ALIASING_CENTER_1</div>
+        <div class="test-case-description">
+        <p>Tests rendering with NV097_SET_SURFACE_FORMAT_ANTI_ALIASING_CENTER_1</p>
+        </div>
     
 <div class="image-container">
         <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Antialiasing_tests/CreateSurfaceWithCenter1.png" alt="Test result for Antialiasing_tests::CreateSurfaceWithCenter1" class="inline-image">
 </div>
     
 <h2 id="CreateSurfaceWithCenterCorner2">CreateSurfaceWithCenterCorner2</h2>
-        <div class="test-case-description">Tests rendering with NV097_SET_SURFACE_FORMAT_ANTI_ALIASING_CENTER_CORNER_2</div>
+        <div class="test-case-description">
+        <p>Tests rendering with NV097_SET_SURFACE_FORMAT_ANTI_ALIASING_CENTER_CORNER_2</p>
+        </div>
     
 <div class="image-container">
         <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Antialiasing_tests/CreateSurfaceWithCenterCorner2.png" alt="Test result for Antialiasing_tests::CreateSurfaceWithCenterCorner2" class="inline-image">
 </div>
     
 <h2 id="CreateSurfaceWithSquareOffset4">CreateSurfaceWithSquareOffset4</h2>
-        <div class="test-case-description">Tests rendering with NV097_SET_SURFACE_FORMAT_ANTI_ALIASING_SQUARE_OFFSET_4</div>
+        <div class="test-case-description">
+        <p>Tests rendering with NV097_SET_SURFACE_FORMAT_ANTI_ALIASING_SQUARE_OFFSET_4</p>
+        </div>
     
 <div class="image-container">
         <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Antialiasing_tests/CreateSurfaceWithSquareOffset4.png" alt="Test result for Antialiasing_tests::CreateSurfaceWithSquareOffset4" class="inline-image">
