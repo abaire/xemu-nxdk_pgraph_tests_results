@@ -447,6 +447,8 @@ def run(
         logger.error("Output directory %s already exists, exiting", output_directory)
         return 200
 
+    test_failure_retries = 2
+
     config = Config(
         work_dir=work_path,
         output_dir=results_path,
@@ -455,7 +457,7 @@ def run(
         ftp_ip="127.0.0.1",
         ftp_ip_override="10.0.2.2",
         xbox_artifact_path=r"c:\nxdk_pgraph_tests",
-        test_failure_retries=2,
+        test_failure_retries=test_failure_retries,
         network_config={"config_automatic": True},
         suite_allowlist=just_suites,
     )
@@ -464,6 +466,12 @@ def run(
     if os.path.isdir(output_directory):
         with open(os.path.join(output_directory, "renderer.json"), "w") as outfile:
             json.dump({"vulkan": use_vulkan}, outfile)
+        with open(os.path.join(output_directory, "runner.json"), "w") as outfile:
+            json.dump({
+                "iso": os.path.basename(iso_path),
+                "test_failure_retries": test_failure_retries,
+                "suite_allowlist": just_suites,
+            }, outfile)
 
     return ret
 
@@ -582,13 +590,16 @@ def _process_arguments_and_run():
             shutil.copy(args.mcpx, os.path.join(inputs_path, "mcpx.bin"))
         with contextlib.suppress(SameFileError):
             shutil.copy(args.bios, os.path.join(inputs_path, "bios.bin"))
+        with contextlib.suppress(SameFileError):
+            hdd_copy = os.path.join(inputs_path, "test_runner_hdd.qcow2")
+            shutil.copy(hdd, hdd_copy)
         return run(
             iso_path=iso,
             work_path=temp_path,
             inputs_path=inputs_path,
             results_path=results_path,
             xemu_path=xemu,
-            hdd_path=hdd,
+            hdd_path=hdd_copy,
             overwrite_existing_outputs=overwrite_existing_outputs,
             no_bundle=args.no_bundle,
             use_vulkan=args.use_vulkan,
