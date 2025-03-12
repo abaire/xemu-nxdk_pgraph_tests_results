@@ -20278,6 +20278,13 @@
 
     <h2><a href="Color_zeta_overlap.html">Color_zeta_overlap</a></h2>
     <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Tests behavior when the color buffer and z/stencil buffers overlap in RAM.</div>
+        
+            <div class="test-description-line">WARNING: These tests are non-deterministic on Xbox hardware. The primary intent of these tests is to verify that emulators do not crash.</div>
+        </div>
+        
         <div class="label">Suite class def</div>
         <div class="value">src/tests/color_zeta_overlap_tests.h</div>
     </div>
@@ -35660,6 +35667,11 @@
 
     <h2><a href="Front_face.html">Front_face</a></h2>
     <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Tests handling of NV097_SET_FRONT_FACE and NV097_SET_CULL_FACE, including degenerate winding values.</div>
+        </div>
+        
         <div class="label">Suite class def</div>
         <div class="value">src/tests/front_face_tests.h</div>
     </div>
@@ -35669,7 +35681,10 @@
         <h3 id="Front_face_FrontFace_0_CF_B">FrontFace_0_CF_B</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">Sets the winding to 0 with back faces culled. Prior to starting the test, NV097_SET_FRONT_FACE is set to CW. Only the right quad should be rendered.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -35697,7 +35712,10 @@
         <h3 id="Front_face_FrontFace_0_CF_F">FrontFace_0_CF_F</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">Sets the winding to 0 with front faces culled. Prior to starting the test, NV097_SET_FRONT_FACE is set to CW. Only the left quad should be rendered.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -35725,7 +35743,10 @@
         <h3 id="Front_face_FrontFace_63_CF_B">FrontFace_63_CF_B</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">Sets the winding to 0x63 with back faces culled. Prior to starting the test, NV097_SET_FRONT_FACE is set to CW. Only the right quad should be rendered.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -35753,7 +35774,10 @@
         <h3 id="Front_face_FrontFace_63_CF_F">FrontFace_63_CF_F</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">Sets the winding to 0x63 with front faces culled. Prior to starting the test, NV097_SET_FRONT_FACE is set to CW. Only the left quad should be rendered.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -35781,7 +35805,10 @@
         <h3 id="Front_face_FrontFace_CCW_CF_B">FrontFace_CCW_CF_B</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">Sets the winding to counter-clockwise with back faces culled. Prior to starting the test, NV097_SET_FRONT_FACE is set to CW. Only the left quad should be rendered.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -35809,7 +35836,10 @@
         <h3 id="Front_face_FrontFace_CCW_CF_F">FrontFace_CCW_CF_F</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">Sets the winding to counter-clockwise with front faces culled. Prior to starting the test, NV097_SET_FRONT_FACE is set to CW. Only the right quad should be rendered.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -35837,7 +35867,10 @@
         <h3 id="Front_face_FrontFace_CW_CF_B">FrontFace_CW_CF_B</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">Sets the winding to clockwise with back faces culled. Prior to starting the test, NV097_SET_FRONT_FACE is set to CCW. Only the right quad should be rendered.</div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -35865,7 +35898,10 @@
         <h3 id="Front_face_FrontFace_CW_CF_F">FrontFace_CW_CF_F</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">Sets the winding to clockwise with front faces culled. Prior to starting the test, NV097_SET_FRONT_FACE is set to CCW. Only the left quad should be rendered.</div>
+        </div>
 
         <div class="comparison-image-set">
 
