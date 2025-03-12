@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+from collections.abc import Collection
 from shutil import SameFileError
 from time import sleep
 from typing import Any
@@ -424,6 +425,7 @@ def run(
     overwrite_existing_outputs: bool,
     no_bundle: bool = False,
     use_vulkan: bool = False,
+        just_suites: Collection[str] | None = None,
 ):
     emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path, no_bundle=no_bundle)
     if not emulator_command:
@@ -455,6 +457,7 @@ def run(
         xbox_artifact_path=r"c:\nxdk_pgraph_tests",
         test_failure_retries=2,
         network_config={"config_automatic": True},
+        suite_allowlist=just_suites,
     )
 
     ret = nxdk_pgraph_test_runner.entrypoint(config)
@@ -538,6 +541,7 @@ def _process_arguments_and_run():
         "--no-bundle", action="store_true", help="Suppress attempt to set DYLD_FALLBACK_LIBRARY_PATH on macOS."
     )
     parser.add_argument("--use-vulkan", action="store_true", help="Use the Vulkan renderer instead of OpenGL.")
+    parser.add_argument("--just-suites", nargs="+", help="Just run the given suites rather than the full test set.")
 
     args = parser.parse_args()
 
@@ -588,6 +592,7 @@ def _process_arguments_and_run():
             overwrite_existing_outputs=overwrite_existing_outputs,
             no_bundle=args.no_bundle,
             use_vulkan=args.use_vulkan,
+            just_suites=args.just_suites,
         )
 
     if args.temp_path:
