@@ -42,7 +42,11 @@
 
     {%- if descriptor and descriptor.test_descriptions[result.test_name]  %}
         <div class="label">Description</div>
-        <div class="value">{{ descriptor.test_descriptions[result.test_name] }}</div>
+        <div class="value">
+            {% for line in descriptor.test_descriptions[result.test_name].split('\n') -%}
+                <p>{{ line | escape }}</p>
+            {%- endfor %}
+        </div>
     {% endif -%}
     </div>
 
