@@ -65,7 +65,7 @@ jobs:
             echo "Archiving xemu results from ${newest_official_result}"
             xemu_info="${newest_official_result##results/}"
             artifact_name="${xemu_info}_results.tgz"
-            tar -czf "${artifact_name}" "${newest_official_result}"
+            tar -vczf "${artifact_name}" "${newest_official_result}" "results/known_issues.json"
 
             echo "xemu_info=${xemu_info}" >> $GITHUB_OUTPUT 
             echo "release_archive=${artifact_name}" >> $GITHUB_OUTPUT
