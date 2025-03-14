@@ -45153,7 +45153,7 @@
             <div class="value">39554</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set SEPARATE_SPECULAR will cause the specular alpha to be set to 1 and failing to set ALPHA_FROM_MATERIAL_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but with a directional light pointing at {1, 0, 1}.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
+                <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1 and failing to set SEPARATE_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but with a directional light pointing at {1, 0, 1}.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
             </div>
         </div>
 
@@ -45186,7 +45186,7 @@
             <div class="value">60273</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set SEPARATE_SPECULAR will cause the specular alpha to be set to 1 and failing to set ALPHA_FROM_MATERIAL_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but with a directional light pointing at {1, 0, 1}.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
+                <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1 and failing to set SEPARATE_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but with a directional light pointing at {1, 0, 1}.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
             </div>
         </div>
 
@@ -45219,7 +45219,7 @@
             <div class="value">55162</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set SEPARATE_SPECULAR will cause the specular alpha to be set to 1 and failing to set ALPHA_FROM_MATERIAL_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but no light exists.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
+                <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1 and failing to set SEPARATE_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but no light exists.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
             </div>
         </div>
 
@@ -45252,7 +45252,7 @@
             <div class="value">53816</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set SEPARATE_SPECULAR will cause the specular alpha to be set to 1 and failing to set ALPHA_FROM_MATERIAL_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but no light exists.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
+                <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1 and failing to set SEPARATE_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but no light exists.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
             </div>
         </div>
 
@@ -45565,6 +45565,11 @@
 
     <h2><a href="Surface_clip.html">Surface_clip</a></h2>
     <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Tests behavior of NV097_SET_SURFACE_CLIP_HORIZONTAL and NV097_SET_SURFACE_CLIP_VERTICAL.</div>
+        </div>
+        
         <div class="label">Suite class def</div>
         <div class="value">src/tests/surface_clip_tests.h</div>
     </div>
@@ -45574,7 +45579,12 @@
         <h3 id="Surface_clip_rt_x0y0_w512h384">rt_x0y0_w512h384</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">102431</div></div>
+            <div class="value">102431</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures a texture target as R5G6B5 and sets the clip region to 0,0 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -45602,7 +45612,12 @@
         <h3 id="Surface_clip_rt_x16y8_w512h384">rt_x16y8_w512h384</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">95642</div></div>
+            <div class="value">95642</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures a texture target as R5G6B5 and sets the clip region to 16,8 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -45630,7 +45645,12 @@
         <h3 id="Surface_clip_rt_x8y16_w632h464">rt_x8y16_w632h464</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">5398</div></div>
+            <div class="value">5398</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures a texture target as R5G6B5 and sets the clip region to 8,16 632x464, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -45658,7 +45678,12 @@
         <h3 id="Surface_clip_x16y8_w512h384">x16y8_w512h384</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">2655</div></div>
+            <div class="value">2655</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures the backbuffer as R5G6B5 and sets the clip region to 16,8 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. No red should be seen, and the light green quads should be fully visible. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -45686,7 +45711,12 @@
         <h3 id="Surface_clip_x8y16_w632h464">x8y16_w632h464</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">5740</div></div>
+            <div class="value">5740</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures the backbuffer as R5G6B5 and sets the clip region to 8,16 632x464, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. No red should be seen, and the light green quads should be fully visible. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 

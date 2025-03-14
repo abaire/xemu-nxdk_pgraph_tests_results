@@ -42370,6 +42370,11 @@
 
     <h2><a href="Surface_clip.html">Surface_clip</a></h2>
     <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Tests behavior of NV097_SET_SURFACE_CLIP_HORIZONTAL and NV097_SET_SURFACE_CLIP_VERTICAL.</div>
+        </div>
+        
         <div class="label">Suite class def</div>
         <div class="value">src/tests/surface_clip_tests.h</div>
     </div>
@@ -42379,7 +42384,12 @@
         <h3 id="Surface_clip_rt_x0y0_w512h384">rt_x0y0_w512h384</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.05154050886631012</div></div>
+            <div class="value">0.05154050886631012</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures a texture target as R5G6B5 and sets the clip region to 0,0 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -42407,7 +42417,12 @@
         <h3 id="Surface_clip_rt_x16y8_w512h384">rt_x16y8_w512h384</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.043021705001592636</div></div>
+            <div class="value">0.043021705001592636</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures a texture target as R5G6B5 and sets the clip region to 16,8 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -42435,7 +42450,12 @@
         <h3 id="Surface_clip_rt_x8y16_w632h464">rt_x8y16_w632h464</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.0016886619850993156</div></div>
+            <div class="value">0.0016886619850993156</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures a texture target as R5G6B5 and sets the clip region to 8,16 632x464, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -42463,7 +42483,12 @@
         <h3 id="Surface_clip_x16y8_w512h384">x16y8_w512h384</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.06822067499160767</div></div>
+            <div class="value">0.06822067499160767</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures the backbuffer as R5G6B5 and sets the clip region to 16,8 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. No red should be seen, and the light green quads should be fully visible. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -42491,7 +42516,12 @@
         <h3 id="Surface_clip_x8y16_w632h464">x8y16_w632h464</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">0.05280907079577446</div></div>
+            <div class="value">0.05280907079577446</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Configures the backbuffer as R5G6B5 and sets the clip region to 8,16 632x464, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. No red should be seen, and the light green quads should be fully visible. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
