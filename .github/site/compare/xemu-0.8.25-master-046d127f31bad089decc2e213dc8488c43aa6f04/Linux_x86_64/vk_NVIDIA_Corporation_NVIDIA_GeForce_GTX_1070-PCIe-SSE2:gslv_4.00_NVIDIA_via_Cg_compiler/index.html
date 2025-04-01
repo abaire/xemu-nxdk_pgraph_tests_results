@@ -39596,6 +39596,15 @@
 
     <h2><a href="Material_color_source.html">Material_color_source</a></h2>
     <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Tests behavior when lighting is enabled and color components are requested from various sources. Also tests the behavior of non-zero NV097_SET_MATERIAL_EMISSION values.</div>
+        
+            <div class="test-description-line">A color legend is rendered along the left hand side: vD = vertex diffuse. vS = vertex specular. sA = scene ambient. mD = material diffuse. mS = material specular. mE = material emissive. mA = material ambient. A single directional light is used with ambient, diffuse, and specular multipliers all set to 1.0.</div>
+        
+            <div class="test-description-line">NV097_SET_SCENE_AMBIENT_COLOR is set to scene ambient + material emissive.</div>
+        </div>
+        
         <div class="label">Suite class def</div>
         <div class="value">src/tests/material_color_source_tests.h</div>
     </div>
@@ -39605,7 +39614,12 @@
         <h3 id="Material_color_source_FromVertexDiffuse">FromVertexDiffuse</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Draws 9 quads with some colors taken from the vertex diffuse color {0.f, 0.25f, 0.5f, 0.25f}. Each quad is divided into rows: the top is just diffuse, the center is just specular, the bottom is both. It is also divided into columns: the left column retains material alpha, the right forces alpha to 1.0.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -39633,7 +39647,12 @@
         <h3 id="Material_color_source_FromVertexSpecular">FromVertexSpecular</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Draws 9 quads with some colors taken from the vertex specular color {0.5f, 0.25f, 0.f, 0.25f}. Each quad is divided into rows: the top is just diffuse, the center is just specular, the bottom is both. It is also divided into columns: the left column retains material alpha, the right forces alpha to 1.0.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
