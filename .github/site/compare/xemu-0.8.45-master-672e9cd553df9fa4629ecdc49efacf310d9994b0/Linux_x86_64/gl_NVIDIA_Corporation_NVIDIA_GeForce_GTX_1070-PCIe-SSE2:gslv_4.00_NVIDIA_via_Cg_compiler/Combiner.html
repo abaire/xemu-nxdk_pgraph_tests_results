@@ -15,8 +15,13 @@
     <div class="page-content"><h1>Combiner : xemu-0.8.45-master-672e9cd553df9fa4629ecdc49efacf310d9994b0:Linux_x86_64:gl_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2:gslv_4.00_NVIDIA_via_Cg_compiler vs Xbox_Hardware</h1>
 
 <div class="label-value-grid">
+    <div class="label">Description</div>
+    <div class="value">
+        <div class="test-description-line">Tests behavior of NV097_SET_COMBINER_* and NV097_SET_SPECULAR_* final combiner operations.</div>
+    </div>
+    
     <div class="label">Suite class def</div>
-    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/combiner_tests.h#L13">src/tests/combiner_tests.h</a></div>
+    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/combiner_tests.h#L14">src/tests/combiner_tests.h</a></div>
     <div class="label">Golden results</div>
     <div class="value"><a href="https://abaire.github.io/nxdk_pgraph_tests_golden_results/results/Combiner/index.html">https://abaire.github.io/nxdk_pgraph_tests_golden_results/results/Combiner/index.html</a></div>
 </div>
@@ -26,7 +31,12 @@
     <h3 id="Flags">Flags</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">164</div></div>
+        <div class="value">164</div>
+        <div class="label">Description</div>
+        <div class="value">
+            <p>Tests behavior of specular_add_invert_r0, specular_add_invert_v1, and specular_clamp on final combiners.</p>
+        </div>
+    </div>
 
     <div class="comparison-image-set">
 
@@ -51,7 +61,12 @@
     <h3 id="Independence">Independence</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">164</div></div>
+        <div class="value">164</div>
+        <div class="label">Description</div>
+        <div class="value">
+            <p>Demonstrates that setting a register&#39;s value in a combiner stage does not mutate the value until after it is assigned as an output. The test performs several draws where R0 is initialized to some color then both mutated and copied into R1, demonstrating that the original value of R0 is copied into R1 before being replaced with the new value.</p>
+        </div>
+    </div>
 
     <div class="comparison-image-set">
 

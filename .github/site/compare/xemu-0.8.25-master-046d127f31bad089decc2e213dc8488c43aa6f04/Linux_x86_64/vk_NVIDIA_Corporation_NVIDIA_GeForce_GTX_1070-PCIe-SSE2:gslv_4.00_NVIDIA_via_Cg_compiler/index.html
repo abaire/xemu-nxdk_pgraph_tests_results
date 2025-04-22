@@ -20729,6 +20729,11 @@
 
     <h2><a href="Combiner.html">Combiner</a></h2>
     <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Tests behavior of NV097_SET_COMBINER_* and NV097_SET_SPECULAR_* final combiner operations.</div>
+        </div>
+        
         <div class="label">Suite class def</div>
         <div class="value">src/tests/combiner_tests.h</div>
     </div>
@@ -20738,7 +20743,12 @@
         <h3 id="Combiner_Flags">Flags</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Tests behavior of specular_add_invert_r0, specular_add_invert_v1, and specular_clamp on final combiners.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -20766,7 +20776,12 @@
         <h3 id="Combiner_Independence">Independence</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">-1</div></div>
+            <div class="value">-1</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Demonstrates that setting a register&#39;s value in a combiner stage does not mutate the value until after it is assigned as an output. The test performs several draws where R0 is initialized to some color then both mutated and copied into R1, demonstrating that the original value of R0 is copied into R1 before being replaced with the new value.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -36300,6 +36315,13 @@
 
     <h2><a href="Inline_array_size_mismatch.html">Inline_array_size_mismatch</a></h2>
     <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Verifies that using an NV097_INLINE_ARRAY draw loop that ends with a partial vertex description silently ignores any partial vertices.</div>
+        
+            <div class="test-description-line">See xemu#985</div>
+        </div>
+        
         <div class="label">Suite class def</div>
         <div class="value">src/tests/inline_array_size_mismatch.h</div>
     </div>
