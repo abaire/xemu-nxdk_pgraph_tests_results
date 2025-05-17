@@ -14,7 +14,7 @@
 
     <div class="page-content"><h1>xemu-0.8.62-master-c720af00bb9db153fc26e982ae379006fa7dbbc2</h1>
 <h2>Darwin_arm64 - OpenGL</h2>
-    <h2>nxdk_pgraph_tests-v2025-04-29_15-47-25-674406178.iso</h2>
+    <h2>nxdk_pgraph_tests-v2025-05-17_02-43-06-365324468.iso</h2>
 
 <h1>Machine info</h1>
 <div class="code-snippet">
@@ -157,6 +157,8 @@ GL_SHADING_LANGUAGE_VERSION: 4.10
         
             <li><a href="Texture_border/index.html">Texture_border</a></li>
         
+            <li><a href="Texture_border_color/index.html">Texture_border_color</a></li>
+        
             <li><a href="Texture_CPU_Update/index.html">Texture_CPU_Update</a></li>
         
             <li><a href="Texture_cubemap/index.html">Texture_cubemap</a></li>
@@ -187,6 +189,8 @@ GL_SHADING_LANGUAGE_VERSION: 4.10
         
             <li><a href="Viewport/index.html">Viewport</a></li>
         
+            <li><a href="Volume%20texture/index.html">Volume texture</a></li>
+        
             <li><a href="Volume_texture/index.html">Volume_texture</a></li>
         
             <li><a href="W_param/index.html">W_param</a></li>
@@ -201,7 +205,7 @@ GL_SHADING_LANGUAGE_VERSION: 4.10
         
     </ul>
 
-<h1>Failed tests (2)</h1>
+<h1>Failed tests (3)</h1>
 
     <h2>Color zeta overlap::AdjacentWithAA</h2>
     <div class="code-snippet">
@@ -233,6 +237,23 @@ nv2a: unimplemented color surface format 0x7
 
     <div class="code-snippet">
 nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+
+    <h2>Volume texture::R6G5B5</h2>
+    <div class="code-snippet">
+Assertion failed: (depth == 1), function pgraph_convert_texture_data, file texture.c, line 381.
+
+    </div>
+
+    <div class="code-snippet">
+Assertion failed: (depth == 1), function pgraph_convert_texture_data, file texture.c, line 381.
+
+    </div>
+
+    <div class="code-snippet">
+Assertion failed: (depth == 1), function pgraph_convert_texture_data, file texture.c, line 381.
 
     </div>
 
