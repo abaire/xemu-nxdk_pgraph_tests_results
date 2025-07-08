@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, Any] | None:
-    full_url = f"{api_url}/releases/latest" if not tag or tag == "latest" else f"{api_url}/releases"
+    full_url = f"{api_url}/releases/latest" if not tag or tag == "latest" else f"{api_url}/releases?per_page=60"
 
     def fetch_and_filter(url: str):
         try:
@@ -62,7 +62,8 @@ def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, A
         next_link = response.links.get("next", {}).get("url")
         if not next_link:
             return None
-        next_link = next_link + "&per_page=60"
+        if "per_page=60" not in next_link:
+            next_link = next_link + "&per_page=60"
         return fetch_and_filter(next_link)
 
     return fetch_and_filter(full_url)
