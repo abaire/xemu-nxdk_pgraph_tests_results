@@ -61,12 +61,12 @@
     </div>
     
     <div class="label">Suite class def</div>
-    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/lighting_control_tests.h#L54">src/tests/lighting_control_tests.h</a></div>
+    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/lighting_control_tests.h#L58">src/tests/lighting_control_tests.h</a></div>
 </div>
 
 <h2 id="FF_0x000000">FF_0x000000</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is off, causing the green of the mesh specular to be retained. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is off, causing the green of the mesh specular to be retained. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. Light control alpha is forced to opaque.</p>
         </div>
     
 <div class="image-container">
@@ -75,7 +75,7 @@
     
 <h2 id="FF_0x000000NoSpec">FF_0x000000NoSpec</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. Light control alpha is ignored and the mesh is forced to opaque because SPECULAR_ENABLED is off. Visually equivalent to FF_0x000001.</p>
         </div>
     
 <div class="image-container">
@@ -84,7 +84,7 @@
     
 <h2 id="FF_0x000001">FF_0x000001</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is on, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is on, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. Light control alpha is forced to opaque.</p>
         </div>
     
 <div class="image-container">
@@ -93,7 +93,7 @@
     
 <h2 id="FF_0x000001NoSpec">FF_0x000001NoSpec</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. Light control alpha is ignored and the mesh is forced to opaque because SPECULAR_ENABLED is off.</p>
         </div>
     
 <div class="image-container">
@@ -102,7 +102,7 @@
     
 <h2 id="FF_0x010000">FF_0x010000</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is off, causing the green of the mesh specular to be retained. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is off, causing the green of the mesh specular to be retained. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. Light control alpha is forced to opaque.</p>
         </div>
     
 <div class="image-container">
@@ -111,7 +111,7 @@
     
 <h2 id="FF_0x010000NoSpec">FF_0x010000NoSpec</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. Light control alpha is ignored and the mesh is forced to opaque because SPECULAR_ENABLED is off.</p>
         </div>
     
 <div class="image-container">
@@ -120,7 +120,7 @@
     
 <h2 id="FF_0x010001">FF_0x010001</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is on, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is on, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. Light control alpha is forced to opaque.</p>
         </div>
     
 <div class="image-container">
@@ -129,7 +129,7 @@
     
 <h2 id="FF_0x010001NoSpec">FF_0x010001NoSpec</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. Light control alpha is ignored and the mesh is forced to opaque because SPECULAR_ENABLED is off.</p>
         </div>
     
 <div class="image-container">
@@ -138,7 +138,7 @@
     
 <h2 id="FF_0x020000">FF_0x020000</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is off, causing the green of the mesh specular to be retained. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is off, causing the green of the mesh specular to be retained. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. Light control alpha is set to compute the alpha from the specular and light effects, so the model is transluscent.</p>
         </div>
     
 <div class="image-container">
@@ -147,7 +147,7 @@
     
 <h2 id="FF_0x020000NoSpec">FF_0x020000NoSpec</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. Light control alpha is ignored and the mesh is forced to opaque because SPECULAR_ENABLED is off.</p>
         </div>
     
 <div class="image-container">
@@ -156,7 +156,7 @@
     
 <h2 id="FF_0x020001">FF_0x020001</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is on, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is on, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. Light control alpha is set to compute the alpha from the specular and light effects, so the model is transluscent.</p>
         </div>
     
 <div class="image-container">
@@ -165,7 +165,7 @@
     
 <h2 id="FF_0x020001NoSpec">FF_0x020001NoSpec</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is off, using a simplified model for specular highlighting, causing artifacts for the point light on the cylinder mesh. Light control alpha is ignored and the mesh is forced to opaque because SPECULAR_ENABLED is off.</p>
         </div>
     
 <div class="image-container">
@@ -174,7 +174,7 @@
     
 <h2 id="FF_0x030000">FF_0x030000</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is off, causing the green of the mesh specular to be retained. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is off, causing the green of the mesh specular to be retained. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. Light control alpha is set to compute the alpha from the specular and light effects, so the model is transluscent.</p>
         </div>
     
 <div class="image-container">
@@ -183,7 +183,7 @@
     
 <h2 id="FF_0x030000NoSpec">FF_0x030000NoSpec</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. Light control alpha is ignored and the mesh is forced to opaque because SPECULAR_ENABLED is off.</p>
         </div>
     
 <div class="image-container">
@@ -192,7 +192,7 @@
     
 <h2 id="FF_0x030001">FF_0x030001</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is on, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED on. Separate specular is on, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. Light control alpha is set to compute the alpha from the specular and light effects, so the model is transluscent.</p>
         </div>
     
 <div class="image-container">
@@ -201,7 +201,7 @@
     
 <h2 id="FF_0x030001NoSpec">FF_0x030001NoSpec</h2>
         <div class="test-case-description">
-        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. </p>
+        <p>Tests behavior using the fixed function pipeline with SET_SPECULAR_ENABLED off. Separate specular is ignored because SPECULAR_ENABLED is off, so the green of the mesh specular is not seen. Localeye is on, using a slower model for specular highlighting that results in more realistic behavior for the point light on the cylinder mesh. Light control alpha is ignored and the mesh is forced to opaque because SPECULAR_ENABLED is off. </p>
         </div>
     
 <div class="image-container">
