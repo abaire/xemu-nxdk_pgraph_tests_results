@@ -15,8 +15,15 @@
     <div class="page-content"><h1>Image_blit : xemu-0.8.85-master-8cc83dfc437312d31d20230383a99384edfe6bbd:Linux_x86_64:vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2:gslv_4.00_NVIDIA_via_Cg_compiler vs Xbox_Hardware</h1>
 
 <div class="label-value-grid">
+    <div class="label">Description</div>
+    <div class="value">
+        <div class="test-description-line">Tests behavior of the 2D blitting commands.</div>
+    
+        <div class="test-description-line">NV09F, NV012, NV019, NV072</div>
+    </div>
+    
     <div class="label">Suite class def</div>
-    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/image_blit_tests.h#L10">src/tests/image_blit_tests.h</a></div>
+    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/image_blit_tests.h#L15">src/tests/image_blit_tests.h</a></div>
     <div class="label">Golden results</div>
     <div class="value"><a href="https://abaire.github.io/nxdk_pgraph_tests_golden_results/results/Image_blit/index.html">https://abaire.github.io/nxdk_pgraph_tests_golden_results/results/Image_blit/index.html</a></div>
 </div>
@@ -26,7 +33,12 @@
     <h3 id="DirtyOverlappedDestSurf">DirtyOverlappedDestSurf</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">16096</div></div>
+        <div class="value">16096</div>
+        <div class="label">Description</div>
+        <div class="value">
+            <p>Performs a 3d render into the backbuffer, then a 2D srccopy that completely overwrites it. Finally performs another 3d render, demonstrating incorrect behavior in various versions of xemu.</p>
+        </div>
+    </div>
 
     <div class="comparison-image-set">
 
