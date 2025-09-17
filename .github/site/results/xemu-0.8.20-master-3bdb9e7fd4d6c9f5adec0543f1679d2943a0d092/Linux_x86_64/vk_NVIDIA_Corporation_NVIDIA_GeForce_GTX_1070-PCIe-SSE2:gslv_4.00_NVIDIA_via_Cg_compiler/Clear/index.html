@@ -33,13 +33,15 @@
     <div class="value">
         <div class="test-description-line">Tests the behavior of various write masks on NV097_CLEAR_SURFACE.</div>
     
-        <div class="test-description-line">Each test draws some geometry, then modifies the NV097_SET_COLOR_MASK, NV097_SET_DEPTH_MASK, and NV097_SET_STENCIL_MASK settings, then invokes NV097_CLEAR_SURFACE.</div>
+        <div class="test-description-line">Color mask (C*) tests: Each test draws some geometry, then modifies the NV097_SET_COLOR_MASK, NV097_SET_DEPTH_MASK, and NV097_SET_STENCIL_MASK settings, then invokes NV097_CLEAR_SURFACE.</div>
     
         <div class="test-description-line">In all cases, the clear color is set to 0x7F7F7F7F and the depth value is set to 0xFFFFFFFF.</div>
+    
+        <div class="test-description-line">Surface format color (SFC*) tests: Each test clears a render target surface and then renders it as a texture with alpha blending disabled in order to test the interaction of surface format with NV097_CLEAR_SURFACE_COLOR.</div>
     </div>
     
     <div class="label">Suite class def</div>
-    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/clear_tests.h#L19">src/tests/clear_tests.h</a></div>
+    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/clear_tests.h#L23">src/tests/clear_tests.h</a></div>
 </div>
 
 <h2 id="C00000000_Depth_n">C00000000_Depth_n</h2>
@@ -251,7 +253,7 @@
     
 <h2 id="C01010101_Depth_y_ZB">C01010101_Depth_y_ZB</h2>
         <div class="test-case-description">
-        <p>Z-buffer result after enabling writing to all color channels and the depth/stencil buffer. </p>
+        <p>Z-buffer result after enabling writing to all color channels and the depth/stencil buffer.</p>
         </div>
     
 <div class="image-container">
