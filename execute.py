@@ -15,10 +15,10 @@ import subprocess
 import sys
 import tempfile
 import zipfile
-from collections.abc import Collection
 from shutil import SameFileError
+from subprocess import CalledProcessError
 from time import sleep
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.request import urlcleanup, urlretrieve
 
 import nxdk_pgraph_test_runner
@@ -27,6 +27,9 @@ from nxdk_pgraph_test_runner import Config
 from nxdk_pgraph_test_runner.emulator_output import EmulatorOutput
 from nxdk_pgraph_test_runner.host_profile import HostProfile
 from nxdk_pgraph_test_runner.runner import get_output_directory
+
+if TYPE_CHECKING:
+    from collections.abc import Collection
 
 logger = logging.getLogger(__name__)
 
@@ -415,6 +418,50 @@ def _determine_output_directory(results_path: str, emulator_command: str, *, is_
     )
 
 
+def _get_macos_bundle_identifier(xemu_path: str, *, no_bundle: bool) -> str | None:
+    if no_bundle or platform.system() != "Darwin":
+        return None
+
+    command = ["mdls", "-name", "kMDItemCFBundleIdentifier", "-r", xemu_path]
+    result = subprocess.run(command, capture_output=True, text=True, check=True)
+    return result.stdout
+
+
+def _set_apple_persistence_ignore_state(macos_bundle_identifier: str, *, ignore: bool | None) -> bool | None:
+    command = [
+        "defaults",
+        "read",
+        macos_bundle_identifier,
+        "ApplePersistenceIgnoreState",
+    ]
+
+    current_value = None
+    with contextlib.suppress(CalledProcessError):
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        current_value = result.stdout.startswith("1")
+
+    if current_value != ignore:
+        if ignore is None:
+            command = [
+                "defaults",
+                "delete",
+                macos_bundle_identifier,
+                "ApplePersistenceIgnoreState",
+            ]
+        else:
+            command = [
+                "defaults",
+                "write",
+                macos_bundle_identifier,
+                "ApplePersistenceIgnoreState",
+                "-bool",
+                "true" if current_value else "false",
+            ]
+        subprocess.run(command, capture_output=True, text=True, check=True)
+
+    return current_value
+
+
 def run(
     iso_path: str,
     work_path: str,
@@ -426,7 +473,7 @@ def run(
     overwrite_existing_outputs: bool,
     no_bundle: bool = False,
     use_vulkan: bool = False,
-        just_suites: Collection[str] | None = None,
+    just_suites: Collection[str] | None = None,
 ):
     emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path, no_bundle=no_bundle)
     if not emulator_command:
@@ -463,16 +510,28 @@ def run(
         suite_allowlist=just_suites,
     )
 
+    # Disable persistence on macOS to avoid modal dialogs after (expected) crashes.
+    macos_bundle_identifier = _get_macos_bundle_identifier(xemu_path, no_bundle=no_bundle)
+    original_ignore_value: bool | None = None
+    if macos_bundle_identifier:
+        original_ignore_value = _set_apple_persistence_ignore_state(macos_bundle_identifier, ignore=True)
+
     ret = nxdk_pgraph_test_runner.entrypoint(config)
     if os.path.isdir(output_directory):
         with open(os.path.join(output_directory, "renderer.json"), "w") as outfile:
             json.dump({"vulkan": use_vulkan}, outfile)
         with open(os.path.join(output_directory, "runner.json"), "w") as outfile:
-            json.dump({
-                "iso": os.path.basename(iso_path),
-                "test_failure_retries": test_failure_retries,
-                "suite_allowlist": just_suites,
-            }, outfile)
+            json.dump(
+                {
+                    "iso": os.path.basename(iso_path),
+                    "test_failure_retries": test_failure_retries,
+                    "suite_allowlist": just_suites,
+                },
+                outfile,
+            )
+
+    if macos_bundle_identifier:
+        _set_apple_persistence_ignore_state(macos_bundle_identifier, ignore=original_ignore_value)
 
     return ret
 

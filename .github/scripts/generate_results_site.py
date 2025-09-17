@@ -516,7 +516,6 @@ class ResultsScanner:
             else:
                 results_summary["runner_info"] = {"iso": "UNKNOWN"}
 
-
         machine_info_files = glob.glob("**/machine_info.txt", root_dir=self.results_dir, recursive=True)
 
         def load_machine_info(subpath: str) -> tuple[str, MachineInfo]:
