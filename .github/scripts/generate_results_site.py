@@ -115,7 +115,7 @@ class RunIdentifier(NamedTuple):
 
     @property
     def path(self) -> str:
-        return str(os.path.join(*self.run_identifier))
+        return str(os.path.join(*self.run_identifier)).replace(":", "--")
 
     @property
     def minimal_path(self) -> str:
