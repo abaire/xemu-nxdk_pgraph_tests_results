@@ -11,6 +11,13 @@ In particular, the framebuffer captures in this repository will respect alpha
 values in a
 way that may not match what is seen within the emulator.
 
+# Checking out on Windows
+
+This repository requires long path support on Windows.
+
+1. In PowerShell with admin privileges: `New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force`
+2. In PowerShell with admin privileges: `git config --system core.longpaths true`
+
 # Updating
 
 Note: Commands below assume that the `requirements.txt` packages have all been
