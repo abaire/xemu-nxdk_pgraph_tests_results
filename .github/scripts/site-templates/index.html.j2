@@ -7,7 +7,7 @@
 {% block content -%}
 
     <h1>Test Results</h1>
-    {% for emulator_version, platforms in emulator_grouped_results | dictsort(reverse=true) -%}
+    {% for emulator_version, platforms in emulator_grouped_results | version_sort -%}
         <h2>{{ emulator_version }}</h2>
         <ul>
         {%- for platform, renderers in platforms | dictsort %}

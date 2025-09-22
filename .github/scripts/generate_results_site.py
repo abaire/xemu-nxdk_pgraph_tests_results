@@ -13,6 +13,7 @@ import json
 import logging
 import math
 import os
+import re
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
@@ -919,15 +920,17 @@ class PagesWriter:
 # 'xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4'
 VERSION_STRING_RE = re.compile(r"xemu-(\d+)\.(\d+)\.(\d+)-.+")
 
-def _xemu_version_sort_filter(data_dict: dict[str, Any], *, reverse: bool=True) -> dict[str, Any]:
+
+def _xemu_version_sort_filter(data_dict: dict[str, Any], *, reverse: bool = True) -> list[tuple[str, Any]]:
     def get_version_key(dict_entry):
         match = VERSION_STRING_RE.match(dict_entry[0])
         if not match:
-            return (0, 0, 0, dict_entry[0])
+            return 0, 0, 0, dict_entry[0]
 
-        return (match.group(1), match.group(2), match.group(3), dict_entry[0])
+        return int(match.group(1)), int(match.group(2)), int(match.group(3)), dict_entry[0]
 
-    return dict(sorted(data_dict.items(), key=get_version_key, reverse=reverse))
+    return sorted(data_dict.items(), key=get_version_key, reverse=reverse)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -1023,6 +1026,7 @@ def main():
         args.templates_dir = os.path.join(os.path.dirname(__file__), "site-templates")
 
     jinja_env = Environment(loader=FileSystemLoader(args.templates_dir))
+    jinja_env.filters["version_sort"] = _xemu_version_sort_filter
     jinja_env.globals["sidenav_width"] = 48
     jinja_env.globals["sidenav_icon_width"] = 32
 
