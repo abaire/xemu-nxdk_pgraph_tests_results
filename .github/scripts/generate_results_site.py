@@ -115,7 +115,7 @@ class RunIdentifier(NamedTuple):
 
     @property
     def path(self) -> str:
-        return str(os.path.join(*self.run_identifier))
+        return str(os.path.join(*self.run_identifier)).replace(":", "--")
 
     @property
     def minimal_path(self) -> str:
@@ -915,6 +915,19 @@ class PagesWriter:
 
         return 0
 
+
+# 'xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4'
+VERSION_STRING_RE = re.compile(r"xemu-(\d+)\.(\d+)\.(\d+)-.+")
+
+def _xemu_version_sort_filter(data_dict: dict[str, Any], *, reverse: bool=True) -> dict[str, Any]:
+    def get_version_key(dict_entry):
+        match = VERSION_STRING_RE.match(dict_entry[0])
+        if not match:
+            return (0, 0, 0, dict_entry[0])
+
+        return (match.group(1), match.group(2), match.group(3), dict_entry[0])
+
+    return dict(sorted(data_dict.items(), key=get_version_key, reverse=reverse))
 
 def main():
     parser = argparse.ArgumentParser()
