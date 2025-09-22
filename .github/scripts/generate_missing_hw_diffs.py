@@ -53,7 +53,7 @@ def _comparison_path_to_source_path(comparison_path: str) -> str:
     platform = components[-3]
     graphics_pair = components[-2]
 
-    return os.path.join(xemu, platform, *graphics_pair.split(":"))
+    return os.path.join(xemu, platform, *graphics_pair.split("--")).replace(":", "--")
 
 
 def find_result_dirs_without_hw_diffs(results_dir: str, output_dir: str) -> set[str]:
