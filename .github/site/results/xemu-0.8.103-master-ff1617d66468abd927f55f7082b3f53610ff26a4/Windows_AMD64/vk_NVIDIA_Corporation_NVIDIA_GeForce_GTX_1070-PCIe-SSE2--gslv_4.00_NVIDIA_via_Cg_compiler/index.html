@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-    <title>xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4: 24H2 - Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz, OpenGL GL: NVIDIA Corporation - NVIDIA GeForce GTX 1070-PCIe-SSE2 - 4.0.0 NVIDIA 581.15, Shader: 4.00 NVIDIA via Cg compiler</title>
+    <title>xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4: 24H2 - Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz, Vulkan GL: NVIDIA Corporation - NVIDIA GeForce GTX 1070-PCIe-SSE2 - 4.0.0 NVIDIA 581.15, Shader: 4.00 NVIDIA via Cg compiler</title>
     <link rel="stylesheet" href="../../../../site.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
     </div>
 
     <div class="page-content"><h1>xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4</h1>
-<h2>24H2 - Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz - OpenGL</h2>
+<h2>24H2 - Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz - Vulkan</h2>
     <h2>nxdk_pgraph_tests-v2025-09-22_14-33-39-879557279.iso</h2>
 
 <h1>Machine info</h1>
@@ -29,6 +29,26 @@ GL_VENDOR: NVIDIA Corporation
 GL_RENDERER: NVIDIA GeForce GTX 1070/PCIe/SSE2
 GL_VERSION: 4.0.0 NVIDIA 581.15
 GL_SHADING_LANGUAGE_VERSION: 4.00 NVIDIA via Cg compiler
+Enabled instance extensions:
+- VK_KHR_surface
+- VK_KHR_win32_surface
+- VK_KHR_get_physical_device_properties2
+- VK_KHR_external_semaphore_capabilities
+- VK_KHR_external_memory_capabilities
+Available physical devices:
+- NVIDIA GeForce GTX 1070
+- NVIDIA GeForce GTX 1070
+Selected physical device: NVIDIA GeForce GTX 1070
+- Vendor: 10de, Device: 1b81
+- Driver Version: 581.60.0
+Enabled device extensions:
+- VK_KHR_external_semaphore
+- VK_KHR_external_memory
+- VK_KHR_external_memory_win32
+- VK_KHR_external_semaphore_win32
+- VK_EXT_custom_border_color
+- VK_EXT_provoking_vertex
+- VK_EXT_memory_budget
 </div>
 
 
@@ -130,6 +150,8 @@ GL_SHADING_LANGUAGE_VERSION: 4.00 NVIDIA via Cg compiler
         
             <li><a href="Point_size/index.html">Point_size</a></li>
         
+            <li><a href="PVIDEO/index.html">PVIDEO</a></li>
+        
             <li><a href="SetVertexData/index.html">SetVertexData</a></li>
         
             <li><a href="Shade_model/index.html">Shade_model</a></li>
@@ -160,11 +182,17 @@ GL_SHADING_LANGUAGE_VERSION: 4.00 NVIDIA via Cg compiler
         
             <li><a href="Texgen_with_texture_matrix/index.html">Texgen_with_texture_matrix</a></li>
         
+            <li><a href="Texture%20border/index.html">Texture border</a></li>
+        
+            <li><a href="Texture%20border%20color/index.html">Texture border color</a></li>
+        
+            <li><a href="Texture%20format/index.html">Texture format</a></li>
+        
+            <li><a href="Texture%20render%20target/index.html">Texture render target</a></li>
+        
             <li><a href="Texture_anisotropy/index.html">Texture_anisotropy</a></li>
         
             <li><a href="Texture_border/index.html">Texture_border</a></li>
-        
-            <li><a href="Texture_border_color/index.html">Texture_border_color</a></li>
         
             <li><a href="Texture_CPU_Update/index.html">Texture_CPU_Update</a></li>
         
@@ -216,32 +244,38 @@ GL_SHADING_LANGUAGE_VERSION: 4.00 NVIDIA via Cg compiler
         
     </ul>
 
-<h1>Failed tests (7)</h1>
+<h1>Failed tests (12)</h1>
 
     <h2>Clear::SCF_X1A7R8G8B8_O1A7R8G8B8</h2>
     <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
 
     </div>
 
     <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
 
     </div>
 
     <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
 
     </div>
 
 
     <h2>Clear::SCF_X1A7R8G8B8_Z1A7R8G8B8</h2>
     <div class="code-snippet">
+nv2a: unimplemented color surface format 0x6
 
     </div>
 
     <div class="code-snippet">
+nv2a: unimplemented color surface format 0x6
 
     </div>
 
     <div class="code-snippet">
+nv2a: unimplemented color surface format 0x6
 
     </div>
 
@@ -294,6 +328,23 @@ nv2a: unimplemented color surface format 0x5
     </div>
 
 
+    <h2>PVIDEO::Out size</h2>
+    <div class="code-snippet">
+vk_result = -3
+
+    </div>
+
+    <div class="code-snippet">
+vk_result = -3
+
+    </div>
+
+    <div class="code-snippet">
+vk_result = -3
+
+    </div>
+
+
     <h2>Surface format::Fmt_X1A7R8G8B8_O1A7R8G8B8</h2>
     <div class="code-snippet">
 nv2a: unimplemented color surface format 0x7
@@ -311,22 +362,75 @@ nv2a: unimplemented color surface format 0x7
     </div>
 
 
+    <h2>Texture border color::TextureBorderColor</h2>
+    <div class="code-snippet">
+
+    </div>
+
+    <div class="code-snippet">
+
+    </div>
+
+    <div class="code-snippet">
+
+    </div>
+
+
+    <h2>Texture border::2D</h2>
+    <div class="code-snippet">
+vk_result = -4
+
+    </div>
+
+    <div class="code-snippet">
+vk_result = -4
+
+    </div>
+
+    <div class="code-snippet">
+vk_result = -4
+
+    </div>
+
+
+    <h2>Texture format::TexFmt_R6G5B5</h2>
+    <div class="code-snippet">
+
+    </div>
+
+    <div class="code-snippet">
+
+    </div>
+
+    <div class="code-snippet">
+
+    </div>
+
+
+    <h2>Texture render target::TexFmt_R6G5B5</h2>
+    <div class="code-snippet">
+
+    </div>
+
+    <div class="code-snippet">
+
+    </div>
+
+    <div class="code-snippet">
+
+    </div>
+
+
     <h2>Volume texture::R6G5B5</h2>
     <div class="code-snippet">
-**
-ERROR:../hw/xbox/nv2a/pgraph/texture.c:381:pgraph_convert_texture_data: assertion failed: (depth == 1)
 
     </div>
 
     <div class="code-snippet">
-**
-ERROR:../hw/xbox/nv2a/pgraph/texture.c:381:pgraph_convert_texture_data: assertion failed: (depth == 1)
 
     </div>
 
     <div class="code-snippet">
-**
-ERROR:../hw/xbox/nv2a/pgraph/texture.c:381:pgraph_convert_texture_data: assertion failed: (depth == 1)
 
     </div>
 </div>
