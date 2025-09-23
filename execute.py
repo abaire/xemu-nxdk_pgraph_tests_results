@@ -33,6 +33,55 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+if sys.platform == "win32":
+    import threading
+    import time
+    import win32gui
+    import win32con
+    import ctypes
+
+
+    class AbortDialogHandler:
+        def __init__(self):
+            self.stop_event = threading.Event()
+            self.dialog_found = False
+
+        def find_and_click_abort(self):
+            """Periodically scans for the CRT assertion dialog and clicks 'Abort'."""
+            dialog_title = "Microsoft Visual C++ Runtime Library"
+
+            while not self.stop_event.is_set():
+                hwnd = win32gui.FindWindow(None, dialog_title)
+                if hwnd:
+                    print(f"ℹ️ Found dialog: '{dialog_title}'")
+
+                    def enum_child_proc(child_hwnd, lparam):
+                        button_text = win32gui.GetWindowText(child_hwnd)
+                        if "abort" in button_text.lower():
+                            print(f"   -> Found 'Abort' button. Clicking it now.")
+                            win32gui.SendMessage(child_hwnd, win32con.BM_CLICK, 0, 0)
+                            self.dialog_found = True
+                        return True
+
+                    win32gui.EnumChildWindows(hwnd, enum_child_proc, None)
+
+                    if self.dialog_found:
+                        time.sleep(2)
+
+                time.sleep(0.2)
+
+        def start(self):
+            """Starts the handler in a background thread."""
+            self.stop_event.clear()
+            self.thread = threading.Thread(target=self.find_and_click_abort, daemon=True)
+            self.thread.start()
+            print("✅ Dialog handler started in the background.")
+
+        def stop(self):
+            """Stops the background handler."""
+            self.stop_event.set()
+            print("⏹️ Dialog handler stopped.")
+
 
 def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, Any] | None:
     full_url = f"{api_url}/releases/latest" if not tag or tag == "latest" else f"{api_url}/releases?per_page=60"
@@ -516,7 +565,16 @@ def run(
     if macos_bundle_identifier:
         original_ignore_value = _set_apple_persistence_ignore_state(macos_bundle_identifier, ignore=True)
 
+    handler: AbortDialogHandler | None = None
+    if sys.platform == "win32":
+        handler = AbortDialogHandler()
+        handler.start()
+
     ret = nxdk_pgraph_test_runner.entrypoint(config)
+
+    if handler:
+        handler.stop()
+
     if os.path.isdir(output_directory):
         with open(os.path.join(output_directory, "renderer.json"), "w") as outfile:
             json.dump({"vulkan": use_vulkan}, outfile)

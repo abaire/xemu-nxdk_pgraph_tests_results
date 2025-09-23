@@ -3,3 +3,5 @@ requests~=2.32.3
 GitPython~=3.1.44
 #lpips~=0.1.4
 #opencv-python~=4.11.0.86
+
+pywin32>=300 ; sys_platform == 'win32'
