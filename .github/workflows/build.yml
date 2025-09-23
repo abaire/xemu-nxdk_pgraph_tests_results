@@ -115,7 +115,9 @@ jobs:
     needs: [ find-changes ]
     name: Diff new results against Xbox hardware results
     runs-on: ubuntu-latest
-    if: needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: |
+        github.event_name == 'workflow_dispatch' || 
+        (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
     permissions:
       contents: write
     timeout-minutes: 60
@@ -159,7 +161,7 @@ jobs:
   BuildSite:
     runs-on: ubuntu-latest
     needs: [ find-changes, DiffAgainstHW ]
-    if: | 
+    if: |
       github.event_name == 'workflow_dispatch' || 
       (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
     permissions:
@@ -208,7 +210,7 @@ jobs:
   DeploySite:
     runs-on: ubuntu-latest
     needs: [ find-changes, BuildSite ]
-    if: | 
+    if: |
       github.event_name == 'workflow_dispatch' || 
       (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
     permissions:
