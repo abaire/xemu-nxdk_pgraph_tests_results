@@ -35,11 +35,11 @@ class ResultsInfo(NamedTuple):
 
     @property
     def output_subdirectory(self) -> str:
-        return os.path.join(self.xemu_version, self.platform_info, self.gl_info).replace(":", "__")
+        return os.path.join(self.xemu_version, self.platform_info, self.gl_info).replace(":", "--")
 
     @property
     def run_identifier_subdirectory(self) -> str:
-        return self.run_identifier.replace(":", "__")
+        return self.run_identifier.replace(":", "--")
 
     def get_flattened_tests(self) -> set[str]:
         """Return a flattened set of test_suite::test_case."""
