@@ -35,7 +35,7 @@ class ResultsInfo(NamedTuple):
 
     @property
     def output_subdirectory(self) -> str:
-        return os.path.join(self.xemu_version, self.platform_info, self.gl_info)
+        return os.path.join(self.xemu_version, self.platform_info, self.gl_info).replace(":", "__")
 
     @property
     def run_identifier_subdirectory(self) -> str:
