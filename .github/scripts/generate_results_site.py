@@ -481,6 +481,8 @@ class ResultsScanner:
         run_identifier = RunIdentifier.parse(run_id)
 
         comparisons = self.run_identifier_to_comparison_results.get(run_identifier.minimal_identifier(), [])
+        if not comparisons:
+            logger.warning("Failed to lookup HW comparisons for %s", run_identifier.minimal_identifier())
         return ResultsInfo(
             identifier=run_identifier,
             machine_info=machine_info,
