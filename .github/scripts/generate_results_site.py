@@ -116,7 +116,7 @@ class RunIdentifier(NamedTuple):
 
     @property
     def path(self) -> str:
-        return str(os.path.join(*self.run_identifier)).replace(":", "--")
+        return str(os.path.join(*self.run_identifier)).replace(":", "_-_")
 
     @property
     def minimal_path(self) -> str:
@@ -140,7 +140,7 @@ class RunIdentifier(NamedTuple):
             run_identifier=tuple(components),
             xemu_version=components[-4],
             platform_info=components[-3],
-            gl_info=f"{components[-2]}:{components[-1]}",
+            gl_info=f"{components[-2]}--{components[-1]}",
         )
 
 
@@ -480,13 +480,14 @@ class ResultsScanner:
 
         run_identifier = RunIdentifier.parse(run_id)
 
+        comparisons = self.run_identifier_to_comparison_results.get(run_identifier.minimal_identifier(), [])
         return ResultsInfo(
             identifier=run_identifier,
             machine_info=machine_info,
             renderer_info=results_summary.get("renderer_info"),
             runner_info=results_summary.get("runner_info"),
             results=tuple(list(suite_results.values())),
-            comparisons=self.run_identifier_to_comparison_results.get(run_identifier.minimal_identifier(), []),
+            comparisons=comparisons,
         )
 
     def _process_summaries(self) -> dict[str, tuple[MachineInfo, ResultsSummary]]:
@@ -578,10 +579,10 @@ class PrettyMachineInfo(NamedTuple):
         gl = (
             f"{gl_vendor} - {gl_renderer} - {gl_version}"
             if gl_vendor and gl_renderer and gl_version
-            else run_identifier.gl_info.split(":")[0]
+            else run_identifier.gl_info.split("--")[0]
         )
         if not glsl_version:
-            glsl_version = run_identifier.gl_info.split(":")[1]
+            glsl_version = run_identifier.gl_info.split("--")[1]
         renderer = "Vulkan" if results_info.renderer_info.get("vulkan") else "OpenGL"
 
         return cls(platform=platform, gl=gl, glsl=glsl_version, renderer=renderer)
