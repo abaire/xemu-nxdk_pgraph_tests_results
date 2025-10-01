@@ -504,7 +504,7 @@ def _set_apple_persistence_ignore_state(macos_bundle_identifier: str, *, ignore:
                 macos_bundle_identifier,
                 "ApplePersistenceIgnoreState",
                 "-bool",
-                "true" if current_value else "false",
+                "true" if ignore else "false",
             ]
         subprocess.run(command, capture_output=True, text=True, check=True)
 
