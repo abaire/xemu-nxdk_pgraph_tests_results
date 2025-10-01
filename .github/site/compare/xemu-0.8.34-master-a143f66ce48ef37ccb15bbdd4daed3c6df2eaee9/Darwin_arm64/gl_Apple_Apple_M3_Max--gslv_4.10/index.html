@@ -40705,6 +40705,8 @@
         <div class="value">
             <div class="test-description-line">Tests the behavior of NV097_SET_POINT_PARAMS_ENABLE (0x00000318) and NV097_SET_POINT_PARAMS (0x00000A30).</div>
         
+            <div class="test-description-line">The scale factors are used to calculate a multiplier for the point size using the formula SFactor = sqrt(1/(A + B * Deye + C * Deye ^ 2)).</div>
+        
             <div class="test-description-line">See</div>
         
             <div class="test-description-line">https://learn.microsoft.com/en-us/windows/win32/direct3d9/point-sprites</div>
@@ -40819,7 +40821,7 @@
             <div class="value">35392</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using a programmable shader with more complex point params. </p>
+                <p>Renders points using a programmable shader with more complex point params.</p>
             </div>
         </div>
 
@@ -40852,7 +40854,7 @@
             <div class="value">6448</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using the fixed function pipeline with point size 128, point smoothing and point params disabled.</p>
+                <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing and point params disabled.</p>
             </div>
         </div>
 
@@ -40885,7 +40887,7 @@
             <div class="value">23205</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using a programmable shader with point size 128, point smoothing and point params disabled.</p>
+                <p>Renders points using a programmable shader with point size 128 (16px), point smoothing and point params disabled.</p>
             </div>
         </div>
 
@@ -40918,7 +40920,7 @@
             <div class="value">217973</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using the fixed function pipeline with point size 128, point smoothing disabled and point params enabled.</p>
+                <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing disabled and point params enabled.</p>
             </div>
         </div>
 
@@ -40951,7 +40953,7 @@
             <div class="value">26530</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using a programmable shader with point size 128, point smoothing disabled and point params enabled.</p>
+                <p>Renders points using a programmable shader with point size 128 (16px), point smoothing disabled and point params enabled.</p>
             </div>
         </div>
 
@@ -41017,7 +41019,7 @@
             <div class="value">217973</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using the fixed function pipeline with point size 128, point smoothing and point params enabled.</p>
+                <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing and point params enabled.</p>
             </div>
         </div>
 
@@ -41050,7 +41052,7 @@
             <div class="value">26530</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using a programmable shader with point size 128, point smoothing and point params enabled.</p>
+                <p>Renders points using a programmable shader with point size 128 (16px), point smoothing and point params enabled.</p>
             </div>
         </div>
 
@@ -47013,7 +47015,12 @@
         <h3 id="Texture_cubemap_Cubemap">Cubemap</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">385</div></div>
+            <div class="value">385</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing a cubemap texture.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -47041,7 +47048,12 @@
         <h3 id="Texture_cubemap_DotSTRCube_-1to1">DotSTRCube_-1to1</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">137</div></div>
+            <div class="value">137</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -47069,7 +47081,12 @@
         <h3 id="Texture_cubemap_DotSTRCube_-1to1D3D">DotSTRCube_-1to1D3D</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">102</div></div>
+            <div class="value">102</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_d3d.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -47097,7 +47114,12 @@
         <h3 id="Texture_cubemap_DotSTRCube_-1to1GL">DotSTRCube_-1to1GL</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">526</div></div>
+            <div class="value">526</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_gl.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -47125,7 +47147,12 @@
         <h3 id="Texture_cubemap_DotSTRCube_0to1">DotSTRCube_0to1</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">132</div></div>
+            <div class="value">132</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_zero_to_one.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -47153,7 +47180,12 @@
         <h3 id="Texture_cubemap_DotSTRCube_HiLoHemi">DotSTRCube_HiLoHemi</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">34534</div></div>
+            <div class="value">34534</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_hemisphere. </p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 

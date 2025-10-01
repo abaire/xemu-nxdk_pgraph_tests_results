@@ -42004,6 +42004,8 @@
         <div class="value">
             <div class="test-description-line">Tests the behavior of NV097_SET_POINT_PARAMS_ENABLE (0x00000318) and NV097_SET_POINT_PARAMS (0x00000A30).</div>
         
+            <div class="test-description-line">The scale factors are used to calculate a multiplier for the point size using the formula SFactor = sqrt(1/(A + B * Deye + C * Deye ^ 2)).</div>
+        
             <div class="test-description-line">See</div>
         
             <div class="test-description-line">https://learn.microsoft.com/en-us/windows/win32/direct3d9/point-sprites</div>
@@ -42082,7 +42084,7 @@
         <h3 id="Point_params_Detailed_FF">Detailed_FF</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">11951</div>
+            <div class="value">39474</div>
             <div class="label">Description</div>
             <div class="value">
                 <p>Renders points using the fixed function pipeline with more complex point params.</p>
@@ -42115,10 +42117,10 @@
         <h3 id="Point_params_Detailed_VS">Detailed_VS</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">35441</div>
+            <div class="value">31651</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using a programmable shader with more complex point params. </p>
+                <p>Renders points using a programmable shader with more complex point params.</p>
             </div>
         </div>
 
@@ -42151,7 +42153,7 @@
             <div class="value">26520</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using the fixed function pipeline with point size 128, point smoothing and point params disabled.</p>
+                <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing and point params disabled.</p>
             </div>
         </div>
 
@@ -42184,7 +42186,7 @@
             <div class="value">23296</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using a programmable shader with point size 128, point smoothing and point params disabled.</p>
+                <p>Renders points using a programmable shader with point size 128 (16px), point smoothing and point params disabled.</p>
             </div>
         </div>
 
@@ -42217,7 +42219,7 @@
             <div class="value">113986</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using the fixed function pipeline with point size 128, point smoothing disabled and point params enabled.</p>
+                <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing disabled and point params enabled.</p>
             </div>
         </div>
 
@@ -42250,7 +42252,7 @@
             <div class="value">26607</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using a programmable shader with point size 128, point smoothing disabled and point params enabled.</p>
+                <p>Renders points using a programmable shader with point size 128 (16px), point smoothing disabled and point params enabled.</p>
             </div>
         </div>
 
@@ -42280,7 +42282,7 @@
         <h3 id="Point_params_PointParamsOn_SmoothOn_001_FF">PointParamsOn_SmoothOn_001_FF</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">113986</div>
+            <div class="value">130975</div>
             <div class="label">Description</div>
             <div class="value">
                 <p>Renders points using the fixed function pipeline with point size 1, point smoothing and point params enabled. Demonstrates that point size is ignored when point params are enabled.</p>
@@ -42313,10 +42315,10 @@
         <h3 id="Point_params_PointParamsOn_SmoothOn_128_FF">PointParamsOn_SmoothOn_128_FF</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">113986</div>
+            <div class="value">130975</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using the fixed function pipeline with point size 128, point smoothing and point params enabled.</p>
+                <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing and point params enabled.</p>
             </div>
         </div>
 
@@ -42346,10 +42348,10 @@
         <h3 id="Point_params_PointParamsOn_SmoothOn_128_VS">PointParamsOn_SmoothOn_128_VS</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">26607</div>
+            <div class="value">18259</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>Renders points using a programmable shader with point size 128, point smoothing and point params enabled.</p>
+                <p>Renders points using a programmable shader with point size 128 (16px), point smoothing and point params enabled.</p>
             </div>
         </div>
 
@@ -42370,6 +42372,430 @@
             </div>
             <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Point_params/PointParamsOn_SmoothOn_128_VS.png" alt="Source image for Point_params::PointParamsOn_SmoothOn_128_VS" class="image-comparison" data-state="source">
             <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Point_params/PointParamsOn_SmoothOn_128_VS.png" alt="Golden image for Point_params::PointParamsOn_SmoothOn_128_VS" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_0_0_0_FF">Scale_0_0_0_FF</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders points using the fixed function pipeline at varying distances from the eye point with point size 130 (16.25px) and point scale params 0.0, 0.0, 0.0. Minimum size is set to 0.5.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_0_0_FF.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_0_0_FF.png" alt="Golden image for Point_params::Scale_0_0_0_FF">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_0_0_0_VS">Scale_0_0_0_VS</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders points using the programmable pipeline at varying distances from the eye point with point size 130 (16.25px) and point scale params 0.0, 0.0, 0.0. Minimum size is set to 0.5.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_0_0_VS.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_0_0_VS.png" alt="Golden image for Point_params::Scale_0_0_0_VS">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_0_0_1_FF">Scale_0_0_1_FF</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders points using the fixed function pipeline at varying distances from the eye point with point size 130 (16.25px) and point scale params 0.0, 0.0, 1.0. Minimum size is set to 0.5.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_0_1_FF.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_0_1_FF.png" alt="Golden image for Point_params::Scale_0_0_1_FF">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_0_0_1_VS">Scale_0_0_1_VS</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders points using the programmable pipeline at varying distances from the eye point with point size 130 (16.25px) and point scale params 0.0, 0.0, 1.0. Minimum size is set to 0.5. </p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_0_1_VS.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_0_1_VS.png" alt="Golden image for Point_params::Scale_0_0_1_VS">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_0_1_0_FF">Scale_0_1_0_FF</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders points using the fixed function pipeline at varying distances from the eye point with point size 130 (16.25px) and point scale params 0.0, 1.0, 0.0. Minimum size is set to 0.5.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_1_0_FF.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_1_0_FF.png" alt="Golden image for Point_params::Scale_0_1_0_FF">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_0_1_0_VS">Scale_0_1_0_VS</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders points using the programmable pipeline at varying distances from the eye point with point size 130 (16.25px) and point scale params 0.0, 1.0, 0.0. Minimum size is set to 0.5.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_1_0_VS.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_1_0_VS.png" alt="Golden image for Point_params::Scale_0_1_0_VS">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_0_1_1_FF">Scale_0_1_1_FF</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_1_1_FF.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_1_1_FF.png" alt="Golden image for Point_params::Scale_0_1_1_FF">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_0_1_1_VS">Scale_0_1_1_VS</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_1_1_VS.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_0_1_1_VS.png" alt="Golden image for Point_params::Scale_0_1_1_VS">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_4_0_0_FF">Scale_4_0_0_FF</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders points using the fixed function pipeline at varying distances from the eye point with point size 130 (16.25px) and point scale params 4.0, 0.0, 0.0. Minimum size is set to 0.5.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_0_0_FF.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_0_0_FF.png" alt="Golden image for Point_params::Scale_4_0_0_FF">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_4_0_0_VS">Scale_4_0_0_VS</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders points using the programmable pipeline at varying distances from the eye point with point size 130 (16.25px) and point scale params 4.0, 0.0, 0.0. Minimum size is set to 0.5.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_0_0_VS.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_0_0_VS.png" alt="Golden image for Point_params::Scale_4_0_0_VS">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_4_0_1_FF">Scale_4_0_1_FF</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_0_1_FF.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_0_1_FF.png" alt="Golden image for Point_params::Scale_4_0_1_FF">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_4_0_1_VS">Scale_4_0_1_VS</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_0_1_VS.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_0_1_VS.png" alt="Golden image for Point_params::Scale_4_0_1_VS">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_4_1_0_FF">Scale_4_1_0_FF</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_1_0_FF.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_1_0_FF.png" alt="Golden image for Point_params::Scale_4_1_0_FF">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_4_1_0_VS">Scale_4_1_0_VS</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_1_0_VS.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_1_0_VS.png" alt="Golden image for Point_params::Scale_4_1_0_VS">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_4_1_1_FF">Scale_4_1_1_FF</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_1_1_FF.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_1_1_FF.png" alt="Golden image for Point_params::Scale_4_1_1_FF">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Point_params_Scale_4_1_1_VS">Scale_4_1_1_VS</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_1_1_VS.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Point_params/Scale_4_1_1_VS.png" alt="Golden image for Point_params::Scale_4_1_1_VS">
         </div>
         
 
@@ -47203,10 +47629,810 @@
 
 
     
+        <h3 id="Texture_cubemap_Cubemap">Cubemap</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">36189</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing a cubemap texture.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2--gslv_4.00_NVIDIA_via_Cg_compiler/Xbox--Xbox--DirectX--nv2a/Texture_cubemap/Cubemap-diff.png" alt="Diff result for Texture_cubemap::Cubemap" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/Cubemap.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/Cubemap.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/Cubemap.png" alt="Source image for Texture_cubemap::Cubemap" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/Cubemap.png" alt="Golden image for Texture_cubemap::Cubemap" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectDiffuse_-1to1">DotReflectDiffuse_-1to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_DIFF pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_-1to1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_-1to1.png" alt="Golden image for Texture_cubemap::DotReflectDiffuse_-1to1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectDiffuse_-1to1D3D">DotReflectDiffuse_-1to1D3D</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_DIFF pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_d3d.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_-1to1D3D.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_-1to1D3D.png" alt="Golden image for Texture_cubemap::DotReflectDiffuse_-1to1D3D">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectDiffuse_-1to1GL">DotReflectDiffuse_-1to1GL</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_DIFF pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_gl.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_-1to1GL.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_-1to1GL.png" alt="Golden image for Texture_cubemap::DotReflectDiffuse_-1to1GL">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectDiffuse_0to1">DotReflectDiffuse_0to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_DIFF pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_zero_to_one.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_0to1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_0to1.png" alt="Golden image for Texture_cubemap::DotReflectDiffuse_0to1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectDiffuse_HiLo_1">DotReflectDiffuse_HiLo_1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_DIFF pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_HiLo_1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_HiLo_1.png" alt="Golden image for Texture_cubemap::DotReflectDiffuse_HiLo_1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectDiffuse_HiLoHemi">DotReflectDiffuse_HiLoHemi</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_DIFF pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_hemisphere.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_HiLoHemi.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectDiffuse_HiLoHemi.png" alt="Golden image for Texture_cubemap::DotReflectDiffuse_HiLoHemi">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpec_-1to1">DotReflectSpec_-1to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_-1to1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_-1to1.png" alt="Golden image for Texture_cubemap::DotReflectSpec_-1to1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpec_-1to1D3D">DotReflectSpec_-1to1D3D</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_d3df.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_-1to1D3D.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_-1to1D3D.png" alt="Golden image for Texture_cubemap::DotReflectSpec_-1to1D3D">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpec_-1to1GL">DotReflectSpec_-1to1GL</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_glf.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_-1to1GL.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_-1to1GL.png" alt="Golden image for Texture_cubemap::DotReflectSpec_-1to1GL">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpec_0to1">DotReflectSpec_0to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_zero_to_onef.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_0to1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_0to1.png" alt="Golden image for Texture_cubemap::DotReflectSpec_0to1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpec_HiLo_1">DotReflectSpec_HiLo_1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_1f.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_HiLo_1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_HiLo_1.png" alt="Golden image for Texture_cubemap::DotReflectSpec_HiLo_1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpec_HiLoHemi">DotReflectSpec_HiLoHemi</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_hemispheref.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_HiLoHemi.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpec_HiLoHemi.png" alt="Golden image for Texture_cubemap::DotReflectSpec_HiLoHemi">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpecConst_-1to1">DotReflectSpecConst_-1to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC_CONST pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_-1to1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_-1to1.png" alt="Golden image for Texture_cubemap::DotReflectSpecConst_-1to1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpecConst_-1to1D3D">DotReflectSpecConst_-1to1D3D</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC_CONST pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_d3d.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_-1to1D3D.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_-1to1D3D.png" alt="Golden image for Texture_cubemap::DotReflectSpecConst_-1to1D3D">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpecConst_-1to1GL">DotReflectSpecConst_-1to1GL</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC_CONST pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_gl.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_-1to1GL.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_-1to1GL.png" alt="Golden image for Texture_cubemap::DotReflectSpecConst_-1to1GL">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpecConst_0to1">DotReflectSpecConst_0to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC_CONST pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_zero_to_one.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_0to1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_0to1.png" alt="Golden image for Texture_cubemap::DotReflectSpecConst_0to1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpecConst_HiLo_1">DotReflectSpecConst_HiLo_1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC_CONST pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_HiLo_1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_HiLo_1.png" alt="Golden image for Texture_cubemap::DotReflectSpecConst_HiLo_1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotReflectSpecConst_HiLoHemi">DotReflectSpecConst_HiLoHemi</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_RFLCT_SPEC_CONST pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_hemisphere.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_HiLoHemi.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotReflectSpecConst_HiLoHemi.png" alt="Golden image for Texture_cubemap::DotReflectSpecConst_HiLoHemi">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTR3D_-1to1">DotSTR3D_-1to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_3D pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_-1to1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_-1to1.png" alt="Golden image for Texture_cubemap::DotSTR3D_-1to1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTR3D_-1to1D3D">DotSTR3D_-1to1D3D</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_3D pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_d3d.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_-1to1D3D.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_-1to1D3D.png" alt="Golden image for Texture_cubemap::DotSTR3D_-1to1D3D">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTR3D_-1to1GL">DotSTR3D_-1to1GL</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_3D pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_gl.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_-1to1GL.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_-1to1GL.png" alt="Golden image for Texture_cubemap::DotSTR3D_-1to1GL">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTR3D_0to1">DotSTR3D_0to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_3D pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_zero_to_one.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_0to1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_0to1.png" alt="Golden image for Texture_cubemap::DotSTR3D_0to1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTR3D_HiLo_1">DotSTR3D_HiLo_1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_3D pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_HiLo_1.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_HiLo_1.png" alt="Golden image for Texture_cubemap::DotSTR3D_HiLo_1">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTR3D_HiLoHemi">DotSTR3D_HiLoHemi</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_3D pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_hemisphere.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_HiLoHemi.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_cubemap/DotSTR3D_HiLoHemi.png" alt="Golden image for Texture_cubemap::DotSTR3D_HiLoHemi">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTRCube_-1to1">DotSTRCube_-1to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">52993</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2--gslv_4.00_NVIDIA_via_Cg_compiler/Xbox--Xbox--DirectX--nv2a/Texture_cubemap/DotSTRCube_-1to1-diff.png" alt="Diff result for Texture_cubemap::DotSTRCube_-1to1" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/DotSTRCube_-1to1.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/DotSTRCube_-1to1.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/DotSTRCube_-1to1.png" alt="Source image for Texture_cubemap::DotSTRCube_-1to1" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/DotSTRCube_-1to1.png" alt="Golden image for Texture_cubemap::DotSTRCube_-1to1" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTRCube_-1to1D3D">DotSTRCube_-1to1D3D</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">45951</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_d3d.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2--gslv_4.00_NVIDIA_via_Cg_compiler/Xbox--Xbox--DirectX--nv2a/Texture_cubemap/DotSTRCube_-1to1D3D-diff.png" alt="Diff result for Texture_cubemap::DotSTRCube_-1to1D3D" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/DotSTRCube_-1to1D3D.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/DotSTRCube_-1to1D3D.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/DotSTRCube_-1to1D3D.png" alt="Source image for Texture_cubemap::DotSTRCube_-1to1D3D" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/DotSTRCube_-1to1D3D.png" alt="Golden image for Texture_cubemap::DotSTRCube_-1to1D3D" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
         <h3 id="Texture_cubemap_DotSTRCube_-1to1GL">DotSTRCube_-1to1GL</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">389</div></div>
+            <div class="value">53131</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_minus1_to_1_gl.</p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 
@@ -47231,10 +48457,81 @@
         </div>
 
     
+        <h3 id="Texture_cubemap_DotSTRCube_0to1">DotSTRCube_0to1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">54439</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_zero_to_one.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2--gslv_4.00_NVIDIA_via_Cg_compiler/Xbox--Xbox--DirectX--nv2a/Texture_cubemap/DotSTRCube_0to1-diff.png" alt="Diff result for Texture_cubemap::DotSTRCube_0to1" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/DotSTRCube_0to1.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/DotSTRCube_0to1.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/DotSTRCube_0to1.png" alt="Source image for Texture_cubemap::DotSTRCube_0to1" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/DotSTRCube_0to1.png" alt="Golden image for Texture_cubemap::DotSTRCube_0to1" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_cubemap_DotSTRCube_HiLo_1">DotSTRCube_HiLo_1</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">56909</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_1.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2--gslv_4.00_NVIDIA_via_Cg_compiler/Xbox--Xbox--DirectX--nv2a/Texture_cubemap/DotSTRCube_HiLo_1-diff.png" alt="Diff result for Texture_cubemap::DotSTRCube_HiLo_1" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/DotSTRCube_HiLo_1.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/DotSTRCube_HiLo_1.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.103-master-ff1617d66468abd927f55f7082b3f53610ff26a4/Windows_AMD64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Texture_cubemap/DotSTRCube_HiLo_1.png" alt="Source image for Texture_cubemap::DotSTRCube_HiLo_1" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_cubemap/DotSTRCube_HiLo_1.png" alt="Golden image for Texture_cubemap::DotSTRCube_HiLo_1" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
         <h3 id="Texture_cubemap_DotSTRCube_HiLoHemi">DotSTRCube_HiLoHemi</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">34457</div></div>
+            <div class="value">53373</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders two angles of a cube utilizing PS_TEXTUREMODES_DOT_STR_CUBE pixel shading mode. The NV097_DOT_RGBMAPPING is set to dotmap_hilo_hemisphere. </p>
+            </div>
+        </div>
 
         <div class="comparison-image-set">
 

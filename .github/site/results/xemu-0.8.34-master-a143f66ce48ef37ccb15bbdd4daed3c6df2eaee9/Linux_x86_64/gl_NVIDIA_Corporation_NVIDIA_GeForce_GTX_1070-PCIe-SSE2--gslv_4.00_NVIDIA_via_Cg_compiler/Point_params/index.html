@@ -33,6 +33,8 @@
     <div class="value">
         <div class="test-description-line">Tests the behavior of NV097_SET_POINT_PARAMS_ENABLE (0x00000318) and NV097_SET_POINT_PARAMS (0x00000A30).</div>
     
+        <div class="test-description-line">The scale factors are used to calculate a multiplier for the point size using the formula SFactor = sqrt(1/(A + B * Deye + C * Deye ^ 2)).</div>
+    
         <div class="test-description-line">See</div>
     
         <div class="test-description-line">https://learn.microsoft.com/en-us/windows/win32/direct3d9/point-sprites</div>
@@ -103,7 +105,7 @@
     </div>
     
     <div class="label">Suite class def</div>
-    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/point_params_tests.h#L63">src/tests/point_params_tests.h</a></div>
+    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/point_params_tests.h#L66">src/tests/point_params_tests.h</a></div>
 </div>
 
 <h2 id="Detailed_FF">Detailed_FF</h2>
@@ -117,7 +119,7 @@
     
 <h2 id="Detailed_VS">Detailed_VS</h2>
         <div class="test-case-description">
-        <p>Renders points using a programmable shader with more complex point params. </p>
+        <p>Renders points using a programmable shader with more complex point params.</p>
         </div>
     
 <div class="image-container">
@@ -126,7 +128,7 @@
     
 <h2 id="PointParamsOff_SmoothOff_128_FF">PointParamsOff_SmoothOff_128_FF</h2>
         <div class="test-case-description">
-        <p>Renders points using the fixed function pipeline with point size 128, point smoothing and point params disabled.</p>
+        <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing and point params disabled.</p>
         </div>
     
 <div class="image-container">
@@ -135,7 +137,7 @@
     
 <h2 id="PointParamsOff_SmoothOff_128_VS">PointParamsOff_SmoothOff_128_VS</h2>
         <div class="test-case-description">
-        <p>Renders points using a programmable shader with point size 128, point smoothing and point params disabled.</p>
+        <p>Renders points using a programmable shader with point size 128 (16px), point smoothing and point params disabled.</p>
         </div>
     
 <div class="image-container">
@@ -144,7 +146,7 @@
     
 <h2 id="PointParamsOn_SmoothOff_128_FF">PointParamsOn_SmoothOff_128_FF</h2>
         <div class="test-case-description">
-        <p>Renders points using the fixed function pipeline with point size 128, point smoothing disabled and point params enabled.</p>
+        <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing disabled and point params enabled.</p>
         </div>
     
 <div class="image-container">
@@ -153,7 +155,7 @@
     
 <h2 id="PointParamsOn_SmoothOff_128_VS">PointParamsOn_SmoothOff_128_VS</h2>
         <div class="test-case-description">
-        <p>Renders points using a programmable shader with point size 128, point smoothing disabled and point params enabled.</p>
+        <p>Renders points using a programmable shader with point size 128 (16px), point smoothing disabled and point params enabled.</p>
         </div>
     
 <div class="image-container">
@@ -171,7 +173,7 @@
     
 <h2 id="PointParamsOn_SmoothOn_128_FF">PointParamsOn_SmoothOn_128_FF</h2>
         <div class="test-case-description">
-        <p>Renders points using the fixed function pipeline with point size 128, point smoothing and point params enabled.</p>
+        <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing and point params enabled.</p>
         </div>
     
 <div class="image-container">
@@ -180,7 +182,7 @@
     
 <h2 id="PointParamsOn_SmoothOn_128_VS">PointParamsOn_SmoothOn_128_VS</h2>
         <div class="test-case-description">
-        <p>Renders points using a programmable shader with point size 128, point smoothing and point params enabled.</p>
+        <p>Renders points using a programmable shader with point size 128 (16px), point smoothing and point params enabled.</p>
         </div>
     
 <div class="image-container">

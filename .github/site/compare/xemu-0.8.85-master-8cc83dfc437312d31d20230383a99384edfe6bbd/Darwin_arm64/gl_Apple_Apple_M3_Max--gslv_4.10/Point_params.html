@@ -19,6 +19,8 @@
     <div class="value">
         <div class="test-description-line">Tests the behavior of NV097_SET_POINT_PARAMS_ENABLE (0x00000318) and NV097_SET_POINT_PARAMS (0x00000A30).</div>
     
+        <div class="test-description-line">The scale factors are used to calculate a multiplier for the point size using the formula SFactor = sqrt(1/(A + B * Deye + C * Deye ^ 2)).</div>
+    
         <div class="test-description-line">See</div>
     
         <div class="test-description-line">https://learn.microsoft.com/en-us/windows/win32/direct3d9/point-sprites</div>
@@ -89,7 +91,7 @@
     </div>
     
     <div class="label">Suite class def</div>
-    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/point_params_tests.h#L63">src/tests/point_params_tests.h</a></div>
+    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/point_params_tests.h#L66">src/tests/point_params_tests.h</a></div>
     <div class="label">Golden results</div>
     <div class="value"><a href="https://abaire.github.io/nxdk_pgraph_tests_golden_results/results/Point_params/index.html">https://abaire.github.io/nxdk_pgraph_tests_golden_results/results/Point_params/index.html</a></div>
 </div>
@@ -132,7 +134,7 @@
         <div class="value">35350</div>
         <div class="label">Description</div>
         <div class="value">
-            <p>Renders points using a programmable shader with more complex point params. </p>
+            <p>Renders points using a programmable shader with more complex point params.</p>
         </div>
     </div>
 
@@ -162,7 +164,7 @@
         <div class="value">26265</div>
         <div class="label">Description</div>
         <div class="value">
-            <p>Renders points using the fixed function pipeline with point size 128, point smoothing and point params disabled.</p>
+            <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing and point params disabled.</p>
         </div>
     </div>
 
@@ -192,7 +194,7 @@
         <div class="value">23205</div>
         <div class="label">Description</div>
         <div class="value">
-            <p>Renders points using a programmable shader with point size 128, point smoothing and point params disabled.</p>
+            <p>Renders points using a programmable shader with point size 128 (16px), point smoothing and point params disabled.</p>
         </div>
     </div>
 
@@ -222,7 +224,7 @@
         <div class="value">114190</div>
         <div class="label">Description</div>
         <div class="value">
-            <p>Renders points using the fixed function pipeline with point size 128, point smoothing disabled and point params enabled.</p>
+            <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing disabled and point params enabled.</p>
         </div>
     </div>
 
@@ -252,7 +254,7 @@
         <div class="value">26530</div>
         <div class="label">Description</div>
         <div class="value">
-            <p>Renders points using a programmable shader with point size 128, point smoothing disabled and point params enabled.</p>
+            <p>Renders points using a programmable shader with point size 128 (16px), point smoothing disabled and point params enabled.</p>
         </div>
     </div>
 
@@ -312,7 +314,7 @@
         <div class="value">114190</div>
         <div class="label">Description</div>
         <div class="value">
-            <p>Renders points using the fixed function pipeline with point size 128, point smoothing and point params enabled.</p>
+            <p>Renders points using the fixed function pipeline with point size 128 (16px), point smoothing and point params enabled.</p>
         </div>
     </div>
 
@@ -342,7 +344,7 @@
         <div class="value">26530</div>
         <div class="label">Description</div>
         <div class="value">
-            <p>Renders points using a programmable shader with point size 128, point smoothing and point params enabled.</p>
+            <p>Renders points using a programmable shader with point size 128 (16px), point smoothing and point params enabled.</p>
         </div>
     </div>
 
