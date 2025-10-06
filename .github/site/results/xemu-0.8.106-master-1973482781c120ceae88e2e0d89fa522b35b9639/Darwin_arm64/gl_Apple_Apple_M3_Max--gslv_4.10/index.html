@@ -14,7 +14,7 @@
 
     <div class="page-content"><h1>xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639</h1>
 <h2>Darwin_arm64 - OpenGL</h2>
-    <h2>nxdk_pgraph_tests-v2025-10-01_04-06-25-846619707.iso</h2>
+    <h2>nxdk_pgraph_tests-v2025-10-06_20-34-54-057918498.iso</h2>
 
 <h1>Machine info</h1>
 <div class="code-snippet">
@@ -24,7 +24,7 @@ xemu_commit: 1973482781c120ceae88e2e0d89fa522b35b9639
 xemu_date: Mon Sep 29 06:46:19 UTC 2025
 xemu_settings_get_base_path: base path: /Users/abaire/development/xbox/pgraph_xemu_results/xemu-nxdk_pgraph_tests_results/cache/xemu-macos-v0.8.106/xemu.app/Contents/Resources/
 xemu_settings_get_path: config path: /Users/abaire/development/xbox/pgraph_xemu_results/xemu-nxdk_pgraph_tests_results/cache/xemu-macos-v0.8.106/xemu.app/Contents/Resources/xemu.toml
-2025-09-30 21:40:27.070 xemu[88172:793612] ApplePersistenceIgnoreState: Existing state will not be touched. New state will be written to /var/folders/z9/z9hjjrbs36741slg5blhthkr0000gn/T/xemu.app.0.savedState
+2025-10-06 14:45:46.382 xemu[13113:164232] ApplePersistenceIgnoreState: Existing state will not be touched. New state will be written to /var/folders/z9/z9hjjrbs36741slg5blhthkr0000gn/T/xemu.app.0.savedState
 CPU: 
 OS_Version: Version 15.7.1 (Build 24G231)
 GL_VENDOR: Apple
@@ -51,6 +51,10 @@ GL_SHADING_LANGUAGE_VERSION: 4.10
             <li><a href="Attrib_float/index.html">Attrib_float</a></li>
         
             <li><a href="Attrib_setter/index.html">Attrib_setter</a></li>
+        
+            <li><a href="Blend%20surface/index.html">Blend surface</a></li>
+        
+            <li><a href="Blend_surface/index.html">Blend_surface</a></li>
         
             <li><a href="Blend_tests/index.html">Blend_tests</a></li>
         
@@ -164,6 +168,8 @@ GL_SHADING_LANGUAGE_VERSION: 4.10
         
             <li><a href="Texgen_with_texture_matrix/index.html">Texgen_with_texture_matrix</a></li>
         
+            <li><a href="Texture_2D_as_cubemap/index.html">Texture_2D_as_cubemap</a></li>
+        
             <li><a href="Texture_anisotropy/index.html">Texture_anisotropy</a></li>
         
             <li><a href="Texture_border/index.html">Texture_border</a></li>
@@ -220,7 +226,24 @@ GL_SHADING_LANGUAGE_VERSION: 4.10
         
     </ul>
 
-<h1>Failed tests (7)</h1>
+<h1>Failed tests (8)</h1>
+
+    <h2>Blend surface::XA_O1A7RGB8_Add_SrcA_1-SrcA</h2>
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
 
     <h2>Clear::SCF_X1A7R8G8B8_O1A7R8G8B8</h2>
     <div class="code-snippet">
@@ -327,7 +350,7 @@ nv2a: unimplemented color surface format 0x7
 
     <h2>Volume texture::R6G5B5</h2>
     <div class="code-snippet">
-UNSUPPORTED (log once): POSSIBLE ISSUE: unit 1 GLD_TEXTURE_INDEX_2D is unloadable and bound to sampler type (Float) - using zero texture because texture unloadable
+UNSUPPORTED (log once): POSSIBLE ISSUE: unit 0 GLD_TEXTURE_INDEX_CUBE_MAP is unloadable and bound to sampler type (Float) - using zero texture because texture unloadable
 Assertion failed: (depth == 1), function pgraph_convert_texture_data, file texture.c, line 381.
 
     </div>
@@ -360,6 +383,8 @@ Assertion failed: (depth == 1), function pgraph_convert_texture_data, file textu
         <li><a href="../../../../compare/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Attrib_float.html">Attrib_float</a></li>
     
         <li><a href="../../../../compare/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Attrib_setter.html">Attrib_setter</a></li>
+    
+        <li><a href="../../../../compare/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Blend_surface.html">Blend_surface</a></li>
     
         <li><a href="../../../../compare/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Blend_tests.html">Blend_tests</a></li>
     
@@ -453,6 +478,8 @@ Assertion failed: (depth == 1), function pgraph_convert_texture_data, file textu
     
         <li><a href="../../../../compare/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texgen_with_texture_matrix.html">Texgen_with_texture_matrix</a></li>
     
+        <li><a href="../../../../compare/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_2D_as_cubemap.html">Texture_2D_as_cubemap</a></li>
+    
         <li><a href="../../../../compare/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_anisotropy.html">Texture_anisotropy</a></li>
     
         <li><a href="../../../../compare/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_border.html">Texture_border</a></li>
@@ -489,6 +516,86 @@ Assertion failed: (depth == 1), function pgraph_convert_texture_data, file textu
     </ul>
         <h3>Missing tests</h3>
         <ul>
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_O1RGB5_Add_SrcA_1-SrcA.png">Blend_surface :: X_O1RGB5_Add_SrcA_1-SrcA</a></div>
+                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_O1RGB5_Add_SrcA_1-SrcA.png">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_O1RGB5_Add_SrcA_1-SrcA.png" alt="Golden result for Blend_surface :: X_O1RGB5_Add_SrcA_1-SrcA" class="hidden-image" style="display: none;">
+            </div>
+        
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_O1RGB5_Add_SrcA_DstA.png">Blend_surface :: X_O1RGB5_Add_SrcA_DstA</a></div>
+                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_O1RGB5_Add_SrcA_DstA.png">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_O1RGB5_Add_SrcA_DstA.png" alt="Golden result for Blend_surface :: X_O1RGB5_Add_SrcA_DstA" class="hidden-image" style="display: none;">
+            </div>
+        
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_ORGB8_Add_SrcA_1-SrcA.png">Blend_surface :: X_ORGB8_Add_SrcA_1-SrcA</a></div>
+                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_ORGB8_Add_SrcA_1-SrcA.png">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_ORGB8_Add_SrcA_1-SrcA.png" alt="Golden result for Blend_surface :: X_ORGB8_Add_SrcA_1-SrcA" class="hidden-image" style="display: none;">
+            </div>
+        
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_ORGB8_Add_SrcA_DstA.png">Blend_surface :: X_ORGB8_Add_SrcA_DstA</a></div>
+                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_ORGB8_Add_SrcA_DstA.png">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/X_ORGB8_Add_SrcA_DstA.png" alt="Golden result for Blend_surface :: X_ORGB8_Add_SrcA_DstA" class="hidden-image" style="display: none;">
+            </div>
+        
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_O1A7RGB8_Add_SrcA_1-SrcA.png">Blend_surface :: XA_O1A7RGB8_Add_SrcA_1-SrcA</a></div>
+                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_O1A7RGB8_Add_SrcA_1-SrcA.png">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_O1A7RGB8_Add_SrcA_1-SrcA.png" alt="Golden result for Blend_surface :: XA_O1A7RGB8_Add_SrcA_1-SrcA" class="hidden-image" style="display: none;">
+            </div>
+        
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_O1A7RGB8_Add_SrcA_DstA.png">Blend_surface :: XA_O1A7RGB8_Add_SrcA_DstA</a></div>
+                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_O1A7RGB8_Add_SrcA_DstA.png">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_O1A7RGB8_Add_SrcA_DstA.png" alt="Golden result for Blend_surface :: XA_O1A7RGB8_Add_SrcA_DstA" class="hidden-image" style="display: none;">
+            </div>
+        
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_Z1A7RGB8_Add_SrcA_1-SrcA.png">Blend_surface :: XA_Z1A7RGB8_Add_SrcA_1-SrcA</a></div>
+                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_Z1A7RGB8_Add_SrcA_1-SrcA.png">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_Z1A7RGB8_Add_SrcA_1-SrcA.png" alt="Golden result for Blend_surface :: XA_Z1A7RGB8_Add_SrcA_1-SrcA" class="hidden-image" style="display: none;">
+            </div>
+        
+            <div class="titled-image-container">
+                <div class="title-and-link">
+                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_Z1A7RGB8_Add_SrcA_DstA.png">Blend_surface :: XA_Z1A7RGB8_Add_SrcA_DstA</a></div>
+                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_Z1A7RGB8_Add_SrcA_DstA.png">
+                        <sub>[<a href="">view golden image</a>]</sub>
+                    </div>
+                </div>
+                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Blend_surface/XA_Z1A7RGB8_Add_SrcA_DstA.png" alt="Golden result for Blend_surface :: XA_Z1A7RGB8_Add_SrcA_DstA" class="hidden-image" style="display: none;">
+            </div>
+        
             <div class="titled-image-container">
                 <div class="title-and-link">
                     <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Clear/SCF_X1A7R8G8B8_O1A7R8G8B8.png">Clear :: SCF_X1A7R8G8B8_O1A7R8G8B8</a></div>
@@ -577,66 +684,6 @@ Assertion failed: (depth == 1), function pgraph_convert_texture_data, file textu
                     </div>
                 </div>
                 <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Surface_format/Fmt_X8R8G8B8_O8R8G8B8.png" alt="Golden result for Surface_format :: Fmt_X8R8G8B8_O8R8G8B8" class="hidden-image" style="display: none;">
-            </div>
-        
-            <div class="titled-image-container">
-                <div class="title-and-link">
-                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/Cubemap_Bad2D.png">Texture_2D_as_cubemap :: Cubemap_Bad2D</a></div>
-                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/Cubemap_Bad2D.png">
-                        <sub>[<a href="">view golden image</a>]</sub>
-                    </div>
-                </div>
-                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/Cubemap_Bad2D.png" alt="Golden result for Texture_2D_as_cubemap :: Cubemap_Bad2D" class="hidden-image" style="display: none;">
-            </div>
-        
-            <div class="titled-image-container">
-                <div class="title-and-link">
-                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectDiffuse_Bad2D.png">Texture_2D_as_cubemap :: DotReflectDiffuse_Bad2D</a></div>
-                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectDiffuse_Bad2D.png">
-                        <sub>[<a href="">view golden image</a>]</sub>
-                    </div>
-                </div>
-                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectDiffuse_Bad2D.png" alt="Golden result for Texture_2D_as_cubemap :: DotReflectDiffuse_Bad2D" class="hidden-image" style="display: none;">
-            </div>
-        
-            <div class="titled-image-container">
-                <div class="title-and-link">
-                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectSpec_Bad2D.png">Texture_2D_as_cubemap :: DotReflectSpec_Bad2D</a></div>
-                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectSpec_Bad2D.png">
-                        <sub>[<a href="">view golden image</a>]</sub>
-                    </div>
-                </div>
-                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectSpec_Bad2D.png" alt="Golden result for Texture_2D_as_cubemap :: DotReflectSpec_Bad2D" class="hidden-image" style="display: none;">
-            </div>
-        
-            <div class="titled-image-container">
-                <div class="title-and-link">
-                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectSpecConst_Bad2D.png">Texture_2D_as_cubemap :: DotReflectSpecConst_Bad2D</a></div>
-                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectSpecConst_Bad2D.png">
-                        <sub>[<a href="">view golden image</a>]</sub>
-                    </div>
-                </div>
-                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotReflectSpecConst_Bad2D.png" alt="Golden result for Texture_2D_as_cubemap :: DotReflectSpecConst_Bad2D" class="hidden-image" style="display: none;">
-            </div>
-        
-            <div class="titled-image-container">
-                <div class="title-and-link">
-                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotSTR3D_Bad2D.png">Texture_2D_as_cubemap :: DotSTR3D_Bad2D</a></div>
-                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotSTR3D_Bad2D.png">
-                        <sub>[<a href="">view golden image</a>]</sub>
-                    </div>
-                </div>
-                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotSTR3D_Bad2D.png" alt="Golden result for Texture_2D_as_cubemap :: DotSTR3D_Bad2D" class="hidden-image" style="display: none;">
-            </div>
-        
-            <div class="titled-image-container">
-                <div class="title-and-link">
-                    <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotSTRCube_Bad2D.png">Texture_2D_as_cubemap :: DotSTRCube_Bad2D</a></div>
-                    <div class="view-link" data-image-url="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotSTRCube_Bad2D.png">
-                        <sub>[<a href="">view golden image</a>]</sub>
-                    </div>
-                </div>
-                <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Texture_2D_as_cubemap/DotSTRCube_Bad2D.png" alt="Golden result for Texture_2D_as_cubemap :: DotSTRCube_Bad2D" class="hidden-image" style="display: none;">
             </div>
         
             <div class="titled-image-container">
