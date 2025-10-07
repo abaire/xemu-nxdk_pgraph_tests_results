@@ -61,15 +61,11 @@ function enableViewLinks(document) {
     });
 }
 
-function enableAnchorCopying(document) {
+function enableAnchorLinks(document) {
     function addClickHandler(element) {
         if (element.id) {
             element.addEventListener('click', () => {
-                const currentURL = window.location.href.split('#');
-                const anchor = element.id;
-                const urlWithAnchor = `${currentURL}#${anchor}`;
-
-                navigator.clipboard.writeText(urlWithAnchor)
+                window.location.hash = element.id;
             });
         }
     }
@@ -83,5 +79,5 @@ function enableAnchorCopying(document) {
 document.addEventListener('DOMContentLoaded', () => {
     enableViewLinks(document);
     enableImagePairs(document);
-    enableAnchorCopying(document);
+    enableAnchorLinks(document);
 });

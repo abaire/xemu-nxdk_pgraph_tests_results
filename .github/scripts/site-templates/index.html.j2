@@ -8,7 +8,7 @@
 
     <h1>Test Results</h1>
     {% for emulator_version, platforms in emulator_grouped_results | version_sort -%}
-        <h2>{{ emulator_version }}</h2>
+        <h2 id="{{ emulator_version }}">{{ emulator_version }}</h2>
         <ul>
         {%- for platform, renderers in platforms | dictsort %}
             <li>
