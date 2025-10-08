@@ -1,6 +1,10 @@
 {
   "golden_identifier": "Xbox_Hardware",
   "goldens_without_results": [
+    "Blend_surface:1-DstAlpha_XA_O1A7RGB8",
+    "Blend_surface:1-DstAlpha_XA_Z1A7RGB8",
+    "Blend_surface:1-DstAlpha_X_O1RGB5",
+    "Blend_surface:1-DstAlpha_X_ORGB8",
     "Blend_surface:DstAlpha_XA_O1A7RGB8",
     "Blend_surface:DstAlpha_XA_Z1A7RGB8",
     "Blend_surface:DstAlpha_X_O1RGB5",
@@ -221,6 +225,8 @@
     "Attrib_float:-NaNs_NaNs": "13636",
     "Attrib_setter:Setters-alpha": "945",
     "Attrib_setter:Setters-visible": "1182",
+    "Blend_surface:1-DstAlpha_X_Z1RGB5": "32768",
+    "Blend_surface:1-DstAlpha_X_ZRGB8": "59052",
     "Blend_surface:ARGB8_Add_SrcA_1-SrcA": "42161",
     "Blend_surface:ARGB8_Add_SrcA_DstA": "36837",
     "Blend_surface:DstAlpha_X_Z1RGB5": "32768",
