@@ -343,7 +343,7 @@
         <h3 id="3D_primitive_LineLoop-inlinearrays-ls">LineLoop-inlinearrays-ls</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">2042</div>
+            <div class="value">1202</div>
             <div class="label">Description</div>
             <div class="value">
                 <p>Draws vertices as a line loop using NV097_INLINE_ARRAY with line smoothing enabled.</p>
@@ -34179,6 +34179,8 @@
             <div class="test-description-line">This test reproduces behavior observed in "Blade 2"</div>
         
             <div class="test-description-line">https://github.com/xemu-project/xemu/issues/1852</div>
+        
+            <div class="test-description-line"></div>
         </div>
         
         <div class="label">Suite class def</div>
@@ -34187,13 +34189,343 @@
 
 
     
+        <h3 id="Fog_carryover_CarryoverLineLoop">CarryoverLineLoop</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">17552</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverLineLoop-diff.png" alt="Diff result for Fog_carryover::CarryoverLineLoop" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverLineLoop.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverLineLoop.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverLineLoop.png" alt="Source image for Fog_carryover::CarryoverLineLoop" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverLineLoop.png" alt="Golden image for Fog_carryover::CarryoverLineLoop" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverLines">CarryoverLines</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">16544</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverLines-diff.png" alt="Diff result for Fog_carryover::CarryoverLines" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverLines.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverLines.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverLines.png" alt="Source image for Fog_carryover::CarryoverLines" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverLines.png" alt="Golden image for Fog_carryover::CarryoverLines" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverLineStrip">CarryoverLineStrip</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">17048</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverLineStrip-diff.png" alt="Diff result for Fog_carryover::CarryoverLineStrip" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverLineStrip.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverLineStrip.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverLineStrip.png" alt="Source image for Fog_carryover::CarryoverLineStrip" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverLineStrip.png" alt="Golden image for Fog_carryover::CarryoverLineStrip" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverPoints">CarryoverPoints</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">16384</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverPoints-diff.png" alt="Diff result for Fog_carryover::CarryoverPoints" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverPoints.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverPoints.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverPoints.png" alt="Source image for Fog_carryover::CarryoverPoints" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverPoints.png" alt="Golden image for Fog_carryover::CarryoverPoints" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverPoly">CarryoverPoly</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">16384</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP. </p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverPoly-diff.png" alt="Diff result for Fog_carryover::CarryoverPoly" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverPoly.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverPoly.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverPoly.png" alt="Source image for Fog_carryover::CarryoverPoly" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverPoly.png" alt="Golden image for Fog_carryover::CarryoverPoly" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverQuads">CarryoverQuads</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">16384</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverQuads-diff.png" alt="Diff result for Fog_carryover::CarryoverQuads" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverQuads.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverQuads.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverQuads.png" alt="Source image for Fog_carryover::CarryoverQuads" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverQuads.png" alt="Golden image for Fog_carryover::CarryoverQuads" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverQuadStrip">CarryoverQuadStrip</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">16384</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverQuadStrip-diff.png" alt="Diff result for Fog_carryover::CarryoverQuadStrip" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverQuadStrip.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverQuadStrip.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverQuadStrip.png" alt="Source image for Fog_carryover::CarryoverQuadStrip" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverQuadStrip.png" alt="Golden image for Fog_carryover::CarryoverQuadStrip" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverTriFan">CarryoverTriFan</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">16384</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverTriFan-diff.png" alt="Diff result for Fog_carryover::CarryoverTriFan" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverTriFan.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverTriFan.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverTriFan.png" alt="Source image for Fog_carryover::CarryoverTriFan" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverTriFan.png" alt="Golden image for Fog_carryover::CarryoverTriFan" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverTris">CarryoverTris</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">16384</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverTris-diff.png" alt="Diff result for Fog_carryover::CarryoverTris" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverTris.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverTris.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverTris.png" alt="Source image for Fog_carryover::CarryoverTris" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverTris.png" alt="Golden image for Fog_carryover::CarryoverTris" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_carryover_CarryoverTriStrip">CarryoverTriStrip</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">16384</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a series of primitives using various draw modes on the left, setting fog coordinates. Then renders a quad using the same draw mode on the right without specifying a fog coordinate at all. The fog mode is set to EXP.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_carryover/CarryoverTriStrip-diff.png" alt="Diff result for Fog_carryover::CarryoverTriStrip" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverTriStrip.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverTriStrip.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_carryover/CarryoverTriStrip.png" alt="Source image for Fog_carryover::CarryoverTriStrip" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_carryover/CarryoverTriStrip.png" alt="Golden image for Fog_carryover::CarryoverTriStrip" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
         <h3 id="Fog_carryover_FogCarryover">FogCarryover</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
             <div class="value">12096</div>
             <div class="label">Description</div>
             <div class="value">
-                <p>The left column triangles are rendered with the fog coordinate explicitly passed through from the vertex by the shader. The right column triangles do not specify the fog coordinate at all. </p>
+                <p>The left column triangles are rendered with the fog coordinate explicitly passed through from the vertex by the shader. The right column triangles do not specify the fog coordinate at all.</p>
             </div>
         </div>
 
@@ -35057,6 +35389,678 @@
             </div>
             <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/FogExc-linear_abs-spec_alpha.png" alt="Source image for Fog_exceptional_value::FogExc-linear_abs-spec_alpha" class="image-comparison" data-state="source">
             <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/FogExc-linear_abs-spec_alpha.png" alt="Golden image for Fog_exceptional_value::FogExc-linear_abs-spec_alpha" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp-abs_planar">RCP-FogExc-exp-abs_planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">4014</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp-abs_planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp-abs_planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp-abs_planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp-abs_planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp-abs_planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp-abs_planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp-abs_planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp-abs_planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp-fog_x">RCP-FogExc-exp-fog_x</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">4014</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp-fog_x-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp-fog_x" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp-fog_x.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp-fog_x.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp-fog_x.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp-fog_x" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp-fog_x.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp-fog_x" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp-planar">RCP-FogExc-exp-planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">4014</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp-planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp-planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp-planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp-planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp-planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp-planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp-planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp-planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp-spec_alpha">RCP-FogExc-exp-spec_alpha</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">4014</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp-spec_alpha-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp-spec_alpha" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp-spec_alpha.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp-spec_alpha.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp-spec_alpha.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp-spec_alpha" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp-spec_alpha.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp-spec_alpha" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp2-abs_planar">RCP-FogExc-exp2-abs_planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">18029</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp2-abs_planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp2-abs_planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2-abs_planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2-abs_planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2-abs_planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp2-abs_planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2-abs_planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp2-abs_planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp2-fog_x">RCP-FogExc-exp2-fog_x</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">18029</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp2-fog_x-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp2-fog_x" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2-fog_x.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2-fog_x.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2-fog_x.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp2-fog_x" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2-fog_x.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp2-fog_x" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp2-planar">RCP-FogExc-exp2-planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">18029</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp2-planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp2-planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2-planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2-planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2-planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp2-planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2-planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp2-planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp2-spec_alpha">RCP-FogExc-exp2-spec_alpha</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">18029</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp2-spec_alpha-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp2-spec_alpha" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2-spec_alpha.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2-spec_alpha.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2-spec_alpha.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp2-spec_alpha" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2-spec_alpha.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp2-spec_alpha" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp2_abs-abs_planar">RCP-FogExc-exp2_abs-abs_planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">18029</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp2_abs-abs_planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp2_abs-abs_planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2_abs-abs_planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2_abs-abs_planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2_abs-abs_planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp2_abs-abs_planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2_abs-abs_planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp2_abs-abs_planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp2_abs-fog_x">RCP-FogExc-exp2_abs-fog_x</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">18029</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp2_abs-fog_x-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp2_abs-fog_x" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2_abs-fog_x.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2_abs-fog_x.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2_abs-fog_x.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp2_abs-fog_x" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2_abs-fog_x.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp2_abs-fog_x" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp2_abs-planar">RCP-FogExc-exp2_abs-planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">18029</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp2_abs-planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp2_abs-planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2_abs-planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2_abs-planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2_abs-planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp2_abs-planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2_abs-planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp2_abs-planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp2_abs-spec_alpha">RCP-FogExc-exp2_abs-spec_alpha</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">18029</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp2_abs-spec_alpha-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp2_abs-spec_alpha" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2_abs-spec_alpha.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2_abs-spec_alpha.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp2_abs-spec_alpha.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp2_abs-spec_alpha" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp2_abs-spec_alpha.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp2_abs-spec_alpha" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp_abs-abs_planar">RCP-FogExc-exp_abs-abs_planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">34396</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp_abs-abs_planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp_abs-abs_planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp_abs-abs_planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp_abs-abs_planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp_abs-abs_planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp_abs-abs_planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp_abs-abs_planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp_abs-abs_planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp_abs-fog_x">RCP-FogExc-exp_abs-fog_x</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">34396</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp_abs-fog_x-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp_abs-fog_x" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp_abs-fog_x.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp_abs-fog_x.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp_abs-fog_x.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp_abs-fog_x" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp_abs-fog_x.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp_abs-fog_x" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp_abs-planar">RCP-FogExc-exp_abs-planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">34396</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp_abs-planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp_abs-planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp_abs-planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp_abs-planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp_abs-planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp_abs-planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp_abs-planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp_abs-planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-exp_abs-spec_alpha">RCP-FogExc-exp_abs-spec_alpha</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">34396</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-exp_abs-spec_alpha-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-exp_abs-spec_alpha" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp_abs-spec_alpha.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp_abs-spec_alpha.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-exp_abs-spec_alpha.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-exp_abs-spec_alpha" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-exp_abs-spec_alpha.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-exp_abs-spec_alpha" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-linear-abs_planar">RCP-FogExc-linear-abs_planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">3484</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-linear-abs_planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-linear-abs_planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear-abs_planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear-abs_planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear-abs_planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-linear-abs_planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear-abs_planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-linear-abs_planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-linear-fog_x">RCP-FogExc-linear-fog_x</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">3484</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-linear-fog_x-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-linear-fog_x" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear-fog_x.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear-fog_x.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear-fog_x.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-linear-fog_x" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear-fog_x.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-linear-fog_x" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-linear-planar">RCP-FogExc-linear-planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">3484</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-linear-planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-linear-planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear-planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear-planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear-planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-linear-planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear-planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-linear-planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-linear-spec_alpha">RCP-FogExc-linear-spec_alpha</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">3484</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-linear-spec_alpha-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-linear-spec_alpha" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear-spec_alpha.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear-spec_alpha.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear-spec_alpha.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-linear-spec_alpha" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear-spec_alpha.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-linear-spec_alpha" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-linear_abs-abs_planar">RCP-FogExc-linear_abs-abs_planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">11477</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-linear_abs-abs_planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-linear_abs-abs_planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear_abs-abs_planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear_abs-abs_planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear_abs-abs_planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-linear_abs-abs_planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear_abs-abs_planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-linear_abs-abs_planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-linear_abs-fog_x">RCP-FogExc-linear_abs-fog_x</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">11477</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-linear_abs-fog_x-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-linear_abs-fog_x" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear_abs-fog_x.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear_abs-fog_x.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear_abs-fog_x.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-linear_abs-fog_x" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear_abs-fog_x.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-linear_abs-fog_x" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-linear_abs-planar">RCP-FogExc-linear_abs-planar</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">11477</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-linear_abs-planar-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-linear_abs-planar" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear_abs-planar.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear_abs-planar.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear_abs-planar.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-linear_abs-planar" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear_abs-planar.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-linear_abs-planar" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Fog_exceptional_value_RCP-FogExc-linear_abs-spec_alpha">RCP-FogExc-linear_abs-spec_alpha</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">11477</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Fog_exceptional_value/RCP-FogExc-linear_abs-spec_alpha-diff.png" alt="Diff result for Fog_exceptional_value::RCP-FogExc-linear_abs-spec_alpha" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear_abs-spec_alpha.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear_abs-spec_alpha.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Fog_exceptional_value/RCP-FogExc-linear_abs-spec_alpha.png" alt="Source image for Fog_exceptional_value::RCP-FogExc-linear_abs-spec_alpha" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Fog_exceptional_value/RCP-FogExc-linear_abs-spec_alpha.png" alt="Golden image for Fog_exceptional_value::RCP-FogExc-linear_abs-spec_alpha" class="image-comparison" data-state="golden" style="display: none;">
         </div>
         
 
@@ -38642,6 +39646,8 @@
             <div class="test-description-line">See</div>
         
             <div class="test-description-line">https://learn.microsoft.com/en-us/windows/uwp/graphics-concepts/attenuation-and-spotlight-factor</div>
+        
+            <div class="test-description-line"></div>
         </div>
         
         <div class="label">Suite class def</div>
@@ -42374,9 +43380,11 @@
         
             <div class="test-description-line">https://xboxdevwiki.net/NV2A/Pixel_Combiner</div>
         
-            <div class="test-description-line">See</div>
+            <div class="test-description-line"> See</div>
         
             <div class="test-description-line">https://web.archive.org/web/20240607015835/https://developer.download.nvidia.com/assets/gamedev/docs/GDC2K1_DX8_Pixel_Shaders.pdf</div>
+        
+            <div class="test-description-line"></div>
         </div>
         
         <div class="label">Suite class def</div>
@@ -42537,6 +43545,70 @@
         
             <div class="test-description-line">In each row, as points go from left to right, point params are set from the following:</div>
         
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">No scale factors, min size 0, size range 0. Should be 1 pixel.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">No scale factors, min size 16, size range 0. Should be 16 pixels square.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">Negligible constant scale, size range 16, min size 0. Should be 16 pixels.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">Negligible constant scale, size range 16, min size 8. Should be 24 pixels.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">4 constant scale, size range 14, min size 16. Should be ~23 pixels.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">4 constant scale, size range 36, min size 4. Should be ~21 pixels.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">256 constant scale, size range 36, min size 4. Should be ~7 pixels.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min 1.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.05 quadratic scale, size range 39, min 1.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">4 constant scale, size range 14, min size 16, bias -0.5.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">4 constant scale, size range 14, min size 16, bias 0.5.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">No scale factors, size range 15, min size 1, bias -100.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">No scale factors, size range 15, min size 1, bias 100.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">Detailed_(FF | VS) Each test renders a grid of points. Point size is set to 128 (16 pixels) for all points.</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line"></div>
+        
             <div class="test-description-line">No scale factors, min size 0, size range 0. Should be 1 pixel.</div>
         
             <div class="test-description-line">No scale factors, min size 16, size range 0. Should be 16 pixels square.</div>
@@ -42568,6 +43640,62 @@
             <div class="test-description-line">As points go from top to bottom: Z starts at -5 (eye at -7) and increases by 25 per row (max depth = 193).</div>
         
             <div class="test-description-line">In each row, as points go from left to right, point params are set from the following:</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -1.0</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -0.5</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -0.25</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -0.01</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias 0</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -0.01</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -0.25</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -0.5</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -1.0</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">4 constant scale, size range 36, min size 4, scale bias -0.4</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">4 constant scale, size range 36, min size 4, scale bias -0.25</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">4 constant scale, size range 36, min size 4, scale bias 0.25</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line">4 constant scale, size range 36, min size 4, scale bias 0.4</div>
+        
+            <div class="test-description-line"></div>
+        
+            <div class="test-description-line"></div>
         
             <div class="test-description-line">0.25 linear scale, size range 39, min size 1, scale bias -1.0</div>
         
@@ -46784,7 +47912,7 @@
         <h3 id="Stipple_tests_Alternating_On">Alternating_On</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">13985</div></div>
+            <div class="value">14119</div></div>
 
         <div class="comparison-image-set">
 
@@ -46812,7 +47940,7 @@
         <h3 id="Stipple_tests_Border_On">Border_On</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">3708</div></div>
+            <div class="value">3842</div></div>
 
         <div class="comparison-image-set">
 
@@ -46840,7 +47968,7 @@
         <h3 id="Stipple_tests_Checkered_Off">Checkered_Off</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">1052</div></div>
+            <div class="value">1186</div></div>
 
         <div class="comparison-image-set">
 
@@ -46868,7 +47996,7 @@
         <h3 id="Stipple_tests_Checkered_On">Checkered_On</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">14064</div></div>
+            <div class="value">14198</div></div>
 
         <div class="comparison-image-set">
 
@@ -46896,7 +48024,7 @@
         <h3 id="Stipple_tests_Zero_On">Zero_On</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">28687</div></div>
+            <div class="value">28821</div></div>
 
         <div class="comparison-image-set">
 
@@ -47734,7 +48862,7 @@
         
             <div class="test-description-line">TextureCubemapTests</div>
         
-            <div class="test-description-line">for examples of how these modes should actually be used.</div>
+            <div class="test-description-line"> for examples of how these modes should actually be used.</div>
         </div>
         
         <div class="label">Suite class def</div>
@@ -47902,6 +49030,93 @@
             </div>
             <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Texture_2D_as_cubemap/DotSTRCube_Bad2D.png" alt="Source image for Texture_2D_as_cubemap::DotSTRCube_Bad2D" class="image-comparison" data-state="source">
             <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_2D_as_cubemap/DotSTRCube_Bad2D.png" alt="Golden image for Texture_2D_as_cubemap::DotSTRCube_Bad2D" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+
+
+    <h2><a href="Texture_3D_as_2D.html">Texture_3D_as_2D</a></h2>
+    <div class="label-value-grid">
+        <div class="label">Description</div>
+        <div class="value">
+            <div class="test-description-line">Tests the behavior of various texture stage modes that require 2D textures but are given cubemap/volumetric textures.</div>
+        
+            <div class="test-description-line">NOTE: This suite tests behavior of incorrectly configured textures. Please see</div>
+        
+            <div class="test-description-line">TextureFormatTests</div>
+        
+            <div class="test-description-line"> for examples of how 2D textures should generally be used.</div>
+        </div>
+        
+        <div class="label">Suite class def</div>
+        <div class="value">src/tests/texture_3d_as_2d_tests.h</div>
+    </div>
+
+
+    
+        <h3 id="Texture_3D_as_2D_Cubemap_as_2D">Cubemap_as_2D</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">67967</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a textured quad using a cubemap texture sampled as 2D_PROJECTIVE. The +X face is rendered as a native-sized reference image. The quad is rendered at 4x the native size of the texture.</p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Texture_3D_as_2D/Cubemap_as_2D-diff.png" alt="Diff result for Texture_3D_as_2D::Cubemap_as_2D" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Texture_3D_as_2D/Cubemap_as_2D.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_3D_as_2D/Cubemap_as_2D.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Texture_3D_as_2D/Cubemap_as_2D.png" alt="Source image for Texture_3D_as_2D::Cubemap_as_2D" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_3D_as_2D/Cubemap_as_2D.png" alt="Golden image for Texture_3D_as_2D::Cubemap_as_2D" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Texture_3D_as_2D_Volumetric_as_2D">Volumetric_as_2D</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">4404</div>
+            <div class="label">Description</div>
+            <div class="value">
+                <p>Renders a textured quad using a volumetric texture sampled as 2D_PROJECTIVE. The first two layers are rendered as native sized reference images on the left. The quad is rendered at 4x the native size of the texture. </p>
+            </div>
+        </div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Texture_3D_as_2D/Volumetric_as_2D-diff.png" alt="Diff result for Texture_3D_as_2D::Volumetric_as_2D" class="inline-image">
+        
+        </div>
+
+
+        
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Texture_3D_as_2D/Volumetric_as_2D.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_3D_as_2D/Volumetric_as_2D.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Texture_3D_as_2D/Volumetric_as_2D.png" alt="Source image for Texture_3D_as_2D::Volumetric_as_2D" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_3D_as_2D/Volumetric_as_2D.png" alt="Golden image for Texture_3D_as_2D::Volumetric_as_2D" class="image-comparison" data-state="golden" style="display: none;">
         </div>
         
 
@@ -49295,54 +50510,6 @@
 
 
     
-        <h3 id="Texture_render_target_TexFmt_A8">TexFmt_A8</h3>
-        <div class="label-value-grid">
-            <div class="label">Difference</div>
-            <div class="value">inf</div></div>
-
-        <div class="comparison-image-set">
-
-        <div class="image-container">
-        
-            <div class="missing-image">No source result</div>
-        
-        </div>
-
-
-        
-        <div class="titled-image">
-            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_render_target/TexFmt_A8.png">Source</a> - No golden result</div>
-            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_render_target/TexFmt_A8.png" alt="Source image for Texture_render_target::TexFmt_A8">
-        </div>
-        
-
-        </div>
-
-    
-        <h3 id="Texture_render_target_TexFmt_A8_L">TexFmt_A8_L</h3>
-        <div class="label-value-grid">
-            <div class="label">Difference</div>
-            <div class="value">inf</div></div>
-
-        <div class="comparison-image-set">
-
-        <div class="image-container">
-        
-            <div class="missing-image">No source result</div>
-        
-        </div>
-
-
-        
-        <div class="titled-image">
-            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_render_target/TexFmt_A8_L.png">Source</a> - No golden result</div>
-            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_render_target/TexFmt_A8_L.png" alt="Source image for Texture_render_target::TexFmt_A8_L">
-        </div>
-        
-
-        </div>
-
-    
         <h3 id="Texture_render_target_TexFmt_DXT1">TexFmt_DXT1</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
@@ -49374,21 +50541,25 @@
         <h3 id="Texture_render_target_TexFmt_R6G5B5">TexFmt_R6G5B5</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">inf</div></div>
+            <div class="value">78604</div></div>
 
         <div class="comparison-image-set">
 
         <div class="image-container">
         
-            <div class="missing-image">No source result</div>
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Texture_render_target/TexFmt_R6G5B5-diff.png" alt="Diff result for Texture_render_target::TexFmt_R6G5B5" class="inline-image">
         
         </div>
 
 
         
-        <div class="titled-image">
-            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_render_target/TexFmt_R6G5B5.png">Source</a> - No golden result</div>
-            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Texture_render_target/TexFmt_R6G5B5.png" alt="Source image for Texture_render_target::TexFmt_R6G5B5">
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Texture_render_target/TexFmt_R6G5B5.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_render_target/TexFmt_R6G5B5.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Texture_render_target/TexFmt_R6G5B5.png" alt="Source image for Texture_render_target::TexFmt_R6G5B5" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Texture_render_target/TexFmt_R6G5B5.png" alt="Golden image for Texture_render_target::TexFmt_R6G5B5" class="image-comparison" data-state="golden" style="display: none;">
         </div>
         
 
@@ -52022,7 +53193,7 @@
         <h3 id="Texture_signed_component_tests_txt_A8R8G8B8_ADD">txt_A8R8G8B8_ADD</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">75686</div></div>
+            <div class="value">70817</div></div>
 
         <div class="comparison-image-set">
 
@@ -52281,21 +53452,25 @@
         <h3 id="Volume_texture_A8">A8</h3>
         <div class="label-value-grid">
             <div class="label">Difference</div>
-            <div class="value">inf</div></div>
+            <div class="value">4346</div></div>
 
         <div class="comparison-image-set">
 
         <div class="image-container">
         
-            <div class="missing-image">No source result</div>
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/compare-results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Xbox--Xbox--DirectX--nv2a/Volume_texture/A8-diff.png" alt="Diff result for Volume_texture::A8" class="inline-image">
         
         </div>
 
 
         
-        <div class="titled-image">
-            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Volume_texture/A8.png">Source</a> - No golden result</div>
-            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max--gslv_4.10/Volume_texture/A8.png" alt="Source image for Volume_texture::A8">
+        <div class="image-pair">
+            <div class="image-pair-title-bar">
+                <div class="image-title" data-state="source"><a href="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Volume_texture/A8.png">Source</a></div>
+                <div class="image-title" data-state="golden"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Volume_texture/A8.png">Golden</a></div>
+            </div>
+            <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Volume_texture/A8.png" alt="Source image for Volume_texture::A8" class="image-comparison" data-state="source">
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Volume_texture/A8.png" alt="Golden image for Volume_texture::A8" class="image-comparison" data-state="golden" style="display: none;">
         </div>
         
 
@@ -52352,6 +53527,30 @@
             </div>
             <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639/Darwin_arm64/gl_Apple_Apple_M3_Max/gslv_4.10/Volume_texture/DXT1.png" alt="Source image for Volume_texture::DXT1" class="image-comparison" data-state="source">
             <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results//Volume_texture/DXT1.png" alt="Golden image for Volume_texture::DXT1" class="image-comparison" data-state="golden" style="display: none;">
+        </div>
+        
+
+        </div>
+
+    
+        <h3 id="Volume_texture_R6G5B5">R6G5B5</h3>
+        <div class="label-value-grid">
+            <div class="label">Difference</div>
+            <div class="value">inf</div></div>
+
+        <div class="comparison-image-set">
+
+        <div class="image-container">
+        
+            <div class="missing-image">No source result</div>
+        
+        </div>
+
+
+        
+        <div class="titled-image">
+            <div class="image-title"><a href="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Volume_texture/R6G5B5.png">Golden</a> - No source result</div>
+            <img src="https://raw.githubusercontent.com/abaire/nxdk_pgraph_tests_golden_results/main/results/Volume_texture/R6G5B5.png" alt="Golden image for Volume_texture::R6G5B5">
         </div>
         
 
