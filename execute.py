@@ -38,7 +38,6 @@ if sys.platform == "win32":
     import time
     import win32gui
     import win32con
-    import ctypes
 
 
     class AbortDialogHandler:
@@ -122,7 +121,7 @@ def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, A
 
 
 def _download_artifact(
-    target_path: str, download_url: str, artifact_path_override: str | None = None, *, force_download: bool = False
+        target_path: str, download_url: str, artifact_path_override: str | None = None, *, force_download: bool = False
 ) -> bool:
     """Downloads an artifact from the given URL, if it does not already exist. Returns True if download was needed."""
     if os.path.exists(target_path) and not force_download:
@@ -253,7 +252,8 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
     elif system == "Darwin":
         # xemu-macos-universal-release.zip
         def check_asset(asset_name: str) -> bool:
-            return asset_name == "xemu-macos-universal-release.zip"
+            return asset_name == "xemu-macos-universal-release.zip" or asset_name.endswith(
+                "-macos-universal-unsigned.zip")
     elif system == "Windows":
         # xemu-win-x86_64-release.zip
         def check_asset(asset_name: str) -> bool:
@@ -369,13 +369,13 @@ def _download_xemu_hdd(output_dir: str, tag: str = "latest") -> str | None:
 
 
 def _generate_xemu_toml(
-    file_path: str,
-    bootrom_path: str,
-    flashrom_path: str,
-    eeprom_path: str,
-    hdd_path: str,
-    *,
-    use_vulkan: bool = False,
+        file_path: str,
+        bootrom_path: str,
+        flashrom_path: str,
+        eeprom_path: str,
+        hdd_path: str,
+        *,
+        use_vulkan: bool = False,
 ) -> None:
     content = [
         "[general]",
@@ -512,17 +512,17 @@ def _set_apple_persistence_ignore_state(macos_bundle_identifier: str, *, ignore:
 
 
 def run(
-    iso_path: str,
-    work_path: str,
-    inputs_path: str,
-    results_path: str,
-    xemu_path: str,
-    hdd_path: str,
-    *,
-    overwrite_existing_outputs: bool,
-    no_bundle: bool = False,
-    use_vulkan: bool = False,
-    just_suites: Collection[str] | None = None,
+        iso_path: str,
+        work_path: str,
+        inputs_path: str,
+        results_path: str,
+        xemu_path: str,
+        hdd_path: str,
+        *,
+        overwrite_existing_outputs: bool,
+        no_bundle: bool = False,
+        use_vulkan: bool = False,
+        just_suites: Collection[str] | None = None,
 ):
     emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path, no_bundle=no_bundle)
     if not emulator_command:
