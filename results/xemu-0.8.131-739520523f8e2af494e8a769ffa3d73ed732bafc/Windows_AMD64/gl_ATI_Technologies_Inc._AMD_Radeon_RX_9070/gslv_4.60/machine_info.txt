@@ -1,0 +1,10 @@
+xemu_version: 0.8.131
+xemu_commit: 739520523f8e2af494e8a769ffa3d73ed732bafc
+xemu_date: Tue Jan 13 03:40:56 UTC 2026
+nvapi: NvAPI_Initialize failed
+CPU: Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz
+OS_Version:  24H2
+GL_VENDOR: ATI Technologies Inc.
+GL_RENDERER: AMD Radeon RX 9070
+GL_VERSION: 4.0.0 Core Profile Context 25.12.1.251128
+GL_SHADING_LANGUAGE_VERSION: 4.60
