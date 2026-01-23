@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # ruff: noqa: T201 `print` found
+# ruff: noqa: RUF001 String contains ambiguous
 
 from __future__ import annotations
 
@@ -36,9 +37,9 @@ logger = logging.getLogger(__name__)
 if sys.platform == "win32":
     import threading
     import time
-    import win32gui
-    import win32con
 
+    import win32con
+    import win32gui
 
     class AbortDialogHandler:
         def __init__(self):
@@ -55,9 +56,10 @@ if sys.platform == "win32":
                     print(f"ℹ️ Found dialog: '{dialog_title}'")
 
                     def enum_child_proc(child_hwnd, lparam):
+                        del lparam
                         button_text = win32gui.GetWindowText(child_hwnd)
                         if "abort" in button_text.lower():
-                            print(f"   -> Found 'Abort' button. Clicking it now.")
+                            print("   -> Found 'Abort' button. Clicking it now.")
                             win32gui.SendMessage(child_hwnd, win32con.BM_CLICK, 0, 0)
                             self.dialog_found = True
                         return True
@@ -121,7 +123,7 @@ def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, A
 
 
 def _download_artifact(
-        target_path: str, download_url: str, artifact_path_override: str | None = None, *, force_download: bool = False
+    target_path: str, download_url: str, artifact_path_override: str | None = None, *, force_download: bool = False
 ) -> bool:
     """Downloads an artifact from the given URL, if it does not already exist. Returns True if download was needed."""
     if os.path.exists(target_path) and not force_download:
@@ -246,14 +248,15 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
     if system == "Linux":
         # xemu-v0.8.15-x86_64.AppImage
         def check_asset(asset_name: str) -> bool:
-            if not asset_name.startswith("xemu-v") or "-dbg-" in asset_name:
+            if not asset_name.startswith("xemu-") or "-dbg-" in asset_name:
                 return False
             return asset_name.endswith(".AppImage") and platform.machine() in asset_name
     elif system == "Darwin":
         # xemu-macos-universal-release.zip
         def check_asset(asset_name: str) -> bool:
             return asset_name == "xemu-macos-universal-release.zip" or asset_name.endswith(
-                "-macos-universal-unsigned.zip")
+                "-macos-universal-unsigned.zip"
+            )
     elif system == "Windows":
         # xemu-win-x86_64-release.zip
         def check_asset(asset_name: str) -> bool:
@@ -277,7 +280,7 @@ def _download_xemu(output_dir: str, tag: str = "latest") -> str | None:
         break
 
     if not download_url:
-        logger.error("Failed to fetch download URL for latest nxdk_pgraph_tests release")
+        logger.error("Failed to fetch download URL for latest xemu release")
         return None
 
     if system == "Linux":
@@ -369,13 +372,13 @@ def _download_xemu_hdd(output_dir: str, tag: str = "latest") -> str | None:
 
 
 def _generate_xemu_toml(
-        file_path: str,
-        bootrom_path: str,
-        flashrom_path: str,
-        eeprom_path: str,
-        hdd_path: str,
-        *,
-        use_vulkan: bool = False,
+    file_path: str,
+    bootrom_path: str,
+    flashrom_path: str,
+    eeprom_path: str,
+    hdd_path: str,
+    *,
+    use_vulkan: bool = False,
 ) -> None:
     content = [
         "[general]",
@@ -512,17 +515,17 @@ def _set_apple_persistence_ignore_state(macos_bundle_identifier: str, *, ignore:
 
 
 def run(
-        iso_path: str,
-        work_path: str,
-        inputs_path: str,
-        results_path: str,
-        xemu_path: str,
-        hdd_path: str,
-        *,
-        overwrite_existing_outputs: bool,
-        no_bundle: bool = False,
-        use_vulkan: bool = False,
-        just_suites: Collection[str] | None = None,
+    iso_path: str,
+    work_path: str,
+    inputs_path: str,
+    results_path: str,
+    xemu_path: str,
+    hdd_path: str,
+    *,
+    overwrite_existing_outputs: bool,
+    no_bundle: bool = False,
+    use_vulkan: bool = False,
+    just_suites: Collection[str] | None = None,
 ):
     emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path, no_bundle=no_bundle)
     if not emulator_command:
