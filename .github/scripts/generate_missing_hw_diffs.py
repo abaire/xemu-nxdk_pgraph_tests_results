@@ -65,8 +65,21 @@ def find_result_dirs_without_hw_diffs(results_dir: str, output_dir: str) -> set[
     return result_paths - source_paths
 
 
-def generate_missing_hw_diffs(results_dir: str, output_dir: str, compare_script: str) -> None:
+def generate_missing_hw_diffs(results_dir: str, output_dir: str, compare_script: str, only_dir: str | None = None, *,
+                              print_dirs_only: bool = False) -> None:
     results_missing_comparisons = find_result_dirs_without_hw_diffs(results_dir, output_dir)
+
+    if print_dirs_only:
+        for result in results_missing_comparisons:
+            print(result)
+        return
+
+    if only_dir:
+        if only_dir not in results_missing_comparisons:
+            print(f"'{only_dir}' does not require comparison")
+            return
+        subprocess.run([compare_script, only_dir, "--verbose"], check=False)
+        return
 
     for result in results_missing_comparisons:
         subprocess.run([compare_script, result, "--verbose"], check=False)
@@ -89,11 +102,21 @@ def main() -> int:
         default="compare.py",
         help="The compare.py script used to generate results",
     )
+    parser.add_argument(
+        "--print-dirs-only",
+        action="store_true",
+        help="Print a list of directories that need to be processed and exit",
+    )
+    parser.add_argument(
+        "--only-dir",
+        help="Restrict generation to the given path",
+    )
 
     args = parser.parse_args()
 
     compare_script = os.path.abspath(os.path.expanduser(args.compare_script))
-    generate_missing_hw_diffs(args.results_dir, args.output_dir, compare_script)
+    generate_missing_hw_diffs(args.results_dir, args.output_dir, compare_script, only_dir=args.only_dir,
+                              print_dirs_only=args.print_dirs_only)
 
     return 0
 
