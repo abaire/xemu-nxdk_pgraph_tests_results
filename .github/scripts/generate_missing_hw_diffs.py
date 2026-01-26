@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import os
 import subprocess
 import sys
 
+logger = logging.getLogger(__name__)
 
 def _find_results_paths(results_dir: str) -> set[str]:
     ret: set[str] = set()
@@ -36,7 +38,8 @@ def _find_hw_comparison_paths(output_dir: str) -> set[str]:
         if "summary.json" not in filenames:
             continue
 
-        if os.path.basename(root) != "Xbox__Xbox__DirectX__nv2a":
+        if os.path.basename(root) != "Xbox--Xbox--DirectX--nv2a":
+            logger.debug("Skip %s (%s != Xbox--Xbox--DirectX--nv2a)", root, os.path.basename(root))
             continue
         ret.add(root)
 
@@ -61,6 +64,9 @@ def find_result_dirs_without_hw_diffs(results_dir: str, output_dir: str) -> set[
 
     hw_comparison_paths = _find_hw_comparison_paths(output_dir)
     source_paths = {os.path.join(results_dir, _comparison_path_to_source_path(path)) for path in hw_comparison_paths}
+
+    logger.debug("Result paths: %s", sorted(result_paths))
+    logger.debug("Source paths: %s", sorted(source_paths))
 
     return result_paths - source_paths
 
@@ -88,6 +94,12 @@ def generate_missing_hw_diffs(results_dir: str, output_dir: str, compare_script:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--verbose",
+        "-v",
+        help="Enables verbose logging information",
+        action="store_true",
+    )
+    parser.add_argument(
         "--results-dir",
         default="results",
         help="Directory including test outputs that will be processed",
@@ -113,6 +125,9 @@ def main() -> int:
     )
 
     args = parser.parse_args()
+
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(level=log_level)
 
     compare_script = os.path.abspath(os.path.expanduser(args.compare_script))
     generate_missing_hw_diffs(args.results_dir, args.output_dir, compare_script, only_dir=args.only_dir,
