@@ -117,11 +117,23 @@ jobs:
     if: |
       github.event_name == 'workflow_dispatch' || 
       (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
+    permissions:
+      contents: write
     outputs:
       dir_list: ${{ steps.get-dirs.outputs.matrix }}
       has_work: ${{ steps.get-dirs.outputs.has_work }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: comparisons
+          fetch-depth: 0
+      - name: Rebase on main
+        run: |
+          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR via action"
+          git fetch origin main
+          git rebase origin/main
+          git push origin comparisons --force
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
       - id: get-dirs
@@ -146,6 +158,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: comparisons
       - uses: actions/setup-python@v6
         with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
