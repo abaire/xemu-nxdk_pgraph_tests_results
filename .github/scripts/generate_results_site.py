@@ -303,6 +303,7 @@ class ComparisonScanner:
 
         def load_summary(subpath: str) -> tuple[str, dict[str, Any]]:
             full_path = os.path.join(self.comparison_dir, subpath)
+            logger.debug("Load summary from '%s'", full_path)
             with open(full_path) as infile:
                 return os.path.dirname(full_path), json.load(infile)
 
