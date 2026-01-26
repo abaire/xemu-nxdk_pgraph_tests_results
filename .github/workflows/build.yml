@@ -11,7 +11,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
-
 jobs:
   find-changes:
     runs-on: ubuntu-latest
@@ -23,6 +22,8 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: '1'
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -43,15 +44,14 @@ jobs:
 
   PackageResultsArtifact:
     needs: [ find-changes ]
-    name: Package the newest results into a build artifact
+    name: Package newest results
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || needs.find-changes.outputs.archive_results == 'true'
     outputs:
       xemu_info: ${{ steps.archive_results.outputs.xemu_info }}
       artifact: ${{ steps.archive_results.outputs.release_archive }}
     steps:
-      - name: Clone tree
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: '1'
       - uses: actions/setup-python@v5
@@ -66,7 +66,6 @@ jobs:
             xemu_info="${newest_official_result##results/}"
             artifact_name="${xemu_info}_results.tgz"
             tar -vczf "${artifact_name}" "${newest_official_result}" "results/known_issues.json"
-
             echo "xemu_info=${xemu_info}" >> $GITHUB_OUTPUT 
             echo "release_archive=${artifact_name}" >> $GITHUB_OUTPUT
           fi
@@ -79,7 +78,7 @@ jobs:
 
   CreateRelease:
     needs: [ PackageResultsArtifact ]
-    name: Create a release with the new build artifact
+    name: Create release
     runs-on: ubuntu-latest
     if: |
       github.event_name == 'workflow_dispatch' ||
@@ -92,8 +91,8 @@ jobs:
       - name: Calculate version
         id: calculate-version
         run: |
-          echo "version=${{ needs.PackageResultsArtifact.outputs.xemu_info }}__$(date +'%Y-%m-%d_%H-%M-%S-%N')"
-          echo "version=${{ needs.PackageResultsArtifact.outputs.xemu_info }}__$(date +'%Y-%m-%d_%H-%M-%S-%N')" >> $GITHUB_OUTPUT
+          version="${{ needs.PackageResultsArtifact.outputs.xemu_info }}__$(date +'%Y-%m-%d_%H-%M-%S-%N')"
+          echo "version=$version" >> $GITHUB_OUTPUT
       - name: Create tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.2
@@ -111,108 +110,125 @@ jobs:
           fail_on_unmatched_files: true
           files: ${{ needs.PackageResultsArtifact.outputs.artifact }}
 
-  DiffAgainstHW:
+  FindDirs:
     needs: [ find-changes ]
-    name: Diff new results against Xbox hardware results
+    name: Discover directories
     runs-on: ubuntu-latest
     if: |
-        github.event_name == 'workflow_dispatch' || 
-        (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
+      github.event_name == 'workflow_dispatch' || 
+      (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
+    outputs:
+      dir_list: ${{ steps.get-dirs.outputs.matrix }}
+      has_work: ${{ steps.get-dirs.outputs.has_work }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - id: get-dirs
+        run: |
+          DIRS=$(python3 .github/scripts/generate_missing_hw_diffs.py --print-dirs-only | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "matrix=$DIRS" >> $GITHUB_OUTPUT
+          if [ "$DIRS" = "[]" ]; then
+            echo "has_work=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_work=true" >> $GITHUB_OUTPUT
+          fi
+
+  DiffAgainstHW:
+    needs: [ find-changes, FindDirs ]
+    name: Diff ${{ matrix.directory }}
+    runs-on: ubuntu-latest
+    if: needs.FindDirs.outputs.has_work == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        directory: ${{ fromJson(needs.FindDirs.outputs.dir_list) }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12', cache: 'pip' }
+      - name: Install requirements
+        run: |
+          sudo apt-get update && sudo apt-get install -y perceptualdiff
+          export PIP_BREAK_SYSTEM_PACKAGES=1
+          pip3 install -r requirements.txt -r .github/scripts/requirements.txt
+      - name: Generate diffs
+        run: python3 .github/scripts/generate_missing_hw_diffs.py --only-dir "${{ matrix.directory }}"
+      - name: Upload partial diffs
+        uses: actions/upload-artifact@v4
+        with:
+          name: diffs-${{ strategy.job-index }}
+          path: compare-results/
+          retention-days: 1
+
+  CommitDiffs:
+    needs: [ FindDirs, DiffAgainstHW ]
+    runs-on: ubuntu-latest
+    if: always() && needs.FindDirs.outputs.has_work == 'true' && needs.DiffAgainstHW.result == 'success'
     permissions:
       contents: write
-    timeout-minutes: 120
     outputs:
       sha: ${{ steps.sha.outputs.new_head_commit }}
     steps:
-      - name: Clone tree
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
-          fetch-depth: '1'
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-      - name: Install requirements
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            perceptualdiff
-
-          export PIP_BREAK_SYSTEM_PACKAGES=1
-          pip3 install -r requirements.txt
-          pip3 install -r .github/scripts/requirements.txt
-      - name: Generate new diffs
-        run: |
-          python3 .github/scripts/generate_missing_hw_diffs.py
-      - name: Commit changes
+          path: compare-results/
+          pattern: diffs-*
+          merge-multiple: true
+      - name: Commit and Push
         run: |
           git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
           git config --local user.name "$GITHUB_ACTOR via action"
-          git add .
-          git diff-index --quiet HEAD || git commit -m "Auto generated diffs against HW results $GITHUB_RUN_NUMBER - $GITHUB_SHA"
-          git push
+          git add compare-results/
+          git diff-index --quiet HEAD || (git commit -m "Auto-generated hardware diffs $GITHUB_RUN_NUMBER" && git push)
       - name: get sha
         id: sha
-        run: |
-          sha_new=$(git rev-parse HEAD)
-          echo ${sha_new}
-          echo "new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
+        run: echo "new_head_commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
   BuildSite:
     runs-on: ubuntu-latest
-    needs: [ find-changes, DiffAgainstHW ]
+    needs: [ find-changes, FindDirs, CommitDiffs ]
     if: |
-      github.event_name == 'workflow_dispatch' || 
-      (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
+      always() &&
+      (needs.CommitDiffs.result == 'success' || (needs.find-changes.outputs.site == 'true' && needs.FindDirs.outputs.has_work == 'false'))
     permissions:
       contents: write
     outputs:
       sha: ${{ steps.sha.outputs.new_head_commit }}
+      site_changed: ${{ steps.check-diff.outputs.changed }}
     steps:
-      - name: Clone tree
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.DiffAgainstHW.outputs.sha }}
-          fetch-depth: 1
+          ref: ${{ needs.CommitDiffs.outputs.sha || github.sha }}
       - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
+        with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
-        run: |
-          export PIP_BREAK_SYSTEM_PACKAGES=1
-          pip3 install -r .github/scripts/requirements.txt
+        run: pip3 install -r .github/scripts/requirements.txt
       - name: Generate site content
+        run: python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results -v
+      - name: Commit and check changes
+        id: check-diff
         run: |
-          python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results -v
-      - name: Commit changes
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          git fetch
-          git remote -v
-          git status
-          git checkout main
-          git pull
           git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
           git config --local user.name "$GITHUB_ACTOR via action"
-          git add .
-          git diff-index --quiet HEAD || git commit -m "Update from github action $GITHUB_RUN_NUMBER - $GITHUB_SHA"
-          git push
+          git add .github/site
+          if git diff-index --quiet HEAD; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            git commit -m "Update site content $GITHUB_RUN_NUMBER"
+            git push
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
       - name: get sha
         id: sha
-        run: |
-          sha_new=$(git rev-parse HEAD)
-          echo ${sha_new}
-          echo "new_head_commit=${sha_new}" >> $GITHUB_OUTPUT
-
-
+        run: echo "new_head_commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
   DeploySite:
     runs-on: ubuntu-latest
-    needs: [ find-changes, BuildSite ]
-    if: |
-      github.event_name == 'workflow_dispatch' || 
-      (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
+    needs: [ BuildSite ]
+    if: needs.BuildSite.outputs.site_changed == 'true'
     permissions:
       contents: read
       pages: write
@@ -220,12 +236,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
-      - name: Print site sha
-        run: echo "Site SHA is ${{ needs.BuildSite.outputs.sha }}"
-      - name: Clone tree
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.BuildSite.outputs.sha }}
           fetch-depth: 1
