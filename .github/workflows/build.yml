@@ -117,11 +117,23 @@ jobs:
     if: |
       github.event_name == 'workflow_dispatch' || 
       (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
+    permissions:
+      contents: write
     outputs:
       dir_list: ${{ steps.get-dirs.outputs.matrix }}
       has_work: ${{ steps.get-dirs.outputs.has_work }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: github_pages
+          fetch-depth: 0
+      - name: Rebase on main
+        run: |
+          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR via action"
+          git fetch origin main
+          git rebase origin/main
+          git push origin github_pages --force
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
       - id: get-dirs
@@ -146,6 +158,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: github_pages
       - uses: actions/setup-python@v6
         with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
@@ -165,13 +179,13 @@ jobs:
   CommitDiffs:
     needs: [ FindDirs, DiffAgainstHW ]
     runs-on: ubuntu-latest
-    if: always() && needs.FindDirs.outputs.has_work == 'true' && needs.DiffAgainstHW.result == 'success'
+    if: needs.FindDirs.outputs.has_work == 'true' && needs.DiffAgainstHW.result == 'success'
     permissions:
       contents: write
-    outputs:
-      sha: ${{ steps.sha.outputs.new_head_commit }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: github_pages
       - uses: actions/download-artifact@v7
         with:
           path: compare-results/
@@ -183,16 +197,12 @@ jobs:
           git config --local user.name "$GITHUB_ACTOR via action"
           git add compare-results/
           git diff-index --quiet HEAD || (git commit -m "Auto-generated hardware diffs $GITHUB_RUN_NUMBER" && git push)
-      - name: get sha
-        id: sha
-        run: echo "new_head_commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
   BuildSite:
     runs-on: ubuntu-latest
     needs: [ find-changes, FindDirs, CommitDiffs ]
     if: |
-      always() &&
-      (needs.CommitDiffs.result == 'success' || (needs.find-changes.outputs.site == 'true' && needs.FindDirs.outputs.has_work == 'false'))
+      needs.CommitDiffs.result == 'success' || (needs.find-changes.outputs.site == 'true' && needs.FindDirs.outputs.has_work == 'false')
     permissions:
       contents: write
     outputs:
@@ -201,28 +211,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.CommitDiffs.outputs.sha || github.sha }}
+          ref: github_pages
       - uses: actions/setup-python@v6
         with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
         run: pip3 install -r .github/scripts/requirements.txt
       - name: Generate site content
-        run: python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results -v
+        run: python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results --comparison-base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages/compare-results -v
       - name: Commit and check changes
         id: check-diff
         run: |
           git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
           git config --local user.name "$GITHUB_ACTOR via action"
+          
           git add .github/site
           if git diff-index --quiet HEAD; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
-            git stash
-            git fetch origin main
-            git rebase origin/main
-            git stash pop
             git commit -m "Update site content $GITHUB_RUN_NUMBER"
-            git push origin HEAD:main
+            git push origin HEAD:github_pages
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
       - name: get sha
@@ -243,7 +250,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.BuildSite.outputs.sha }}
+          ref: github_pages
           fetch-depth: 1
       - name: Setup Pages
         uses: actions/configure-pages@v5
