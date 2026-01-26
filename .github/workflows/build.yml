@@ -168,10 +168,10 @@ jobs:
     if: always() && needs.FindDirs.outputs.has_work == 'true' && needs.DiffAgainstHW.result == 'success'
     permissions:
       contents: write
-    outputs:
-      sha: ${{ steps.sha.outputs.new_head_commit }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: comparisons
       - uses: actions/download-artifact@v7
         with:
           path: compare-results/
@@ -183,9 +183,6 @@ jobs:
           git config --local user.name "$GITHUB_ACTOR via action"
           git add compare-results/
           git diff-index --quiet HEAD || (git commit -m "Auto-generated hardware diffs $GITHUB_RUN_NUMBER" && git push)
-      - name: get sha
-        id: sha
-        run: echo "new_head_commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
   BuildSite:
     runs-on: ubuntu-latest
@@ -200,14 +197,16 @@ jobs:
       site_changed: ${{ steps.check-diff.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.CommitDiffs.outputs.sha || github.sha }}
+          ref: comparisons
+          path: compare-results-branch
       - uses: actions/setup-python@v6
         with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
         run: pip3 install -r .github/scripts/requirements.txt
       - name: Generate site content
-        run: python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results -v
+        run: python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results-branch/compare-results --comparison-base-url https://raw.githubusercontent.com/${{ github.repository }}/comparisons/compare-results -v
       - name: Commit and check changes
         id: check-diff
         run: |
