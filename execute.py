@@ -680,20 +680,43 @@ def _process_arguments_and_run():
     cache_path = _ensure_cache_path(args.cache_path)
     results_path = _ensure_results_path(args.results_path)
 
-    if args.iso:
-        iso = os.path.abspath(os.path.expanduser(args.iso))
-    else:
-        iso = _download_tester_iso(cache_path, args.pgraph_tag)
-    if not iso or not os.path.isfile(iso):
-        logger.error("Invalid ISO path '%s'", iso)
-        return 1
-
     xemu = os.path.abspath(os.path.expanduser(args.xemu)) if args.xemu else _download_xemu(cache_path, args.xemu_tag)
     if not xemu:
         logger.error("Failed to download xemu")
         return 1
     if not os.path.exists(xemu):
         logger.error("Invalid xemu path '%s'", xemu)
+        return 1
+
+    # Check for existing results to avoid redundant runs
+    if not args.overwrite_existing_outputs and not args.just_suites:
+        try:
+            emulator_command, _ = _build_emulator_command(xemu, no_bundle=args.no_bundle)
+            if emulator_command:
+                output_directory = _determine_output_directory(
+                    results_path, emulator_command=emulator_command, is_vulkan=args.use_vulkan
+                )
+                
+                # If we find summary.json files in subdirectories, we assume it's done.
+                existing_summaries = glob.glob(os.path.join(output_directory, "*", "summary.json"))
+                if existing_summaries:
+                    logger.warning(
+                        "Found %d existing summary.json files in %s. Skipping execution. Use --overwrite-existing-outputs to force run.",
+                        len(existing_summaries),
+                        output_directory,
+                    )
+                    return 0
+        except Exception:
+            logger.exception("Failed to check for existing results")
+            # If we fail to check, assume we need to run.
+            pass
+
+    if args.iso:
+        iso = os.path.abspath(os.path.expanduser(args.iso))
+    else:
+        iso = _download_tester_iso(cache_path, args.pgraph_tag)
+    if not iso or not os.path.isfile(iso):
+        logger.error("Invalid ISO path '%s'", iso)
         return 1
 
     hdd = os.path.abspath(os.path.expanduser(args.hdd)) if args.hdd else _download_xemu_hdd(cache_path)
