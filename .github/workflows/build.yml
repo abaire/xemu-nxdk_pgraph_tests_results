@@ -224,13 +224,7 @@ jobs:
           git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
           git config --local user.name "$GITHUB_ACTOR via action"
           
-          # Move generated site content to root for GitHub Pages
-          # We need to preserve .git, .github, results, and compare-results to avoid breaking things, 
-          # but we can overwrite everything else.
-          # For simplicity let's just copy the site folder content to the root.
-          cp -r .github/site/* .
-          
-          git add .
+          git add .github/site
           if git diff-index --quiet HEAD; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
@@ -263,7 +257,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: '.'
+          path: '.github/site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
