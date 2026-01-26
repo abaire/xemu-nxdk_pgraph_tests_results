@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>xemu-0.8.133-26fcbe54f17e496bdf530dad9f237e74e2f943fc: Ubuntu 24.04.3 LTS - Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz, GL: AMD - AMD Radeon Graphics (radeonsi, gfx1201, LLVM 20.1.2, DRM 3.64, 6.8.0-87-generic) - 4.6 (Core Profile) Mesa 25.0.7-0ubuntu0.24.04.2, Shader: 4.60 - Degenerate_begin_end</title>
+    <link rel="stylesheet" href="../../../../../site.css">
+</head>
+<body>
+
+    <div class="sidenav">
+    <a href="../../../../../index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Home_%2885249%29_-_The_Noun_Project.svg" width="32" alt="Navigate to the top level" /></a>
+    
+      <a href="../index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/9/92/Arrow_chevron_up_in_sharp_solid_style.svg" width="32" alt="Navigate up one level" /></a>
+    </div>
+
+    <div class="page-content"><h1>Degenerate_begin_end</h1>
+
+<div class="label-value-grid">
+    <div class="label"><a href="https://xemu.app">xemu</a> version</div>
+    <div class="value">xemu-0.8.133-26fcbe54f17e496bdf530dad9f237e74e2f943fc</div>
+
+    <div class="label">Platform</div>
+    <div class="value">Ubuntu 24.04.3 LTS - Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz</div>
+
+    <div class="label">Renderer</div>
+    <div class="value">OpenGL</div>
+
+    <div class="label">GL info</div>
+    <div class="value">AMD - AMD Radeon Graphics (radeonsi, gfx1201, LLVM 20.1.2, DRM 3.64, 6.8.0-87-generic) - 4.6 (Core Profile) Mesa 25.0.7-0ubuntu0.24.04.2</div>
+
+    <div class="label">GLSL version</div>
+    <div class="value">4.60</div>
+    <div class="label">Description</div>
+    <div class="value">
+        <div class="test-description-line">Tests atypical situations involving NV097_SET_BEGIN_END.</div>
+    </div>
+    
+    <div class="label">Suite class def</div>
+    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/degenerate_begin_end_tests.h#L13">src/tests/degenerate_begin_end_tests.h</a></div>
+</div>
+
+<h2 id="BeginWithoutEnd">BeginWithoutEnd</h2>
+        <div class="test-case-description">
+        <p>Renders a series of 3 triangles and one quad. The middle two triangles send NV097_SET_BEGIN_END with a triangle primitive, but do not send NV097_SET_BEGIN_END with NV097_SET_BEGIN_END_OP_END when completed. The final quad is treated as a triangle by the nv2a as the previous triangle primitive was never ended. </p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/main/results/xemu-0.8.133-26fcbe54f17e496bdf530dad9f237e74e2f943fc/Linux_x86_64/gl_AMD_AMD_Radeon_Graphics_(radeonsi,_gfx1201,_LLVM_20.1.2,_DRM_3.64,_6.8.0-87-generic)/gslv_4.60/Degenerate_begin_end/BeginWithoutEnd.png" alt="Test result for Degenerate_begin_end::BeginWithoutEnd" class="inline-image">
+</div>
+    
+</div>
+
+    <script src="../../../../../script.js"></script>
+</body>
+</html>
