@@ -74,6 +74,7 @@ def find_result_dirs_without_hw_diffs(results_dir: str, output_dir: str) -> set[
 def generate_missing_hw_diffs(results_dir: str, output_dir: str, compare_script: str, only_dir: str | None = None, *,
                               print_dirs_only: bool = False) -> None:
     results_missing_comparisons = find_result_dirs_without_hw_diffs(results_dir, output_dir)
+    logger.debug("Results without comparisons: %s", sorted(results_missing_comparisons))
 
     if print_dirs_only:
         for result in results_missing_comparisons:
