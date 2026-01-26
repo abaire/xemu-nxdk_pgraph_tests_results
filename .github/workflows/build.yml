@@ -211,23 +211,26 @@ jobs:
       site_changed: ${{ steps.check-diff.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
         with:
           ref: github_pages
-          path: compare-results-branch
       - uses: actions/setup-python@v6
         with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
         run: pip3 install -r .github/scripts/requirements.txt
       - name: Generate site content
-        run: python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results-branch/compare-results --comparison-base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages/compare-results -v
+        run: python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results --comparison-base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages/compare-results -v
       - name: Commit and check changes
         id: check-diff
         run: |
           git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
           git config --local user.name "$GITHUB_ACTOR via action"
-          cd compare-results-branch
-          cp -r ../.github/site/* .
+          
+          # Move generated site content to root for GitHub Pages
+          # We need to preserve .git, .github, results, and compare-results to avoid breaking things, 
+          # but we can overwrite everything else.
+          # For simplicity let's just copy the site folder content to the root.
+          cp -r .github/site/* .
+          
           git add .
           if git diff-index --quiet HEAD; then
             echo "changed=false" >> $GITHUB_OUTPUT
