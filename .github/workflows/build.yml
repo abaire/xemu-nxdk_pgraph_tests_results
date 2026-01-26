@@ -179,7 +179,7 @@ jobs:
   CommitDiffs:
     needs: [ FindDirs, DiffAgainstHW ]
     runs-on: ubuntu-latest
-    if: always() && needs.FindDirs.outputs.has_work == 'true' && needs.DiffAgainstHW.result == 'success'
+    if: needs.FindDirs.outputs.has_work == 'true' && needs.DiffAgainstHW.result == 'success'
     permissions:
       contents: write
     steps:
@@ -202,8 +202,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ find-changes, FindDirs, CommitDiffs ]
     if: |
-      always() &&
-      (needs.CommitDiffs.result == 'success' || (needs.find-changes.outputs.site == 'true' && needs.FindDirs.outputs.has_work == 'false'))
+      needs.CommitDiffs.result == 'success' || (needs.find-changes.outputs.site == 'true' && needs.FindDirs.outputs.has_work == 'false')
     permissions:
       contents: write
     outputs:
