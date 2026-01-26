@@ -42,8 +42,41 @@ jobs:
               - 'compare.py'
               - 'execute.py'
 
-  PackageResultsArtifact:
+  ImportResults:
     needs: [ find-changes ]
+    runs-on: ubuntu-latest
+    if: needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-branch
+      - uses: actions/checkout@v4
+        with:
+          ref: github_pages
+          path: github-pages-branch
+      - name: Rebase on main
+        run: |
+          pushd github-pages-branch
+          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR via action"
+          git fetch origin main
+          git rebase origin/main
+          git push origin github_pages --force
+          popd
+      - name: Sync Results
+        run: |
+          mkdir -p github-pages-branch/results
+          rsync -avz --delete main-branch/results/ github-pages-branch/results/
+          
+          cd github-pages-branch
+          git add results/
+          git diff-index --quiet HEAD || (git commit -m "Import results from main $GITHUB_RUN_NUMBER" && git push)
+
+  PackageResultsArtifact:
+    needs: [ find-changes, ImportResults ]
     name: Package newest results
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || needs.find-changes.outputs.archive_results == 'true'
@@ -53,6 +86,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: github_pages
           fetch-depth: '1'
       - uses: actions/setup-python@v6
         with:
@@ -111,7 +145,7 @@ jobs:
           files: ${{ needs.PackageResultsArtifact.outputs.artifact }}
 
   FindDirs:
-    needs: [ find-changes ]
+    needs: [ find-changes, ImportResults ]
     name: Discover directories
     runs-on: ubuntu-latest
     if: |
@@ -127,13 +161,6 @@ jobs:
         with:
           ref: github_pages
           fetch-depth: 0
-      - name: Rebase on main
-        run: |
-          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
-          git config --local user.name "$GITHUB_ACTOR via action"
-          git fetch origin main
-          git rebase origin/main
-          git push origin github_pages --force
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
       - id: get-dirs
@@ -261,3 +288,32 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  CleanupMain:
+    needs: [ DeploySite ]
+    runs-on: ubuntu-latest
+    if: (needs.DeploySite.result == 'success' || needs.DeploySite.result == 'skipped') && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Remove images from results
+        run: |
+          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR via action"
+          
+          # Find all PNG files in results/ and remove them
+          find results -name "*.png" -delete
+          
+          # Add changes to git index
+          git add -u results/
+          
+          # Check if there are changes to commit
+          if git diff-index --quiet HEAD; then
+            echo "No changes to commit"
+          else
+            git commit -m "Remove processed result images [skip ci]"
+            git push
+          fi
