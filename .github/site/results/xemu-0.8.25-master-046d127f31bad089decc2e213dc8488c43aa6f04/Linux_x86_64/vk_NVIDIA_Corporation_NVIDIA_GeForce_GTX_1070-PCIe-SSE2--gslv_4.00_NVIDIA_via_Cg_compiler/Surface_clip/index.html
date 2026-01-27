@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04: Ubuntu 24.04.2 LTS - Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz, GL: NVIDIA Corporation - NVIDIA GeForce GTX 1070-PCIe-SSE2 - 4.0.0 NVIDIA 570.124.06, Shader: 4.00 NVIDIA via Cg compiler - Surface_clip</title>
+    <link rel="stylesheet" href="../../../../../site.css">
+</head>
+<body>
+
+    <div class="sidenav">
+    <a href="../../../../../index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Home_%2885249%29_-_The_Noun_Project.svg" width="32" alt="Navigate to the top level" /></a>
+    
+      <a href="../index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/9/92/Arrow_chevron_up_in_sharp_solid_style.svg" width="32" alt="Navigate up one level" /></a>
+    </div>
+
+    <div class="page-content"><h1>Surface_clip</h1>
+
+<div class="label-value-grid">
+    <div class="label"><a href="https://xemu.app">xemu</a> version</div>
+    <div class="value">xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04</div>
+
+    <div class="label">Platform</div>
+    <div class="value">Ubuntu 24.04.2 LTS - Intel(R) Core(TM) i7-6700K CPU @ 4.00GHz</div>
+
+    <div class="label">Renderer</div>
+    <div class="value">Vulkan</div>
+
+    <div class="label">GL info</div>
+    <div class="value">NVIDIA Corporation - NVIDIA GeForce GTX 1070-PCIe-SSE2 - 4.0.0 NVIDIA 570.124.06</div>
+
+    <div class="label">GLSL version</div>
+    <div class="value">4.00 NVIDIA via Cg compiler</div>
+    <div class="label">Description</div>
+    <div class="value">
+        <div class="test-description-line">Tests behavior of NV097_SET_SURFACE_CLIP_HORIZONTAL and NV097_SET_SURFACE_CLIP_VERTICAL.</div>
+    </div>
+    
+    <div class="label">Suite class def</div>
+    <div class="value"><a href="https://github.com/abaire/nxdk_pgraph_tests/blob/pages_doxygen/src/tests/surface_clip_tests.h#L14">src/tests/surface_clip_tests.h</a></div>
+</div>
+
+<h2 id="rt_x0y0_w0h0">rt_x0y0_w0h0</h2>
+        <div class="test-case-description">
+        <p>Configures a texture target as R5G6B5 and sets the clip region to 0,0 0x0, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/rt_x0y0_w0h0.png" alt="Test result for Surface_clip::rt_x0y0_w0h0" class="inline-image">
+</div>
+    
+<h2 id="rt_x0y0_w512h384">rt_x0y0_w512h384</h2>
+        <div class="test-case-description">
+        <p>Configures a texture target as R5G6B5 and sets the clip region to 0,0 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/rt_x0y0_w512h384.png" alt="Test result for Surface_clip::rt_x0y0_w512h384" class="inline-image">
+</div>
+    
+<h2 id="rt_x0y0_w640h480">rt_x0y0_w640h480</h2>
+        <div class="test-case-description">
+        <p>Configures a texture target as R5G6B5 and sets the clip region to 0,0 640x480, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary.The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/rt_x0y0_w640h480.png" alt="Test result for Surface_clip::rt_x0y0_w640h480" class="inline-image">
+</div>
+    
+<h2 id="rt_x16y8_w512h384">rt_x16y8_w512h384</h2>
+        <div class="test-case-description">
+        <p>Configures a texture target as R5G6B5 and sets the clip region to 16,8 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/rt_x16y8_w512h384.png" alt="Test result for Surface_clip::rt_x16y8_w512h384" class="inline-image">
+</div>
+    
+<h2 id="rt_x8y16_w632h464">rt_x8y16_w632h464</h2>
+        <div class="test-case-description">
+        <p>Configures a texture target as R5G6B5 and sets the clip region to 8,16 632x464, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. The texture is then rendered into an 8888 backbuffer. No red should be seen, and the light green quads should be fully visible.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/rt_x8y16_w632h464.png" alt="Test result for Surface_clip::rt_x8y16_w632h464" class="inline-image">
+</div>
+    
+<h2 id="x0y0_w0h0">x0y0_w0h0</h2>
+        <div class="test-case-description">
+        <p>Configures the backbuffer as R5G6B5 and sets the clip region to 0,0 0x0, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/x0y0_w0h0.png" alt="Test result for Surface_clip::x0y0_w0h0" class="inline-image">
+</div>
+    
+<h2 id="x0y0_w512h384">x0y0_w512h384</h2>
+        <div class="test-case-description">
+        <p>Configures the backbuffer as R5G6B5 and sets the clip region to 0,0 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. No red should be seen, and the light green quads should be fully visible. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/x0y0_w512h384.png" alt="Test result for Surface_clip::x0y0_w512h384" class="inline-image">
+</div>
+    
+<h2 id="x0y0_w640h480">x0y0_w640h480</h2>
+        <div class="test-case-description">
+        <p>Configures the backbuffer as R5G6B5 and sets the clip region to 0,0 640x480, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. No red should be seen, and the light green quads should be fully visible. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/x0y0_w640h480.png" alt="Test result for Surface_clip::x0y0_w640h480" class="inline-image">
+</div>
+    
+<h2 id="x16y8_w512h384">x16y8_w512h384</h2>
+        <div class="test-case-description">
+        <p>Configures the backbuffer as R5G6B5 and sets the clip region to 16,8 512x384, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. No red should be seen, and the light green quads should be fully visible. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/x16y8_w512h384.png" alt="Test result for Surface_clip::x16y8_w512h384" class="inline-image">
+</div>
+    
+<h2 id="x8y16_w632h464">x8y16_w632h464</h2>
+        <div class="test-case-description">
+        <p>Configures the backbuffer as R5G6B5 and sets the clip region to 8,16 632x464, then clears the clipped region and draws 4 red quads just outside the clip region, a dark green quad 1 pixel within the clip region, and 4 lighter green quads along the clip boundary. No red should be seen, and the light green quads should be fully visible. Because the format is 565, the colors are shifted from red -&gt; green, light green -&gt; light pink, and dark green -&gt; pink.</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/x8y16_w632h464.png" alt="Test result for Surface_clip::x8y16_w632h464" class="inline-image">
+</div>
+    
+<h2 id="XemuBug420">XemuBug420</h2>
+        <div class="test-case-description">
+        <p>Reproduction case for xemu#420. A 32-bit surface is created, then immediately changed to a 16-bit one, followed by a region clear. This caused an assertion in versions before xemu#919</p>
+        </div>
+    
+<div class="image-container">
+        <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/results/xemu-0.8.25-master-046d127f31bad089decc2e213dc8488c43aa6f04/Linux_x86_64/vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2/gslv_4.00_NVIDIA_via_Cg_compiler/Surface_clip/XemuBug420.png" alt="Test result for Surface_clip::XemuBug420" class="inline-image">
+</div>
+    
+</div>
+
+    <script src="../../../../../script.js"></script>
+</body>
+</html>
