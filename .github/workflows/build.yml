@@ -21,7 +21,7 @@ jobs:
       site: ${{ steps.filter.outputs.site }}
       docker: ${{ steps.filter.outputs.docker }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: '1'
       - uses: dorny/paths-filter@v3
@@ -51,7 +51,7 @@ jobs:
       xemu_info: ${{ steps.archive_results.outputs.xemu_info }}
       artifact: ${{ steps.archive_results.outputs.release_archive }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: '1'
       - uses: actions/setup-python@v6
@@ -123,7 +123,7 @@ jobs:
       dir_list: ${{ steps.get-dirs.outputs.matrix }}
       has_work: ${{ steps.get-dirs.outputs.has_work }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
           fetch-depth: 0
@@ -157,7 +157,7 @@ jobs:
         directory: ${{ fromJson(needs.FindDirs.outputs.dir_list) }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
       - uses: actions/setup-python@v6
@@ -183,7 +183,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
       - uses: actions/download-artifact@v7
@@ -209,7 +209,7 @@ jobs:
       sha: ${{ steps.sha.outputs.new_head_commit }}
       site_changed: ${{ steps.check-diff.outputs.changed }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
       - uses: actions/setup-python@v6
@@ -248,7 +248,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
           fetch-depth: 1
