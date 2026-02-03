@@ -45,11 +45,12 @@ jobs:
     needs: [ find-changes ]
     runs-on: ubuntu-latest
     if: |
-      (needs.find-changes.outputs.site == 'true' || needs.find-changes.outputs.archive_results == 'true') &&
-        github.ref == 'refs/heads/main' &&
-        github.event_name == 'push'
-    permissions:
-      contents: write
+      github.event_name == 'workflow_dispatch' ||
+        (
+          (needs.find-changes.outputs.site == 'true' || needs.find-changes.outputs.archive_results == 'true') &&
+            github.ref == 'refs/heads/main' &&
+            github.event_name == 'push'
+        )
     steps:
       - uses: actions/checkout@v4
         with:
@@ -62,27 +63,45 @@ jobs:
       - name: Sync site scripts
         run: |
           mkdir -p github-pages-branch/.github/scripts
-          rsync -avz --delete main-branch/.github/scripts/ github-pages-branch/.github/scripts/
+          rsync -avz main-branch/.github/scripts/ github-pages-branch/.github/scripts/
       - name: Sync Results
         run: |
           mkdir -p github-pages-branch/results
-          rsync -avz --delete main-branch/results/ github-pages-branch/results/
-      - name: Commit changes
+          rsync -avz main-branch/results/ github-pages-branch/results/
+      - name: Prepare artifact
         run: |
           cd github-pages-branch
           git add .github/scripts/
           git add results/
-          git diff-index --quiet HEAD || (git commit -m "Import results from main $GITHUB_RUN_NUMBER" && git push)
+          
+          # Identify changed files (cached diff)
+          CHANGED_FILES=$(git diff --name-only --cached)
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changes detected."
+            mkdir -p ../artifact-staging
+          else
+            echo "Changes detected:"
+            echo "$CHANGED_FILES"
+            
+            # Copy changed files to artifact staging, preserving structure
+            # We use rsync with --files-from to handle paths correctly
+            echo "$CHANGED_FILES" > changed_files_list.txt
+            mkdir -p ../artifact-staging
+            rsync -av --files-from=changed_files_list.txt . ../artifact-staging/
+          fi
+      - name: Upload data
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-data
+          path: artifact-staging/
+          retention-days: 1
 
   FindDirs:
     needs: [ find-changes, ImportResults ]
     name: Discover directories
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' || 
-      (needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push')
-    permissions:
-      contents: write
+    if: needs.ImportResults.result == 'success'
     outputs:
       dir_list: ${{ steps.get-dirs.outputs.matrix }}
       has_work: ${{ steps.get-dirs.outputs.has_work }}
@@ -90,7 +109,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: github_pages
-          fetch-depth: 0
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: updated-data
       - uses: actions/setup-python@v6
         with: { python-version: '3.12' }
       - id: get-dirs
@@ -117,6 +139,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: github_pages
+      - uses: actions/download-artifact@v4
+        with:
+          name: updated-data
       - uses: actions/setup-python@v6
         with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
@@ -133,43 +158,31 @@ jobs:
           path: compare-results/
           retention-days: 1
 
-  CommitDiffs:
-    needs: [ FindDirs, DiffAgainstHW ]
+  Publish:
     runs-on: ubuntu-latest
-    if: needs.FindDirs.outputs.has_work == 'true' && needs.DiffAgainstHW.result == 'success'
+    needs: [ ImportResults, DiffAgainstHW ]
+    if: |
+      needs.ImportResults.result == 'success' && 
+      (needs.DiffAgainstHW.result == 'success' || needs.DiffAgainstHW.result == 'skipped')
     permissions:
       contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: github_pages
+      - uses: actions/download-artifact@v4
+        with:
+          name: updated-data
       - uses: actions/download-artifact@v7
         with:
-          path: compare-results/
           pattern: diffs-*
+          path: compare-results/
           merge-multiple: true
-      - name: Commit and Push
-        run: |
-          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
-          git config --local user.name "$GITHUB_ACTOR via action"
-          git add compare-results/
-          git diff-index --quiet HEAD || (git commit -m "Auto-generated hardware diffs $GITHUB_RUN_NUMBER" && git push)
-
-  BuildSite:
-    runs-on: ubuntu-latest
-    needs: [ find-changes, FindDirs, CommitDiffs ]
-    if: |
-      needs.CommitDiffs.result == 'success' || 
-      (needs.find-changes.outputs.site == 'true' && needs.FindDirs.outputs.has_work == 'false')
-    permissions:
-      contents: write
-    outputs:
-      sha: ${{ steps.sha.outputs.new_head_commit }}
-      site_changed: ${{ steps.check-diff.outputs.changed }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: github_pages
       - uses: actions/setup-python@v6
         with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
@@ -180,40 +193,19 @@ jobs:
             --comparison-dir compare-results \
             --base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages \
             -v
-      - name: Commit and check changes
-        id: check-diff
+      - name: Commit and Push
         run: |
           git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
           git config --local user.name "$GITHUB_ACTOR via action"
           
-          git add .github/site
+          git add results/ .github/scripts/ compare-results/ .github/site/
+          
           if git diff-index --quiet HEAD; then
-            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes to commit"
           else
-            git commit -m "Update site content $GITHUB_RUN_NUMBER"
-            git push origin HEAD:github_pages
-            echo "changed=true" >> $GITHUB_OUTPUT
+            git commit -m "Update results and site $GITHUB_RUN_NUMBER"
+            git push
           fi
-      - name: get sha
-        id: sha
-        run: echo "new_head_commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-
-  DeploySite:
-    runs-on: ubuntu-latest
-    needs: [ BuildSite ]
-    if: needs.BuildSite.outputs.site_changed == 'true'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: github_pages
-          fetch-depth: 1
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
@@ -225,9 +217,9 @@ jobs:
         uses: actions/deploy-pages@v4
 
   CleanupMain:
-    needs: [ DeploySite ]
+    needs: [ Publish ]
     runs-on: ubuntu-latest
-    if: (needs.DeploySite.result == 'success' || needs.DeploySite.result == 'skipped') && github.ref == 'refs/heads/main'
+    if: (needs.Publish.result == 'success' || needs.Publish.result == 'skipped') && github.ref == 'refs/heads/main'
     permissions:
       contents: write
     steps:
