@@ -36,7 +36,6 @@ jobs:
               - '.github/scripts/**'
               - '.github/site/**'
               - 'results/**'
-              - 'compare-results/**'
             scripts:
               - '.github/workflows/*.yml'
               - 'compare.py'
@@ -45,7 +44,10 @@ jobs:
   ImportResults:
     needs: [ find-changes ]
     runs-on: ubuntu-latest
-    if: needs.find-changes.outputs.site == 'true' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: |
+      (needs.find-changes.outputs.site == 'true' || needs.find-changes.outputs.archive_results == 'true') &&
+        github.ref == 'refs/heads/main' &&
+        github.event_name == 'push'
     permissions:
       contents: write
     steps:
@@ -57,92 +59,20 @@ jobs:
         with:
           ref: github_pages
           path: github-pages-branch
-      - name: Rebase on main
+      - name: Sync site scripts
         run: |
-          pushd github-pages-branch
-          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
-          git config --local user.name "$GITHUB_ACTOR via action"
-          git fetch origin main
-          git rebase origin/main
-          git push origin github_pages --force
-          popd
+          mkdir -p github-pages-branch/.github/scripts
+          rsync -avz --delete main-branch/.github/scripts/ github-pages-branch/.github/scripts/
       - name: Sync Results
         run: |
           mkdir -p github-pages-branch/results
           rsync -avz --delete main-branch/results/ github-pages-branch/results/
-          
+      - name: Commit changes
+        run: |
           cd github-pages-branch
+          git add .github/scripts/
           git add results/
           git diff-index --quiet HEAD || (git commit -m "Import results from main $GITHUB_RUN_NUMBER" && git push)
-
-  PackageResultsArtifact:
-    needs: [ find-changes, ImportResults ]
-    name: Package newest results
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || needs.find-changes.outputs.archive_results == 'true'
-    outputs:
-      xemu_info: ${{ steps.archive_results.outputs.xemu_info }}
-      artifact: ${{ steps.archive_results.outputs.release_archive }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: github_pages
-          fetch-depth: '1'
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-      - name: Archive newest results
-        id: archive_results
-        run: |
-          newest_official_result="$(python3 .github/scripts/get_latest_results_directory.py)"
-          if [[ $? ]]; then
-            echo "Archiving xemu results from ${newest_official_result}"
-            xemu_info="${newest_official_result##results/}"
-            artifact_name="${xemu_info}_results.tgz"
-            tar -vczf "${artifact_name}" "${newest_official_result}" "results/known_issues.json"
-            echo "xemu_info=${xemu_info}" >> $GITHUB_OUTPUT 
-            echo "release_archive=${artifact_name}" >> $GITHUB_OUTPUT
-          fi
-      - name: Upload artifact
-        if: ${{ steps.archive_results.outputs.release_archive }}
-        uses: actions/upload-artifact@v6
-        with:
-          name: ${{ steps.archive_results.outputs.release_archive }}
-          path: ${{ steps.archive_results.outputs.release_archive }}
-
-  CreateRelease:
-    needs: [ PackageResultsArtifact ]
-    name: Create release
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (needs.PackageResultsArtifact.outputs.artifact != '' && github.ref == 'refs/heads/main' && github.event_name == 'push')
-    steps:
-      - uses: actions/download-artifact@v7
-        with:
-          name: ${{ needs.PackageResultsArtifact.outputs.artifact }}
-          path: .
-      - name: Calculate version
-        id: calculate-version
-        run: |
-          version="${{ needs.PackageResultsArtifact.outputs.xemu_info }}__$(date +'%Y-%m-%d_%H-%M-%S-%N')"
-          echo "version=$version" >> $GITHUB_OUTPUT
-      - name: Create tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ steps.calculate-version.outputs.version }}
-      - name: Create release
-        uses: softprops/action-gh-release@v2.5.0
-        with:
-          tag_name: ${{ steps.tag_version.outputs.new_tag }}
-          name: "xemu results ${{ steps.tag_version.outputs.new_version }}"
-          prerelease: false
-          draft: false
-          make_latest: true
-          fail_on_unmatched_files: true
-          files: ${{ needs.PackageResultsArtifact.outputs.artifact }}
 
   FindDirs:
     needs: [ find-changes, ImportResults ]
@@ -229,7 +159,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ find-changes, FindDirs, CommitDiffs ]
     if: |
-      needs.CommitDiffs.result == 'success' || (needs.find-changes.outputs.site == 'true' && needs.FindDirs.outputs.has_work == 'false')
+      needs.CommitDiffs.result == 'success' || 
+      (needs.find-changes.outputs.site == 'true' && needs.FindDirs.outputs.has_work == 'false')
     permissions:
       contents: write
     outputs:
@@ -244,7 +175,11 @@ jobs:
       - name: Install requirements
         run: pip3 install -r .github/scripts/requirements.txt
       - name: Generate site content
-        run: python3 .github/scripts/generate_results_site.py results .github/site --comparison-dir compare-results --base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages -v
+        run: |
+          python3 .github/scripts/generate_results_site.py results .github/site \
+            --comparison-dir compare-results \
+            --base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages \
+            -v
       - name: Commit and check changes
         id: check-diff
         run: |
