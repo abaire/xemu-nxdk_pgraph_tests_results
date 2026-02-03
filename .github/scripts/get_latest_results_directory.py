@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import glob
+import os
 import re
 import sys
 
@@ -12,47 +13,32 @@ XEMU_VERSION_RE = re.compile(r"results/xemu-(\d+)\.(\d+)\.(\d+)-master.*")
 def main() -> int:
     results = glob.glob("results/*")
 
-    latest_version: tuple[int, int, int] = (0, 0, 0)
-    latest_path = ""
+    # List of (version_tuple, mtime, path)
+    candidates = []
 
     for result in results:
         match = XEMU_VERSION_RE.match(result)
         if not match:
             continue
 
-        version = int(match.group(1)), int(match.group(2)), int(match.group(3))
+        version = (int(match.group(1)), int(match.group(2)), int(match.group(3)))
+        try:
+            mtime = os.path.getmtime(result)
+        except OSError:
+            mtime = 0.0
 
-        if not latest_path:
-            latest_version = version
-            latest_path = result
-            continue
+        candidates.append({'version': version, 'mtime': mtime, 'path': result})
 
-        major = version[0] - latest_version[0]
-        minor = version[1] - latest_version[1]
-        patch = version[2] - latest_version[2]
-
-        if major > 0:
-            latest_version = version
-            latest_path = result
-            continue
-        if major < 0:
-            continue
-
-        if minor > 0:
-            latest_version = version
-            latest_path = result
-            continue
-        if minor < 0:
-            continue
-
-        if patch > 0:
-            latest_version = version
-            latest_path = result
-
-    if not latest_path:
+    if not candidates:
         return 1
 
-    print(latest_path)
+    # Sort by version (descending), then mtime (descending)
+    # Python's sort is stable, but we can just use a key tuple.
+    # We want max version, max mtime.
+    # sorted(..., reverse=True) will sort by first element desc, then second desc.
+    candidates.sort(key=lambda x: (x['version'], x['mtime']), reverse=True)
+
+    print(candidates[0]['path'])
     return 0
 
 

@@ -41,6 +41,76 @@ jobs:
               - 'compare.py'
               - 'execute.py'
 
+  PackageResultsArtifact:
+    needs: [ Publish ]
+    name: Package the newest results into a build artifact
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || needs.Publish.result == 'success'
+    outputs:
+      xemu_info: ${{ steps.archive_results.outputs.xemu_info }}
+      artifact: ${{ steps.archive_results.outputs.release_archive }}
+    steps:
+      - name: Clone tree
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '1'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Archive newest results
+        id: archive_results
+        run: |
+          newest_official_result="$(python3 .github/scripts/get_latest_results_directory.py)"
+          if [[ $? ]]; then
+            echo "Archiving xemu results from ${newest_official_result}"
+            xemu_info="${newest_official_result##results/}"
+            artifact_name="${xemu_info}_results.tgz"
+            tar -vczf "${artifact_name}" "${newest_official_result}" "results/known_issues.json"
+
+            echo "xemu_info=${xemu_info}" >> $GITHUB_OUTPUT 
+            echo "release_archive=${artifact_name}" >> $GITHUB_OUTPUT
+          fi
+      - name: Upload artifact
+        if: ${{ steps.archive_results.outputs.release_archive }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.archive_results.outputs.release_archive }}
+          path: ${{ steps.archive_results.outputs.release_archive }}
+
+  CreateRelease:
+    needs: [ PackageResultsArtifact ]
+    name: Create a release with the new build artifact
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (needs.PackageResultsArtifact.outputs.artifact != '' && github.ref == 'refs/heads/main' && github.event_name == 'push')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.PackageResultsArtifact.outputs.artifact }}
+          path: .
+      - name: Calculate version
+        id: calculate-version
+        run: |
+          echo "version=${{ needs.PackageResultsArtifact.outputs.xemu_info }}__$(date +'%Y-%m-%d_%H-%M-%S-%N')" >> $GITHUB_OUTPUT
+      - name: Create tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ steps.calculate-version.outputs.version }}
+      - name: Create release
+        uses: softprops/action-gh-release@v2.2.1
+        with:
+          tag_name: ${{ steps.tag_version.outputs.new_tag }}
+          name: "xemu results ${{ steps.tag_version.outputs.new_version }}"
+          prerelease: false
+          draft: false
+          make_latest: true
+          fail_on_unmatched_files: true
+          files: ${{ needs.PackageResultsArtifact.outputs.artifact }}
+
+
   ImportResults:
     needs: [ find-changes ]
     runs-on: ubuntu-latest
@@ -77,9 +147,11 @@ jobs:
           # Identify changed files (cached diff)
           CHANGED_FILES=$(git diff --name-only --cached)
           
+          mkdir -p ../artifact-staging
+          
           if [ -z "$CHANGED_FILES" ]; then
             echo "No changes detected."
-            mkdir -p ../artifact-staging
+            touch ../artifact-staging/KEEP_ARTIFACT
           else
             echo "Changes detected:"
             echo "$CHANGED_FILES"
@@ -87,7 +159,6 @@ jobs:
             # Copy changed files to artifact staging, preserving structure
             # We use rsync with --files-from to handle paths correctly
             echo "$CHANGED_FILES" > changed_files_list.txt
-            mkdir -p ../artifact-staging
             rsync -av --files-from=changed_files_list.txt . ../artifact-staging/
           fi
       - name: Upload data
@@ -96,6 +167,7 @@ jobs:
           name: updated-data
           path: artifact-staging/
           retention-days: 1
+          include-hidden-files: true
 
   FindDirs:
     needs: [ find-changes, ImportResults ]
