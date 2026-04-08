@@ -21,7 +21,7 @@ jobs:
       site: ${{ steps.filter.outputs.site }}
       docker: ${{ steps.filter.outputs.docker }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: '1'
       - uses: dorny/paths-filter@v3
@@ -51,7 +51,7 @@ jobs:
       artifact: ${{ steps.archive_results.outputs.release_archive }}
     steps:
       - name: Clone tree
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: '1'
       - uses: actions/setup-python@v6
@@ -122,11 +122,11 @@ jobs:
             github.event_name == 'push'
         )
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: main
           path: main-branch
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
           path: github-pages-branch
@@ -178,7 +178,7 @@ jobs:
       dir_list: ${{ steps.get-dirs.outputs.matrix }}
       has_work: ${{ steps.get-dirs.outputs.has_work }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
           fetch-depth: 1
@@ -208,7 +208,7 @@ jobs:
         directory: ${{ fromJson(needs.FindDirs.outputs.dir_list) }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
       - uses: actions/download-artifact@v7
@@ -244,7 +244,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: github_pages
       - uses: actions/download-artifact@v7
@@ -295,7 +295,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: main
       - name: Remove images from results
