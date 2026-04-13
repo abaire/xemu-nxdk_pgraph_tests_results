@@ -72,7 +72,7 @@ jobs:
           fi
       - name: Upload artifact
         if: ${{ steps.archive_results.outputs.release_archive }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.archive_results.outputs.release_archive }}
           path: ${{ steps.archive_results.outputs.release_archive }}
@@ -162,7 +162,7 @@ jobs:
             rsync -av --files-from=changed_files_list.txt . ../artifact-staging/
           fi
       - name: Upload data
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: updated-data
           path: artifact-staging/
@@ -224,7 +224,7 @@ jobs:
       - name: Generate diffs
         run: python3 .github/scripts/generate_missing_hw_diffs.py --only-dir "${{ matrix.directory }}"
       - name: Upload partial diffs
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: diffs-${{ strategy.job-index }}
           path: compare-results/
