@@ -100,6 +100,8 @@ jobs:
         run: |
           mkdir -p github-pages-branch/.github/scripts
           rsync -avz main-branch/.github/scripts/ github-pages-branch/.github/scripts/
+          mkdir -p github-pages-branch/dev_scripts
+          rsync -avz main-branch/dev_scripts/ github-pages-branch/dev_scripts/
       - name: Sync Results
         run: |
           mkdir -p github-pages-branch/results
@@ -108,6 +110,7 @@ jobs:
         run: |
           cd github-pages-branch
           git add .github/scripts/
+          git add dev_scripts/
           git add results/
           
           # Identify changed files (cached diff)
@@ -186,7 +189,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y perceptualdiff
           export PIP_BREAK_SYSTEM_PACKAGES=1
-          pip3 install -r .github/scripts/requirements.txt
+          pip3 install -r .github/scripts/requirements.txt -r dev_scripts/requirements.txt
       - name: Generate diffs
         run: python3 .github/scripts/generate_missing_hw_diffs.py --only-dir "${{ matrix.directory }}"
       - name: Upload partial diffs
