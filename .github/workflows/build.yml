@@ -124,7 +124,7 @@ jobs:
           else
             echo "Changes detected:"
             echo "$CHANGED_FILES"
-            
+          
             # Copy changed files to artifact staging, preserving structure
             # We use rsync with --files-from to handle paths correctly
             echo "$CHANGED_FILES" > changed_files_list.txt
@@ -259,10 +259,27 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v5
 
-  CleanupMain:
+  ArchiveResults:
     needs: [ Publish ]
     runs-on: ubuntu-latest
-    if: (needs.Publish.result == 'success' || needs.Publish.result == 'skipped') && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout github_pages
+        uses: actions/checkout@v6
+        with:
+          ref: github_pages
+          fetch-depth: 0 # Need full history and remotes for sync
+
+      - name: Sync all version archives
+        run: python3 .github/scripts/sync_archives.py
+
+  CleanupMain:
+    needs: [ ArchiveResults ]
+    runs-on: ubuntu-latest
+    if: |
+      always() && 
+      (needs.ArchiveResults.result == 'success' || needs.ArchiveResults.result == 'skipped') && 
+      github.ref == 'refs/heads/main'
     permissions:
       contents: write
     steps:
