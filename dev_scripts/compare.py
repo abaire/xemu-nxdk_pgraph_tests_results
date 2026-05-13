@@ -180,7 +180,7 @@ def _compare_lpips(results_info: ResultsInfo, golden_info: ResultsInfo) -> tuple
             )
 
             differences.append(Difference(test_suite, test_case, artifact, golden_artifact, distance_value))
-        print("")
+        print()
 
     return only_results, only_goldens, differences
 
@@ -218,7 +218,7 @@ def _compare_perceptualdiff(
                     diff_score = match.group(1)
             diff = Difference(test_suite, test_case, artifact, golden_artifact, diff_score)
             differences.append(diff)
-        print("")
+        print()
 
     return only_results, only_goldens, differences
 
