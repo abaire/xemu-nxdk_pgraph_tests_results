@@ -72,7 +72,7 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: "User Scripts - ${{ steps.version.outputs.tag }}"
-          body: "Automatically packaged user scripts for Windows, macOS, and Linux."
+          body: "Scripts that may be used to submit test results."
           draft: false
           prerelease: false
           files: |

@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import glob
 import json
 import logging
-import glob
 import os
 import platform
 import shutil
@@ -29,6 +29,11 @@ from nxdk_pgraph_test_runner import Config
 from nxdk_pgraph_test_runner.emulator_output import EmulatorOutput
 from nxdk_pgraph_test_runner.host_profile import HostProfile
 from nxdk_pgraph_test_runner.runner import get_output_directory
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 if TYPE_CHECKING:
     from collections.abc import Collection
@@ -618,6 +623,21 @@ def _ensure_results_path(results_path: str) -> str:
     return _ensure_path(results_path)
 
 
+def _extract_info_from_xemu_toml(toml_path: str) -> tuple[str, str] | None:
+    toml_path = os.path.abspath(os.path.expanduser(toml_path))
+    if os.path.isdir(toml_path):
+        toml_path = os.path.join(toml_path, "xemu.toml")
+    if not os.path.isfile(toml_path):
+        logger.error("No xemu toml file found at '%s'", toml_path)
+        return None
+
+    with open(toml_path, "rb") as infile:
+        data = tomllib.load(infile)
+
+    files = data.get("sys", {}).get("files", {})
+    return files.get("bootrom_path"), files.get("flashrom_path")
+
+
 def _process_arguments_and_run():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -672,6 +692,12 @@ def _process_arguments_and_run():
     )
     parser.add_argument("--use-vulkan", action="store_true", help="Use the Vulkan renderer instead of OpenGL.")
     parser.add_argument("--just-suites", nargs="+", help="Just run the given suites rather than the full test set.")
+    parser.add_argument(
+        "--toml",
+        "-T",
+        help="Import bios and mcpx from an existing xemu install",
+        metavar="xemu_toml_path",
+    )
 
     args = parser.parse_args()
 
@@ -697,7 +723,7 @@ def _process_arguments_and_run():
                 output_directory = _determine_output_directory(
                     results_path, emulator_command=emulator_command, is_vulkan=args.use_vulkan
                 )
-                
+
                 # If we find summary.json files in subdirectories, we assume it's done.
                 existing_summaries = glob.glob(os.path.join(output_directory, "*", "summary.json"))
                 if existing_summaries:
@@ -710,7 +736,6 @@ def _process_arguments_and_run():
         except Exception:
             logger.exception("Failed to check for existing results")
             # If we fail to check, assume we need to run.
-            pass
 
     if args.iso:
         iso = os.path.abspath(os.path.expanduser(args.iso))
@@ -727,6 +752,13 @@ def _process_arguments_and_run():
     if not os.path.isfile(hdd):
         logger.error("Invalid xemu_hdd path '%s'", hdd)
         return 1
+
+    if args.toml:
+        result = _extract_info_from_xemu_toml(args.toml)
+        if not result:
+            logger.error("Failed to extract mcpx and bios from xemu toml at '%s'", args.toml)
+            return 1
+        args.mcpx, args.bios = result
 
     def _copy_inputs_and_run(temp_path: str, *, overwrite_existing_outputs: bool) -> int:
         inputs_path = os.path.join(temp_path, "inputs")
