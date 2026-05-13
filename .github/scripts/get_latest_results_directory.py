@@ -27,7 +27,7 @@ def main() -> int:
         except OSError:
             mtime = 0.0
 
-        candidates.append({'version': version, 'mtime': mtime, 'path': result})
+        candidates.append({"version": version, "mtime": mtime, "path": result})
 
     if not candidates:
         return 1
@@ -36,9 +36,9 @@ def main() -> int:
     # Python's sort is stable, but we can just use a key tuple.
     # We want max version, max mtime.
     # sorted(..., reverse=True) will sort by first element desc, then second desc.
-    candidates.sort(key=lambda x: (x['version'], x['mtime']), reverse=True)
+    candidates.sort(key=lambda x: (x["version"], x["mtime"]), reverse=True)
 
-    print(candidates[0]['path'])
+    print(candidates[0]["path"])
     return 0
 
 

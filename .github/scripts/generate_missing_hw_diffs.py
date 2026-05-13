@@ -10,6 +10,7 @@ import sys
 
 logger = logging.getLogger(__name__)
 
+
 def _find_results_paths(results_dir: str) -> set[str]:
     ret: set[str] = set()
 
@@ -71,8 +72,14 @@ def find_result_dirs_without_hw_diffs(results_dir: str, output_dir: str) -> set[
     return result_paths - source_paths
 
 
-def generate_missing_hw_diffs(results_dir: str, output_dir: str, compare_script: str, only_dir: str | None = None, *,
-                              print_dirs_only: bool = False) -> None:
+def generate_missing_hw_diffs(
+    results_dir: str,
+    output_dir: str,
+    compare_script: str,
+    only_dir: str | None = None,
+    *,
+    print_dirs_only: bool = False,
+) -> None:
     results_missing_comparisons = find_result_dirs_without_hw_diffs(results_dir, output_dir)
     logger.debug("Results without comparisons: %s", sorted(results_missing_comparisons))
 
@@ -131,8 +138,9 @@ def main() -> int:
     logging.basicConfig(level=log_level)
 
     compare_script = os.path.abspath(os.path.expanduser(args.compare_script))
-    generate_missing_hw_diffs(args.results_dir, args.output_dir, compare_script, only_dir=args.only_dir,
-                              print_dirs_only=args.print_dirs_only)
+    generate_missing_hw_diffs(
+        args.results_dir, args.output_dir, compare_script, only_dir=args.only_dir, print_dirs_only=args.print_dirs_only
+    )
 
     return 0
 
