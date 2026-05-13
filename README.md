@@ -20,14 +20,8 @@ This repository requires long path support on Windows.
 
 # Updating
 
-Note: Commands below assume that the `requirements.txt` packages have all been
-installed.
-
-```shell
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
+1. Download the latest UserScripts release from https://github.com/abaire/xemu-nxdk_pgraph_tests_results/releases
+2. Run the "run.bat" or "run.sh" script with the appropriate arguments below
 
 ## Running tests for a new xemu (or nxdk_pgraph_tests) release
 
@@ -37,24 +31,44 @@ pip install -r requirements.txt
 ### Test the latest xemu with the latest nxdk_pgraph_tests
 
 ```shell
-./execute.py -B <path_to_bios> -M <path_to_mcpx>
+./run.sh -B <path_to_bios> -M <path_to_mcpx>
 ```
 
 ### Testing against specific xemu and/or nxdk_pgraph_tests
 
 ```shell
-./execute.py \
+./run.sh \
   -B <path_to_bios> \
   -M <path_to_mcpx> \
   --xemu-tag v0.8.7 \
   --pgraph-tag v2025-02-04_12-54-35-248456211
 ```
 
-### Reusing the nxdk_pgraph_tests ISO and/or xemu binary
+## Reusing the nxdk_pgraph_tests ISO and/or xemu binary
 
 You can use the `--iso` and `--xemu` flags to specify existing artifacts. This
 will skip an automated check against the GitHub API for the `latest` tagged
 artifacts.
+
+## Submitting new results
+
+Use git to create a new branch, add the generated files, and create a pull
+request.
+
+```shell
+git checkout -b my_new_results
+git add .
+git commit -m "xemu v1.2.3 - Windows NVIDIA"
+git push origin my_new_results
+```
+
+(Updating the commit -m message as appropriate for your test machine)
+
+Then create a new pull request
+on [the GitHub project page](https://github.com/abaire/xemu-nxdk_pgraph_tests_results)
+
+
+# Advanced
 
 ## Generating diffs
 
@@ -67,33 +81,18 @@ install [perceptualdiff](https://github.com/myint/perceptualdiff)
 comparison on new results after they are merged to the `main` branch.
 
 ```shell
-./compare.py <results_directory_created_by_execute>
+./dev_scripts/compare.py <results_directory_created_by_execute>
 ```
 
 ### Compare between xemu versions or host machines
 
 ```shell
-./compare.py <results_directory_created_by_execute> --against <another_results_directory_created_by_execute>
+./dev_scripts/compare.py <results_directory_created_by_execute> --against <another_results_directory_created_by_execute>
 ```
-
-## Submitting new results or comparisons
-
-Use git to create a new branch, add the generated files, and create a pull
-request.
-
-```shell
-git checkout -b my_new_results
-git add .
-git commit -m "A message explaining these changes"
-git push origin my_new_results
-```
-
-Then create a new pull request
-on [the GitHub project page](https://github.com/abaire/xemu-nxdk_pgraph_tests_results)
 
 # Running locally for xemu development purposes
 
-The `generate_local_site_for_custom_xemu_build.sh` script may be used to
+The `dev_scripts/generate_local_site_for_custom_xemu_build.sh` script may be used to
 generate a local variant of
 the [deployed pages](https://abaire.github.io/xemu-nxdk_pgraph_tests_results/)
 that compares a developer build of xemu to the newest checked in results. 

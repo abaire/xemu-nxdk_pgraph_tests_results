@@ -84,7 +84,6 @@ fi
 if [[ ! -d ".venv" ]]; then
   echo "Setting up Python virtualenv"
   python3 -m venv .venv
-  .venv/bin/pip install -r requirements.txt
   .venv/bin/pip install -r .github/scripts/requirements.txt
 fi
 
@@ -158,7 +157,7 @@ function compare_results() {
 
   command=(
     .venv/bin/python3
-    compare.py
+    dev_scripts/compare.py
     "${latest_local_result}"
     --against "${newest_official_result}"
     --output-dir "${local_compare_results_dir}"
