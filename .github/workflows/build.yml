@@ -38,8 +38,8 @@ jobs:
               - 'results/**'
             scripts:
               - '.github/workflows/*.yml'
-              - 'compare.py'
-              - 'execute.py'
+              - 'dev_scripts/compare.py'
+              - 'user_scripts/*'
 
   PackageResultsArtifact:
     needs: [ Publish ]
@@ -220,7 +220,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y perceptualdiff
           export PIP_BREAK_SYSTEM_PACKAGES=1
-          pip3 install -r requirements.txt -r .github/scripts/requirements.txt
+          pip3 install -r .github/scripts/requirements.txt
       - name: Generate diffs
         run: python3 .github/scripts/generate_missing_hw_diffs.py --only-dir "${{ matrix.directory }}"
       - name: Upload partial diffs
