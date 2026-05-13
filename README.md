@@ -34,6 +34,12 @@ This repository requires long path support on Windows.
 ./run.sh -B <path_to_bios> -M <path_to_mcpx>
 ```
 
+  or
+
+```shell
+./run.sh -T <path_to_xemu.toml_file>
+```
+
 ### Testing against specific xemu and/or nxdk_pgraph_tests
 
 ```shell
