@@ -200,8 +200,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ ImportResults, DiffAgainstHW ]
     if: |
-      needs.ImportResults.result == 'success' && 
-      (needs.DiffAgainstHW.result == 'success' || needs.DiffAgainstHW.result == 'skipped')
+      always() &&
+      needs.ImportResults.result == 'success' &&
+      needs.DiffAgainstHW.result != 'failure' &&
+      needs.DiffAgainstHW.result != 'cancelled'
     permissions:
       contents: write
       pages: write
