@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-# ruff: noqa: T201 `print` found
 
 import os
 import sys
