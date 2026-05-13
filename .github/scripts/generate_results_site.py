@@ -4,6 +4,7 @@
 # ruff: noqa: C414 Unnecessary list call
 # ruff: noqa: S701: By default, jinja2 sets `autoescape` to `False`.
 # ruff: noqa: PLR2004 Magic value used in comparison
+# ruff: noqa: S701 By default, jinja2 sets `autoescape` to `False`. Consider using `autoescape=True` or the `select_autoescape` function to mitigate XSS vulnerabilities.
 
 from __future__ import annotations
 
@@ -83,7 +84,7 @@ class TestSuiteDescriptorLoader:
         self.registry_url = registry_url
 
     def _load_registry(self) -> dict[str, Any] | None:
-        import requests
+        import requests  # noqa: PLC0415 `import` should be at the top-level of a file
 
         try:
             response = requests.get(self.registry_url, timeout=30)
@@ -469,7 +470,7 @@ class ResultsScanner:
                 suite_results[suite_name] = result
 
         for fqname, failure in results_summary.get("failed", {}).items():
-            suite, test = fqname.split("::")
+            suite, _ = fqname.split("::")
             if suite not in suite_results:
                 suite_results[suite] = SuiteResults(
                     name=suite,
