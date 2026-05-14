@@ -432,7 +432,9 @@ def _build_macos_xemu_binary_paths(xemu_app_bundle_path: str) -> tuple[str, str]
     return xemu_binary, os.path.join(contents_path, "Resources")
 
 
-def _build_emulator_command(xemu_path: str, *, no_bundle: bool = False) -> tuple[str, str]:
+def _build_emulator_command(
+    xemu_path: str, *, no_bundle: bool = False, custom_toml_path: str | None = None
+) -> tuple[str, str]:
     portable_mode_config_path = os.path.dirname(xemu_path)
 
     system = platform.system()
@@ -449,11 +451,20 @@ def _build_emulator_command(xemu_path: str, *, no_bundle: bool = False) -> tuple
         msg = f"Platform {system} not supported."
         raise NotImplementedError(msg)
 
-    return xemu_path + " -dvd_path {ISO}", os.path.join(portable_mode_config_path, "xemu.toml")
+    cmd = xemu_path + " -dvd_path {ISO}"
+    if custom_toml_path:
+        cmd += f' -config_path "{custom_toml_path}"'
+        toml_path = custom_toml_path
+    else:
+        toml_path = os.path.join(portable_mode_config_path, "xemu.toml")
+
+    return cmd, toml_path
 
 
 def _determine_output_directory(results_path: str, emulator_command: str, *, is_vulkan: bool) -> str | None:
-    command = Config(emulator_command=emulator_command).build_emulator_command("__this_file_does_not_exist")
+    command = Config(emulator_command=emulator_command + " -display none").build_emulator_command(
+        "__this_file_does_not_exist"
+    )
     try:
         result = subprocess.run(command, capture_output=True, text=True, check=True, timeout=1)
         stderr = result.stderr
@@ -534,13 +545,16 @@ def run(
     no_bundle: bool = False,
     use_vulkan: bool = False,
     just_suites: Collection[str] | None = None,
+    custom_toml_path: str | None = None,
 ):
-    emulator_command, portable_mode_config_path = _build_emulator_command(xemu_path, no_bundle=no_bundle)
+    emulator_command, toml_path = _build_emulator_command(
+        xemu_path, no_bundle=no_bundle, custom_toml_path=custom_toml_path
+    )
     if not emulator_command:
         return 1
 
     _generate_xemu_toml(
-        portable_mode_config_path,
+        toml_path,
         bootrom_path=os.path.join(inputs_path, "mcpx.bin"),
         flashrom_path=os.path.join(inputs_path, "bios.bin"),
         eeprom_path=os.path.join(inputs_path, "eeprom.bin"),
@@ -715,6 +729,7 @@ def _run_shard(
         no_bundle=no_bundle,
         use_vulkan=use_vulkan,
         just_suites=just_suites,
+        custom_toml_path=os.path.join(inputs_path, "xemu.toml"),
     )
 
 
