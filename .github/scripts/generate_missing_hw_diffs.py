@@ -76,26 +76,19 @@ def generate_missing_hw_diffs(
     results_dir: str,
     output_dir: str,
     compare_script: str,
-    only_dir: str | None = None,
-    *,
-    print_dirs_only: bool = False,
+    shard_index: int | None = None,
+    shard_count: int | None = None,
 ) -> None:
     results_missing_comparisons = find_result_dirs_without_hw_diffs(results_dir, output_dir)
     logger.debug("Results without comparisons: %s", sorted(results_missing_comparisons))
 
-    if print_dirs_only:
-        for result in results_missing_comparisons:
-            print(result)
-        return
-
-    if only_dir:
-        if only_dir not in results_missing_comparisons:
-            print(f"'{only_dir}' does not require comparison")
+    all_results = sorted(results_missing_comparisons)
+    if shard_index is not None and shard_count is not None:
+        all_results = [r for i, r in enumerate(all_results) if i % shard_count == shard_index]
+        if not all_results:
             return
-        subprocess.run([compare_script, only_dir, "--verbose"], check=False)
-        return
 
-    for result in results_missing_comparisons:
+    for result in all_results:
         subprocess.run([compare_script, result, "--verbose"], check=False)
 
 
@@ -123,13 +116,16 @@ def main() -> int:
         help="The compare.py script used to generate results",
     )
     parser.add_argument(
-        "--print-dirs-only",
-        action="store_true",
-        help="Print a list of directories that need to be processed and exit",
+        "--shard-index",
+        type=int,
+        default=None,
+        help="Index of this shard (0-based). Must be used with --shard-count.",
     )
     parser.add_argument(
-        "--only-dir",
-        help="Restrict generation to the given path",
+        "--shard-count",
+        type=int,
+        default=None,
+        help="Total number of shards. Must be used with --shard-index.",
     )
 
     args = parser.parse_args()
@@ -137,9 +133,12 @@ def main() -> int:
     log_level = logging.DEBUG if args.verbose else logging.INFO
     logging.basicConfig(level=log_level)
 
+    if (args.shard_index is None) != (args.shard_count is None):
+        parser.error("--shard-index and --shard-count must be used together")
+
     compare_script = os.path.abspath(os.path.expanduser(args.compare_script))
     generate_missing_hw_diffs(
-        args.results_dir, args.output_dir, compare_script, only_dir=args.only_dir, print_dirs_only=args.print_dirs_only
+        args.results_dir, args.output_dir, compare_script, shard_index=args.shard_index, shard_count=args.shard_count
     )
 
     return 0
