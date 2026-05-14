@@ -102,43 +102,15 @@ jobs:
           retention-days: 1
           include-hidden-files: true
 
-  FindDirs:
+  DiffAgainstHW:
     needs: [ find-changes, ImportResults ]
-    name: Discover directories
+    name: Diff shard ${{ matrix.shard }}
     runs-on: ubuntu-latest
     if: needs.ImportResults.result == 'success'
-    outputs:
-      dir_list: ${{ steps.get-dirs.outputs.matrix }}
-      has_work: ${{ steps.get-dirs.outputs.has_work }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: github_pages
-          fetch-depth: 1
-      - uses: actions/download-artifact@v8
-        with:
-          name: updated-data
-      - uses: actions/setup-python@v6
-        with: { python-version: '3.12' }
-      - id: get-dirs
-        run: |
-          DIRS=$(python3 .github/scripts/generate_missing_hw_diffs.py --print-dirs-only | jq -R -s -c 'split("\n") | map(select(length > 0))')
-          echo "matrix=$DIRS" >> $GITHUB_OUTPUT
-          if [ "$DIRS" = "[]" ]; then
-            echo "has_work=false" >> $GITHUB_OUTPUT
-          else
-            echo "has_work=true" >> $GITHUB_OUTPUT
-          fi
-
-  DiffAgainstHW:
-    needs: [ find-changes, FindDirs ]
-    name: Diff ${{ matrix.directory }}
-    runs-on: ubuntu-latest
-    if: needs.FindDirs.outputs.has_work == 'true'
     strategy:
       fail-fast: false
       matrix:
-        directory: ${{ fromJson(needs.FindDirs.outputs.dir_list) }}
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
@@ -155,7 +127,7 @@ jobs:
           export PIP_BREAK_SYSTEM_PACKAGES=1
           pip3 install -r .github/scripts/requirements.txt -r dev_scripts/requirements.txt
       - name: Generate diffs
-        run: python3 .github/scripts/generate_missing_hw_diffs.py --only-dir "${{ matrix.directory }}"
+        run: python3 .github/scripts/generate_missing_hw_diffs.py --shard-index ${{ matrix.shard }} --shard-count 8
       - name: Upload partial diffs
         uses: actions/upload-artifact@v7
         with:
