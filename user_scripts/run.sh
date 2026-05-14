@@ -13,4 +13,4 @@ if [[ ! -d "${SCRIPT_DIR}/venv" ]]; then
   exit 1
 fi
 
-"${SCRIPT_DIR}/venv/bin/python" "${SCRIPT_DIR}/execute.py "$@"
+"${SCRIPT_DIR}/venv/bin/python" "${SCRIPT_DIR}/execute.py" "$@"

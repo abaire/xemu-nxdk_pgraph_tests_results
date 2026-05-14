@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import contextlib
 import glob
 import json
@@ -25,6 +26,7 @@ from urllib.request import urlcleanup, urlretrieve
 
 import nxdk_pgraph_test_runner
 import requests
+from nxdk_pgraph_test_repacker import ensure_extract_xiso, extract_config, repack_config
 from nxdk_pgraph_test_runner import Config
 from nxdk_pgraph_test_runner.emulator_output import EmulatorOutput
 from nxdk_pgraph_test_runner.host_profile import HostProfile
@@ -638,6 +640,142 @@ def _extract_info_from_xemu_toml(toml_path: str) -> tuple[str, str] | None:
     return files.get("bootrom_path"), files.get("flashrom_path")
 
 
+def _prepare_sharded_iso(iso_path: str, shard_index: int, shard_count: int, output_iso_path: str) -> bool:
+    extract_xiso = ensure_extract_xiso(None)
+    if not extract_xiso:
+        logger.error("extract-xiso is unavailable")
+        return False
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config_path = os.path.join(tmpdir, "config.json")
+        if not extract_config(iso_path, config_path, extract_xiso):
+            logger.error("Failed to extract JSON config for sharding")
+            return False
+
+        with open(config_path) as f:
+            config_data = json.load(f)
+
+        if "settings" not in config_data:
+            config_data["settings"] = {}
+        config_data["settings"]["sharding"] = {"index": shard_index, "count": shard_count}
+
+        updated_config_path = os.path.join(tmpdir, "updated_config.json")
+        with open(updated_config_path, "w") as f:
+            json.dump(config_data, f)
+
+        if not repack_config(iso_path, output_iso_path, updated_config_path, extract_xiso):
+            logger.error("Failed to repack ISO for shard %d", shard_index)
+            return False
+
+    return True
+
+
+def _run_shard(
+    shard_index: int,
+    shard_count: int,
+    temp_path: str,
+    iso_path: str,
+    hdd_path: str,
+    mcpx_path: str,
+    bios_path: str,
+    xemu_path: str,
+    results_path: str,
+    *,
+    overwrite_existing_outputs: bool,
+    no_bundle: bool,
+    use_vulkan: bool,
+    just_suites: Collection[str] | None,
+) -> int:
+    inputs_path = os.path.join(temp_path, "inputs")
+    os.makedirs(inputs_path, exist_ok=True)
+
+    if shard_count > 1:
+        effective_iso_path = os.path.join(inputs_path, "test_runner_shard.iso")
+        if not _prepare_sharded_iso(iso_path, shard_index, shard_count, effective_iso_path):
+            return 1
+    else:
+        effective_iso_path = iso_path
+
+    with contextlib.suppress(SameFileError):
+        shutil.copy(mcpx_path, os.path.join(inputs_path, "mcpx.bin"))
+    with contextlib.suppress(SameFileError):
+        shutil.copy(bios_path, os.path.join(inputs_path, "bios.bin"))
+    hdd_copy = os.path.join(inputs_path, "test_runner_hdd.qcow2")
+    with contextlib.suppress(SameFileError):
+        shutil.copy(hdd_path, hdd_copy)
+
+    return run(
+        iso_path=effective_iso_path,
+        work_path=temp_path,
+        inputs_path=inputs_path,
+        results_path=results_path,
+        xemu_path=xemu_path,
+        hdd_path=hdd_copy,
+        overwrite_existing_outputs=overwrite_existing_outputs,
+        no_bundle=no_bundle,
+        use_vulkan=use_vulkan,
+        just_suites=just_suites,
+    )
+
+
+def _merge_shard_results(temp_path: str, shard_count: int, final_results_path: str) -> None:
+    merged_passed = {}
+    merged_failed = {}
+    merged_flaky = {}
+    merged_missing = []
+
+    output_dir_rel = None
+
+    for i in range(shard_count):
+        shard_results_path = os.path.join(temp_path, f"shard_{i}", "results")
+
+        manifest_path = None
+        for root, _, files in os.walk(shard_results_path):
+            if "results.json" in files:
+                manifest_path = os.path.join(root, "results.json")
+                break
+
+        if not manifest_path:
+            logger.warning("No results.json found for shard %d", i)
+            continue
+
+        if not output_dir_rel:
+            output_dir_rel = os.path.relpath(os.path.dirname(manifest_path), shard_results_path)
+
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+
+        merged_passed.update(manifest.get("passed", {}))
+        merged_failed.update(manifest.get("failed", {}))
+        merged_flaky.update(manifest.get("flaky", {}))
+        merged_missing.extend(manifest.get("missing_artifacts", []))
+
+        src_dir = os.path.dirname(manifest_path)
+        dest_dir = os.path.join(final_results_path, output_dir_rel)
+        os.makedirs(dest_dir, exist_ok=True)
+
+        for item in os.listdir(src_dir):
+            src_item = os.path.join(src_dir, item)
+            dest_item = os.path.join(dest_dir, item)
+            if os.path.isdir(src_item):
+                if not os.path.exists(dest_item):
+                    shutil.copytree(src_item, dest_item)
+                else:
+                    for suite_item in os.listdir(src_item):
+                        shutil.copy2(os.path.join(src_item, suite_item), os.path.join(dest_item, suite_item))
+            elif item in ("machine_info.txt", "renderer.json", "runner.json") and not os.path.exists(dest_item):
+                shutil.copy2(src_item, dest_item)
+
+    if output_dir_rel:
+        final_manifest_path = os.path.join(final_results_path, output_dir_rel, "results.json")
+        merged_manifest = {"passed": merged_passed, "failed": merged_failed, "flaky": merged_flaky}
+        if merged_missing:
+            merged_manifest["missing_artifacts"] = merged_missing
+
+        with open(final_manifest_path, "w") as f:
+            json.dump(merged_manifest, f, indent=2, sort_keys=True)
+
+
 def _process_arguments_and_run():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -697,6 +835,13 @@ def _process_arguments_and_run():
         "-T",
         help="Import bios and mcpx from an existing xemu install",
         metavar="xemu_toml_path",
+    )
+    parser.add_argument(
+        "--shard-count",
+        "-S",
+        type=int,
+        default=0,
+        help="Number of shards to split the execution into (must be > 1 to enable sharding).",
     )
 
     args = parser.parse_args()
@@ -761,27 +906,59 @@ def _process_arguments_and_run():
         args.mcpx, args.bios = result
 
     def _copy_inputs_and_run(temp_path: str, *, overwrite_existing_outputs: bool) -> int:
-        inputs_path = os.path.join(temp_path, "inputs")
-        os.makedirs(inputs_path, exist_ok=True)
-        with contextlib.suppress(SameFileError):
-            shutil.copy(args.mcpx, os.path.join(inputs_path, "mcpx.bin"))
-        with contextlib.suppress(SameFileError):
-            shutil.copy(args.bios, os.path.join(inputs_path, "bios.bin"))
-        with contextlib.suppress(SameFileError):
-            hdd_copy = os.path.join(inputs_path, "test_runner_hdd.qcow2")
-            shutil.copy(hdd, hdd_copy)
-        return run(
-            iso_path=iso,
-            work_path=temp_path,
-            inputs_path=inputs_path,
-            results_path=results_path,
-            xemu_path=xemu,
-            hdd_path=hdd_copy,
-            overwrite_existing_outputs=overwrite_existing_outputs,
-            no_bundle=args.no_bundle,
-            use_vulkan=args.use_vulkan,
-            just_suites=args.just_suites,
-        )
+        if args.shard_count <= 1:
+            return _run_shard(
+                0,
+                1,
+                temp_path,
+                iso,
+                hdd,
+                args.mcpx,
+                args.bios,
+                xemu,
+                results_path,
+                overwrite_existing_outputs=overwrite_existing_outputs,
+                no_bundle=args.no_bundle,
+                use_vulkan=args.use_vulkan,
+                just_suites=args.just_suites,
+            )
+
+        futures = []
+        with concurrent.futures.ProcessPoolExecutor(max_workers=args.shard_count) as executor:
+            for i in range(args.shard_count):
+                shard_temp_path = os.path.join(temp_path, f"shard_{i}")
+                os.makedirs(shard_temp_path, exist_ok=True)
+                shard_results_path = os.path.join(shard_temp_path, "results")
+
+                futures.append(
+                    executor.submit(
+                        _run_shard,
+                        i,
+                        args.shard_count,
+                        shard_temp_path,
+                        iso,
+                        hdd,
+                        args.mcpx,
+                        args.bios,
+                        xemu,
+                        shard_results_path,
+                        overwrite_existing_outputs=True,
+                        no_bundle=args.no_bundle,
+                        use_vulkan=args.use_vulkan,
+                        just_suites=args.just_suites,
+                    )
+                )
+
+            for future in concurrent.futures.as_completed(futures):
+                ret = future.result()
+                if ret != 0:
+                    logger.error("Shard failed with exit code %d, aborting all shards.", ret)
+                    for f in futures:
+                        f.cancel()
+                    return ret
+
+        _merge_shard_results(temp_path, args.shard_count, results_path)
+        return 0
 
     if args.temp_path:
         return _copy_inputs_and_run(
