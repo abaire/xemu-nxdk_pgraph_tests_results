@@ -613,6 +613,18 @@ def run(
                 outfile,
             )
 
+        # Truncate full paths to just filenames for artifacts in results.json
+        manifest_path = os.path.join(output_directory, "results.json")
+        if os.path.isfile(manifest_path):
+            with open(manifest_path) as f:
+                manifest = json.load(f)
+            for state in ("passed", "failed", "flaky"):
+                for test_info in manifest.get(state, {}).values():
+                    if "artifacts" in test_info:
+                        test_info["artifacts"] = [os.path.basename(p) for p in test_info["artifacts"]]
+            with open(manifest_path, "w") as f:
+                json.dump(manifest, f, indent=2, sort_keys=True)
+
     if macos_bundle_identifier:
         _set_apple_persistence_ignore_state(macos_bundle_identifier, ignore=original_ignore_value)
 
