@@ -58,6 +58,6 @@ IF NOT EXIST "%~dp0venv\" (
 
 CALL "%~dp0venv\Scripts\activate.bat"
 
-"%~dp0venv\Scripts\python.exe" execute.py %*
+"%~dp0venv\Scripts\python.exe" "%~dp0\execute.py" %*
 
 ENDLOCAL
