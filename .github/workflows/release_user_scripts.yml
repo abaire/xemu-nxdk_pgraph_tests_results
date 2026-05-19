@@ -67,7 +67,7 @@ jobs:
         run: echo "tag=scripts-v$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         if: github.ref == 'refs/heads/main'
         with:
           tag_name: ${{ steps.version.outputs.tag }}
