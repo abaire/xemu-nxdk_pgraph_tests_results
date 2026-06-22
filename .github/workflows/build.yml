@@ -21,7 +21,7 @@ jobs:
       site: ${{ steps.filter.outputs.site }}
       docker: ${{ steps.filter.outputs.docker }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: '1'
       - uses: dorny/paths-filter@v4
@@ -52,11 +52,11 @@ jobs:
             github.event_name == 'push'
         )
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: main
           path: main-branch
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: github_pages
           path: github-pages-branch
@@ -113,7 +113,7 @@ jobs:
         shard: [0, 1, 2, 3, 4, 5, 6, 7]
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: github_pages
       - uses: actions/download-artifact@v8
@@ -151,7 +151,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: github_pages
       - uses: actions/download-artifact@v8
@@ -205,7 +205,7 @@ jobs:
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     steps:
       - name: Checkout github_pages
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: github_pages
           fetch-depth: 0 # Need full history and remotes for sync
@@ -226,7 +226,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: main
       - name: Remove images from results
