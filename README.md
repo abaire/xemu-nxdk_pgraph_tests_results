@@ -26,7 +26,7 @@ This repository requires long path support on Windows.
 ## Running tests for a new xemu (or nxdk_pgraph_tests) release
 
 * You will need to provide your own BIOS and MCPX boot images.
-* The test procedure can take a very long time (more than 60 minutes).
+* The test procedure can take a very long time (more than 60 minutes, unless you use sharding; use the run script with "--help").
 
 ### Test the latest xemu with the latest nxdk_pgraph_tests
 
