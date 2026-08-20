@@ -77,6 +77,22 @@ def _fuzzy_lookup_suite_descriptor(
     return descriptors.get(f"{camel_cased}Tests")
 
 
+def _load_json_file(file_path: str) -> Any:
+    """Loads and parses a JSON file, logging the raw content if parsing fails."""
+    try:
+        with open(file_path, "r", encoding="utf-8") as infile:
+            content = infile.read()
+    except Exception:
+        logger.exception("Failed to read JSON file from '%s'", file_path)
+        raise
+
+    try:
+        return json.loads(content)
+    except Exception:
+        logger.exception("Failed to parse JSON file '%s'. Raw file content:\n%s", file_path, content)
+        raise
+
+
 class TestSuiteDescriptorLoader:
     """Loads test suite descriptors from the nxdk_pgraph_tests project."""
 
@@ -89,9 +105,18 @@ class TestSuiteDescriptorLoader:
         try:
             response = requests.get(self.registry_url, timeout=30)
             response.raise_for_status()
-            return json.loads(response.content)
         except requests.exceptions.RequestException:
             logger.exception("Failed to load descriptor from '%s'", self.registry_url)
+            return None
+
+        try:
+            return json.loads(response.content)
+        except Exception:
+            logger.exception(
+                "Failed to parse registry JSON from '%s'. Raw content:\n%s",
+                self.registry_url,
+                response.text,
+            )
             return None
 
     def process(self) -> dict[str, TestSuiteDescriptor]:
@@ -305,8 +330,7 @@ class ComparisonScanner:
         def load_summary(subpath: str) -> tuple[str, dict[str, Any]]:
             full_path = os.path.join(self.comparison_dir, subpath)
             logger.debug("Load summary from '%s'", full_path)
-            with open(full_path) as infile:
-                return os.path.dirname(full_path), json.load(infile)
+            return os.path.dirname(full_path), _load_json_file(full_path)
 
         return {key: value for key, value in [load_summary(summary_file) for summary_file in summary_files]}
 
@@ -500,8 +524,7 @@ class ResultsScanner:
 
         def load_results(subpath: str) -> tuple[str, ResultsSummary]:
             full_path = os.path.join(self.results_dir, subpath)
-            with open(full_path) as infile:
-                return os.path.dirname(full_path), json.load(infile)
+            return os.path.dirname(full_path), _load_json_file(full_path)
 
         run_id_to_results: dict[str, ResultsSummary] = {
             key: value for key, value in [load_results(filename) for filename in results_files]
@@ -510,15 +533,13 @@ class ResultsScanner:
         for run_id, results_summary in run_id_to_results.items():
             renderer_info_file = os.path.join(run_id, "renderer.json")
             if os.path.isfile(renderer_info_file):
-                with open(renderer_info_file) as infile:
-                    results_summary["renderer_info"] = json.load(infile)
+                results_summary["renderer_info"] = _load_json_file(renderer_info_file)
             else:
                 results_summary["renderer_info"] = {"vulkan": False}
 
             runner_info_file = os.path.join(run_id, "runner.json")
             if os.path.isfile(runner_info_file):
-                with open(runner_info_file) as infile:
-                    results_summary["runner_info"] = json.load(infile)
+                results_summary["runner_info"] = _load_json_file(runner_info_file)
             else:
                 results_summary["runner_info"] = {"iso": "UNKNOWN"}
 
@@ -706,7 +727,7 @@ class PagesWriter:
                                 output_subdir,
                             ),
                             "test_results": suite_to_results[suite.suite_name],
-                            "descriptor": suite.descriptor,
+                            "descriptor": self._pack_descriptor(suite.descriptor),
                         }
                         for suite in comparison.results
                     },
