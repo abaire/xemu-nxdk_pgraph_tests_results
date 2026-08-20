@@ -13,6 +13,7 @@ import json
 import logging
 import os
 import platform
+import shlex
 import shutil
 import subprocess
 import sys
@@ -41,6 +42,26 @@ if TYPE_CHECKING:
     from collections.abc import Collection
 
 logger = logging.getLogger(__name__)
+
+
+def _clean_shlex_token(token: str) -> str:
+    if token.startswith(('"', "'")) and token.endswith(token[0]) and token not in ('"', "'"):
+        return token[1:-1]
+    return token
+
+
+def _patched_build_emulator_command(self: Config, iso_path: str) -> list[str]:
+    if not self._emulator_command:
+        msg = "Emulator command was not provided."
+        raise ValueError(msg)
+    posix = platform.system() != "Windows"
+    tokens = shlex.split(self._emulator_command.replace("{ISO}", iso_path), posix=posix)
+    if not posix:
+        tokens = [_clean_shlex_token(t) for t in tokens]
+    return tokens
+
+
+Config.build_emulator_command = _patched_build_emulator_command
 
 
 def _load_json_file(file_path: str) -> Any:
@@ -409,6 +430,11 @@ def _generate_xemu_toml(
     *,
     use_vulkan: bool = False,
 ) -> None:
+    bootrom_path = os.path.abspath(os.path.expanduser(bootrom_path)).replace("\\", "/")
+    flashrom_path = os.path.abspath(os.path.expanduser(flashrom_path)).replace("\\", "/")
+    eeprom_path = os.path.abspath(os.path.expanduser(eeprom_path)).replace("\\", "/")
+    hdd_path = os.path.abspath(os.path.expanduser(hdd_path)).replace("\\", "/")
+
     content = [
         "[general]",
         "show_welcome = false",
@@ -434,7 +460,7 @@ def _generate_xemu_toml(
         content.extend(["", "[display]", "renderer = 'VULKAN'"])
 
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    with open(file_path, "w") as outfile:
+    with open(file_path, "w", encoding="utf-8") as outfile:
         outfile.write("\n".join(content))
 
 
@@ -472,7 +498,7 @@ def _build_emulator_command(
         msg = f"Platform {system} not supported."
         raise NotImplementedError(msg)
 
-    cmd = xemu_path + " -dvd_path {ISO}"
+    cmd = f'"{xemu_path}" -dvd_path {{ISO}}'
     if custom_toml_path:
         cmd += f' -config_path "{custom_toml_path}"'
         toml_path = custom_toml_path
@@ -1004,23 +1030,35 @@ def _process_arguments_and_run():
     # Check for existing results to avoid redundant runs
     if not args.overwrite_existing_outputs and not args.just_suites:
         try:
-            emulator_command, _ = _build_emulator_command(xemu, no_bundle=args.no_bundle)
-            if emulator_command:
-                output_directory = _determine_output_directory(
-                    results_path,
-                    emulator_command=emulator_command,
-                    is_vulkan=args.use_vulkan,
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_toml = os.path.join(temp_dir, "xemu.toml")
+                _generate_xemu_toml(
+                    temp_toml,
+                    bootrom_path=mcpx_path,
+                    flashrom_path=bios_path,
+                    eeprom_path=os.path.join(temp_dir, "eeprom.bin"),
+                    hdd_path=os.path.join(temp_dir, "hdd.img"),
+                    use_vulkan=args.use_vulkan,
                 )
-
-                # If we find summary.json files in subdirectories, we assume it's done.
-                existing_summaries = glob.glob(os.path.join(output_directory, "*", "summary.json"))
-                if existing_summaries:
-                    logger.warning(
-                        "Found %d existing summary.json files in %s. Skipping execution. Use --overwrite-existing-outputs to force run.",
-                        len(existing_summaries),
-                        output_directory,
+                emulator_command, _ = _build_emulator_command(
+                    xemu, no_bundle=args.no_bundle, custom_toml_path=temp_toml
+                )
+                if emulator_command:
+                    output_directory = _determine_output_directory(
+                        results_path,
+                        emulator_command=emulator_command,
+                        is_vulkan=args.use_vulkan,
                     )
-                    return 0
+
+                    # If we find summary.json files in subdirectories, we assume it's done.
+                    existing_summaries = glob.glob(os.path.join(output_directory, "*", "summary.json"))
+                    if existing_summaries:
+                        logger.warning(
+                            "Found %d existing summary.json files in %s. Skipping execution. Use --overwrite-existing-outputs to force run.",
+                            len(existing_summaries),
+                            output_directory,
+                        )
+                        return 0
         except Exception:
             logger.exception("Failed to check for existing results")
             # If we fail to check, assume we need to run.
