@@ -600,30 +600,42 @@ def run(
     if handler:
         handler.stop()
 
-    if os.path.isdir(output_directory):
-        with open(os.path.join(output_directory, "renderer.json"), "w") as outfile:
-            json.dump({"vulkan": use_vulkan}, outfile)
-        with open(os.path.join(output_directory, "runner.json"), "w") as outfile:
-            json.dump(
-                {
-                    "iso": os.path.basename(iso_path),
-                    "test_failure_retries": test_failure_retries,
-                    "suite_allowlist": just_suites,
-                },
-                outfile,
+    if not os.path.isdir(output_directory):
+        if use_vulkan:
+            logger.error(
+                "Vulkan renderer was requested (--use-vulkan), but the test runner did not detect Vulkan output from xemu (expected %s).",
+                output_directory,
             )
+        else:
+            logger.error(
+                "OpenGL renderer was expected, but the test runner did not create the expected OpenGL output directory (expected %s).",
+                output_directory,
+            )
+        return 1
 
-        # Truncate full paths to just filenames for artifacts in results.json
-        manifest_path = os.path.join(output_directory, "results.json")
-        if os.path.isfile(manifest_path):
-            with open(manifest_path) as f:
-                manifest = json.load(f)
-            for state in ("passed", "failed", "flaky"):
-                for test_info in manifest.get(state, {}).values():
-                    if "artifacts" in test_info:
-                        test_info["artifacts"] = [os.path.basename(p) for p in test_info["artifacts"]]
-            with open(manifest_path, "w") as f:
-                json.dump(manifest, f, indent=2, sort_keys=True)
+    with open(os.path.join(output_directory, "renderer.json"), "w") as outfile:
+        json.dump({"vulkan": use_vulkan}, outfile)
+    with open(os.path.join(output_directory, "runner.json"), "w") as outfile:
+        json.dump(
+            {
+                "iso": os.path.basename(iso_path),
+                "test_failure_retries": test_failure_retries,
+                "suite_allowlist": just_suites,
+            },
+            outfile,
+        )
+
+    # Truncate full paths to just filenames for artifacts in results.json
+    manifest_path = os.path.join(output_directory, "results.json")
+    if os.path.isfile(manifest_path):
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+        for state in ("passed", "failed", "flaky"):
+            for test_info in manifest.get(state, {}).values():
+                if "artifacts" in test_info:
+                    test_info["artifacts"] = [os.path.basename(p) for p in test_info["artifacts"]]
+        with open(manifest_path, "w") as f:
+            json.dump(manifest, f, indent=2, sort_keys=True)
 
     if macos_bundle_identifier:
         _set_apple_persistence_ignore_state(macos_bundle_identifier, ignore=original_ignore_value)
