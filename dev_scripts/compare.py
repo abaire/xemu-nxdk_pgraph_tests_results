@@ -136,14 +136,14 @@ def _ensure_cache_path(cache_path: str) -> str:
 
 
 def _fetch_hw_goldens(output_dir: str):
-    from git import Repo
+    from git import Repo  # noqa: PLC0415
 
     logger.info("Cloning from %s", _HW_GOLDEN_GIT_URL)
     Repo.clone_from(_HW_GOLDEN_GIT_URL, output_dir, depth=1)
 
 
 def _compare_lpips(results_info: ResultsInfo, golden_info: ResultsInfo) -> tuple[set[str], set[str], list[Difference]]:
-    import lpips
+    import lpips  # noqa: PLC0415
 
     loss_fn = lpips.LPIPS(net="alex")
 
@@ -207,7 +207,7 @@ def _compare_perceptualdiff(
                 continue
 
             diff = Difference(test_suite, test_case, artifact, golden_artifact, -1)
-            result, stdout, stderr = diff.generate_difference_image(perceptualdiff, comparison_output_directory)
+            result, stdout, _stderr = diff.generate_difference_image(perceptualdiff, comparison_output_directory)
             if not result:
                 continue
 
