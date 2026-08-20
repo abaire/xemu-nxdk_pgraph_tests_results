@@ -683,19 +683,51 @@ def _ensure_results_path(results_path: str) -> str:
     return _ensure_path(results_path)
 
 
-def _extract_info_from_xemu_toml(toml_path: str) -> tuple[str, str] | None:
+def copy_xemu_inputs(toml_path: str, destination_directory: str = "inputs") -> None:
+    """Copies the various required input files from an existing xemu.toml manifest to the given directory."""
     toml_path = os.path.abspath(os.path.expanduser(toml_path))
     if os.path.isdir(toml_path):
         toml_path = os.path.join(toml_path, "xemu.toml")
     if not os.path.isfile(toml_path):
-        logger.error("No xemu toml file found at '%s'", toml_path)
-        return None
+        msg = f"No xemu toml file found at '{toml_path}'"
+        raise ValueError(msg)
 
     with open(toml_path, "rb") as infile:
         data = tomllib.load(infile)
 
     files = data.get("sys", {}).get("files", {})
-    return files.get("bootrom_path"), files.get("flashrom_path")
+    mcpx_path = files.get("bootrom_path")
+    bios_path = files.get("flashrom_path")
+
+    if not mcpx_path:
+        msg = f"No 'bootrom_path' (MCPX) found in '{toml_path}'"
+        raise ValueError(msg)
+    if not bios_path:
+        msg = f"No 'flashrom_path' (BIOS) found in '{toml_path}'"
+        raise ValueError(msg)
+
+    mcpx_path = os.path.abspath(os.path.expanduser(mcpx_path))
+    if not os.path.isfile(mcpx_path):
+        msg = f"MCPX boot ROM '{mcpx_path}' specified in '{toml_path}' not found"
+        raise ValueError(msg)
+
+    bios_path = os.path.abspath(os.path.expanduser(bios_path))
+    if not os.path.isfile(bios_path):
+        msg = f"Xbox BIOS '{bios_path}' specified in '{toml_path}' not found"
+        raise ValueError(msg)
+
+    os.makedirs(destination_directory, exist_ok=True)
+    shutil.copy2(mcpx_path, os.path.join(destination_directory, "mcpx.bin"))
+    shutil.copy2(bios_path, os.path.join(destination_directory, "bios.bin"))
+
+
+def _copy_files_from_xemu_toml(args: argparse.Namespace) -> None:
+    toml_path = getattr(args, "import_install", None) or getattr(args, "toml", None)
+    if not toml_path:
+        msg = "Invalid state: _copy_files_from_xemu_toml called without xemu.toml path argument"
+        raise RuntimeError(msg)
+
+    copy_xemu_inputs(toml_path, "inputs")
 
 
 def _prepare_sharded_iso(iso_path: str, shard_index: int, shard_count: int, output_iso_path: str) -> bool:
@@ -917,6 +949,7 @@ def _process_arguments_and_run():
         "-T",
         help="Import bios and mcpx from an existing xemu install",
         metavar="xemu_toml_path",
+        dest="import_install",
     )
     parser.add_argument(
         "--shard-count",
@@ -933,6 +966,32 @@ def _process_arguments_and_run():
 
     cache_path = _ensure_cache_path(args.cache_path)
     results_path = _ensure_results_path(args.results_path)
+
+    if args.import_install:
+        try:
+            _copy_files_from_xemu_toml(args)
+        except (ValueError, RuntimeError, OSError):
+            logger.exception("Failed to import configuration from %s", args.import_install)
+            return 1
+        else:
+            logger.info("Configuration files copied")
+            return 0
+
+    mcpx_path = os.path.abspath(os.path.expanduser(args.mcpx))
+    if not os.path.isfile(mcpx_path):
+        logger.error(
+            "Missing required MCPX boot ROM file '%s'. Provide --mcpx, run with --import-install, or place mcpx.bin in inputs/",
+            mcpx_path,
+        )
+        return 1
+
+    bios_path = os.path.abspath(os.path.expanduser(args.bios))
+    if not os.path.isfile(bios_path):
+        logger.error(
+            "Missing required Xbox BIOS file '%s'. Provide --bios, run with --import-install, or place bios.bin in inputs/",
+            bios_path,
+        )
+        return 1
 
     xemu = os.path.abspath(os.path.expanduser(args.xemu)) if args.xemu else _download_xemu(cache_path, args.xemu_tag)
     if not xemu:
@@ -982,13 +1041,6 @@ def _process_arguments_and_run():
         logger.error("Invalid xemu_hdd path '%s'", hdd)
         return 1
 
-    if args.toml:
-        result = _extract_info_from_xemu_toml(args.toml)
-        if not result:
-            logger.error("Failed to extract mcpx and bios from xemu toml at '%s'", args.toml)
-            return 1
-        args.mcpx, args.bios = result
-
     def _copy_inputs_and_run(temp_path: str, *, overwrite_existing_outputs: bool) -> int:
         if args.shard_count <= 1:
             return _run_shard(
@@ -997,8 +1049,8 @@ def _process_arguments_and_run():
                 temp_path,
                 iso,
                 hdd,
-                args.mcpx,
-                args.bios,
+                mcpx_path,
+                bios_path,
                 xemu,
                 results_path,
                 overwrite_existing_outputs=overwrite_existing_outputs,
@@ -1022,8 +1074,8 @@ def _process_arguments_and_run():
                         shard_temp_path,
                         iso,
                         hdd,
-                        args.mcpx,
-                        args.bios,
+                        mcpx_path,
+                        bios_path,
                         xemu,
                         shard_results_path,
                         overwrite_existing_outputs=True,
