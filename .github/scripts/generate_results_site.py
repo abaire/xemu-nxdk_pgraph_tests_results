@@ -84,7 +84,7 @@ class TestSuiteDescriptorLoader:
         self.registry_url = registry_url
 
     def _load_registry(self) -> dict[str, Any] | None:
-        import requests  # noqa: PLC0415 `import` should be at the top-level of a file
+        import requests
 
         try:
             response = requests.get(self.registry_url, timeout=30)
