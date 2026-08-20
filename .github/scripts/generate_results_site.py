@@ -2,7 +2,6 @@
 
 # ruff: noqa: C416 Unnecessary dict comprehension
 # ruff: noqa: C414 Unnecessary list call
-# ruff: noqa: S701: By default, jinja2 sets `autoescape` to `False`.
 # ruff: noqa: PLR2004 Magic value used in comparison
 # ruff: noqa: S701 By default, jinja2 sets `autoescape` to `False`. Consider using `autoescape=True` or the `select_autoescape` function to mitigate XSS vulnerabilities.
 
@@ -20,6 +19,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any, NamedTuple
 
+import requests
 from frozendict import deepfreeze, frozendict
 from jinja2 import Environment, FileSystemLoader
 
@@ -80,7 +80,7 @@ def _fuzzy_lookup_suite_descriptor(
 def _load_json_file(file_path: str) -> Any:
     """Loads and parses a JSON file, logging the raw content if parsing fails."""
     try:
-        with open(file_path, "r", encoding="utf-8") as infile:
+        with open(file_path, encoding="utf-8") as infile:
             content = infile.read()
     except Exception:
         logger.exception("Failed to read JSON file from '%s'", file_path)
@@ -100,8 +100,6 @@ class TestSuiteDescriptorLoader:
         self.registry_url = registry_url
 
     def _load_registry(self) -> dict[str, Any] | None:
-        import requests
-
         try:
             response = requests.get(self.registry_url, timeout=30)
             response.raise_for_status()
