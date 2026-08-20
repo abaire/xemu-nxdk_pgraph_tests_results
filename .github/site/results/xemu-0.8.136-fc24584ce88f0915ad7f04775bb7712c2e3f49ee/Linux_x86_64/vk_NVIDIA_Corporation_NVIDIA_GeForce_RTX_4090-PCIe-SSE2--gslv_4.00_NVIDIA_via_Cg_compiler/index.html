@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>xemu-0.8.136-fc24584ce88f0915ad7f04775bb7712c2e3f49ee: Linux_x86_64, Vulkan GL: NVIDIA Corporation - NVIDIA GeForce RTX 4090-PCIe-SSE2 - 4.0.0 NVIDIA 580.178.04, Shader: 4.00 NVIDIA via Cg compiler</title>
+    <link rel="stylesheet" href="../../../../site.css">
+</head>
+<body>
+
+    <div class="sidenav">
+    <a href="../../../../index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Home_%2885249%29_-_The_Noun_Project.svg" width="32" alt="Navigate to the top level" /></a>
+    
+      <a href="../../../../index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/9/92/Arrow_chevron_up_in_sharp_solid_style.svg" width="32" alt="Navigate up one level" /></a>
+    </div>
+
+    <div class="page-content"><h1>xemu-0.8.136-fc24584ce88f0915ad7f04775bb7712c2e3f49ee</h1>
+<h2>Linux_x86_64 - Vulkan</h2>
+    <h2>test_runner_shard.iso</h2>
+
+<h1>Machine info</h1>
+<div class="code-snippet">
+xemu_version: 0.8.136
+xemu_commit: fc24584ce88f0915ad7f04775bb7712c2e3f49ee
+xemu_date: Mon Jun  8 05:42:46 UTC 2026
+CPU: 
+OS_Version: Ubuntu 24.04.4 LTS
+GL_VENDOR: NVIDIA Corporation
+GL_RENDERER: NVIDIA GeForce RTX 4090/PCIe/SSE2
+GL_VERSION: 4.0.0 NVIDIA 580.178.04
+GL_SHADING_LANGUAGE_VERSION: 4.00 NVIDIA via Cg compiler
+GL geometry shader winding: 0, 0, 0, 0
+Available physical devices:
+- NVIDIA GeForce RTX 4090
+- llvmpipe (LLVM 20.1.2, 256 bits)
+Selected physical device: NVIDIA GeForce RTX 4090
+- Vendor: 10de, Device: 2684
+- Driver Version: 580.712.256
+Enabled device extensions:
+- VK_KHR_external_memory_fd
+- VK_KHR_external_semaphore_fd
+- VK_EXT_custom_border_color
+- VK_EXT_memory_budget
+VK geometry shader winding: 0, 0, 0, 0
+</div>
+
+
+
+<h1>Results</h1>
+    <ul>
+        
+            <li><a href="Blend%20surface/index.html">Blend surface</a></li>
+        
+            <li><a href="Bump%20env%20lum/index.html">Bump env lum</a></li>
+        
+            <li><a href="Bump%20map/index.html">Bump map</a></li>
+        
+            <li><a href="Clear/index.html">Clear</a></li>
+        
+            <li><a href="Color%20zeta%20overlap/index.html">Color zeta overlap</a></li>
+        
+            <li><a href="Surface%20format/index.html">Surface format</a></li>
+        
+            <li><a href="Texgen%20with%20texture%20matrix/index.html">Texgen with texture matrix</a></li>
+        
+            <li><a href="Texture%20border/index.html">Texture border</a></li>
+        
+            <li><a href="Texture%20border%20color/index.html">Texture border color</a></li>
+        
+            <li><a href="Texture%20BRDF/index.html">Texture BRDF</a></li>
+        
+            <li><a href="Texture%20format/index.html">Texture format</a></li>
+        
+            <li><a href="Volume%20texture/index.html">Volume texture</a></li>
+        
+    </ul>
+
+<h1>Failed tests (12)</h1>
+
+    <h2>Blend surface::1-DstAlpha_XA_O1A7RGB8</h2>
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+
+    <h2>Bump env lum::BumpEnvLum_R16B16</h2>
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+
+    <h2>Bump map::BumpMap_R16B16</h2>
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+
+    <h2>Clear::SCF_X1A7R8G8B8_O1A7R8G8B8</h2>
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+
+    <h2>Color zeta overlap::AdjacentWithAA</h2>
+    <div class="code-snippet">
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/surface.c:647: void invalidate_surface(NV2AState *, SurfaceBinding *): Assertion `d->pgraph.surface_color.buffer_dirty' failed.
+
+    </div>
+
+    <div class="code-snippet">
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/surface.c:647: void invalidate_surface(NV2AState *, SurfaceBinding *): Assertion `d->pgraph.surface_color.buffer_dirty' failed.
+
+    </div>
+
+    <div class="code-snippet">
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/surface.c:647: void invalidate_surface(NV2AState *, SurfaceBinding *): Assertion `d->pgraph.surface_color.buffer_dirty' failed.
+
+    </div>
+
+
+    <h2>Surface format::Fmt_X1A7R8G8B8_O1A7R8G8B8</h2>
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented color surface format 0x7
+
+    </div>
+
+
+    <h2>Texgen with texture matrix::SphereMap_Arbitrary</h2>
+    <div class="code-snippet">
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/pgraph.c:1669: unsigned int kelvin_map_texgen(uint32_t, unsigned int): Assertion `channel < 2' failed.
+
+    </div>
+
+    <div class="code-snippet">
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/pgraph.c:1669: unsigned int kelvin_map_texgen(uint32_t, unsigned int): Assertion `channel < 2' failed.
+
+    </div>
+
+    <div class="code-snippet">
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/pgraph.c:1669: unsigned int kelvin_map_texgen(uint32_t, unsigned int): Assertion `channel < 2' failed.
+
+    </div>
+
+
+    <h2>Texture border color::TextureBorderColor</h2>
+    <div class="code-snippet">
+vk_result = -3
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/texture.c:1241: void create_texture(PGRAPHState *, int): Assertion `vk_result == VK_SUCCESS && "vk check failed"' failed.
+
+    </div>
+
+    <div class="code-snippet">
+vk_result = -3
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/texture.c:1241: void create_texture(PGRAPHState *, int): Assertion `vk_result == VK_SUCCESS && "vk check failed"' failed.
+
+    </div>
+
+    <div class="code-snippet">
+vk_result = -3
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/texture.c:1241: void create_texture(PGRAPHState *, int): Assertion `vk_result == VK_SUCCESS && "vk check failed"' failed.
+
+    </div>
+
+
+    <h2>Texture border::2D</h2>
+    <div class="code-snippet">
+vk_result = -4
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/command.c:104: void pgraph_vk_end_single_time_commands(PGRAPHState *, VkCommandBuffer): Assertion `vk_result == VK_SUCCESS && "vk check failed"' failed.
+
+    </div>
+
+    <div class="code-snippet">
+vk_result = -4
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/command.c:104: void pgraph_vk_end_single_time_commands(PGRAPHState *, VkCommandBuffer): Assertion `vk_result == VK_SUCCESS && "vk check failed"' failed.
+
+    </div>
+
+    <div class="code-snippet">
+vk_result = -4
+xemu-0.8.136-x86_64.AppImage: ../hw/xbox/nv2a/pgraph/vk/command.c:104: void pgraph_vk_end_single_time_commands(PGRAPHState *, VkCommandBuffer): Assertion `vk_result == VK_SUCCESS && "vk check failed"' failed.
+
+    </div>
+
+
+    <h2>Texture BRDF::BRDF_e0_l0</h2>
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+
+    <h2>Texture format::TexFmt_R16B16</h2>
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+
+    <h2>Volume texture::R16B16</h2>
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+
+    <div class="code-snippet">
+nv2a: unimplemented texture color format 0x33
+
+    </div>
+</div>
+
+    <script src="../../../../script.js"></script>
+</body>
+</html>
