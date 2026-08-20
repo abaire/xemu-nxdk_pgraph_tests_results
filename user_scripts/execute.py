@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 def _load_json_file(file_path: str) -> Any:
     """Loads and parses a JSON file, logging the raw content if parsing fails."""
     try:
-        with open(file_path, "r", encoding="utf-8") as infile:
+        with open(file_path, encoding="utf-8") as infile:
             content = infile.read()
     except Exception:
         logger.exception("Failed to read JSON file from '%s'", file_path)
@@ -57,6 +57,7 @@ def _load_json_file(file_path: str) -> Any:
     except Exception:
         logger.exception("Failed to parse JSON file '%s'. Raw file content:\n%s", file_path, content)
         raise
+
 
 if sys.platform == "win32":
     import threading
@@ -147,7 +148,11 @@ def _fetch_github_release_info(api_url: str, tag: str = "latest") -> dict[str, A
 
 
 def _download_artifact(
-    target_path: str, download_url: str, artifact_path_override: str | None = None, *, force_download: bool = False
+    target_path: str,
+    download_url: str,
+    artifact_path_override: str | None = None,
+    *,
+    force_download: bool = False,
 ) -> bool:
     """Downloads an artifact from the given URL, if it does not already exist. Returns True if download was needed."""
     if os.path.exists(target_path) and not force_download:
@@ -709,7 +714,10 @@ def _prepare_sharded_iso(iso_path: str, shard_index: int, shard_count: int, outp
 
         if "settings" not in config_data:
             config_data["settings"] = {}
-        config_data["settings"]["sharding"] = {"index": shard_index, "count": shard_count}
+        config_data["settings"]["sharding"] = {
+            "index": shard_index,
+            "count": shard_count,
+        }
 
         updated_config_path = os.path.join(tmpdir, "updated_config.json")
         with open(updated_config_path, "w") as f:
@@ -814,13 +822,24 @@ def _merge_shard_results(temp_path: str, shard_count: int, final_results_path: s
                     shutil.copytree(src_item, dest_item)
                 else:
                     for suite_item in os.listdir(src_item):
-                        shutil.copy2(os.path.join(src_item, suite_item), os.path.join(dest_item, suite_item))
-            elif item in ("machine_info.txt", "renderer.json", "runner.json") and not os.path.exists(dest_item):
+                        shutil.copy2(
+                            os.path.join(src_item, suite_item),
+                            os.path.join(dest_item, suite_item),
+                        )
+            elif item in (
+                "machine_info.txt",
+                "renderer.json",
+                "runner.json",
+            ) and not os.path.exists(dest_item):
                 shutil.copy2(src_item, dest_item)
 
     if output_dir_rel:
         final_manifest_path = os.path.join(final_results_path, output_dir_rel, "results.json")
-        merged_manifest = {"passed": merged_passed, "failed": merged_failed, "flaky": merged_flaky}
+        merged_manifest = {
+            "passed": merged_passed,
+            "failed": merged_failed,
+            "flaky": merged_flaky,
+        }
         if merged_missing:
             merged_manifest["missing_artifacts"] = merged_missing
 
@@ -878,12 +897,23 @@ def _process_arguments_and_run():
         help="Run even if the expected outputs already exist.",
     )
     parser.add_argument(
-        "--no-bundle", action="store_true", help="Suppress attempt to set DYLD_FALLBACK_LIBRARY_PATH on macOS."
+        "--no-bundle",
+        action="store_true",
+        help="Suppress attempt to set DYLD_FALLBACK_LIBRARY_PATH on macOS.",
     )
-    parser.add_argument("--use-vulkan", action="store_true", help="Use the Vulkan renderer instead of OpenGL.")
-    parser.add_argument("--just-suites", nargs="+", help="Just run the given suites rather than the full test set.")
+    parser.add_argument(
+        "--use-vulkan",
+        action="store_true",
+        help="Use the Vulkan renderer instead of OpenGL.",
+    )
+    parser.add_argument(
+        "--just-suites",
+        nargs="+",
+        help="Just run the given suites rather than the full test set.",
+    )
     parser.add_argument(
         "--toml",
+        "--import-install",
         "-T",
         help="Import bios and mcpx from an existing xemu install",
         metavar="xemu_toml_path",
@@ -918,7 +948,9 @@ def _process_arguments_and_run():
             emulator_command, _ = _build_emulator_command(xemu, no_bundle=args.no_bundle)
             if emulator_command:
                 output_directory = _determine_output_directory(
-                    results_path, emulator_command=emulator_command, is_vulkan=args.use_vulkan
+                    results_path,
+                    emulator_command=emulator_command,
+                    is_vulkan=args.use_vulkan,
                 )
 
                 # If we find summary.json files in subdirectories, we assume it's done.
@@ -1014,11 +1046,15 @@ def _process_arguments_and_run():
 
     if args.temp_path:
         return _copy_inputs_and_run(
-            _ensure_path(args.temp_path), overwrite_existing_outputs=args.overwrite_existing_outputs
+            _ensure_path(args.temp_path),
+            overwrite_existing_outputs=args.overwrite_existing_outputs,
         )
 
     with tempfile.TemporaryDirectory() as temp_path:
-        return _copy_inputs_and_run(_ensure_path(temp_path), overwrite_existing_outputs=args.overwrite_existing_outputs)
+        return _copy_inputs_and_run(
+            _ensure_path(temp_path),
+            overwrite_existing_outputs=args.overwrite_existing_outputs,
+        )
 
 
 if __name__ == "__main__":
