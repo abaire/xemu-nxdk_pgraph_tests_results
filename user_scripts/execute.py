@@ -42,6 +42,22 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+
+def _load_json_file(file_path: str) -> Any:
+    """Loads and parses a JSON file, logging the raw content if parsing fails."""
+    try:
+        with open(file_path, "r", encoding="utf-8") as infile:
+            content = infile.read()
+    except Exception:
+        logger.exception("Failed to read JSON file from '%s'", file_path)
+        raise
+
+    try:
+        return json.loads(content)
+    except Exception:
+        logger.exception("Failed to parse JSON file '%s'. Raw file content:\n%s", file_path, content)
+        raise
+
 if sys.platform == "win32":
     import threading
     import time
@@ -628,8 +644,7 @@ def run(
     # Truncate full paths to just filenames for artifacts in results.json
     manifest_path = os.path.join(output_directory, "results.json")
     if os.path.isfile(manifest_path):
-        with open(manifest_path) as f:
-            manifest = json.load(f)
+        manifest = _load_json_file(manifest_path)
         for state in ("passed", "failed", "flaky"):
             for test_info in manifest.get(state, {}).values():
                 if "artifacts" in test_info:
@@ -690,8 +705,7 @@ def _prepare_sharded_iso(iso_path: str, shard_index: int, shard_count: int, outp
             logger.error("Failed to extract JSON config for sharding")
             return False
 
-        with open(config_path) as f:
-            config_data = json.load(f)
+        config_data = _load_json_file(config_path)
 
         if "settings" not in config_data:
             config_data["settings"] = {}
@@ -781,8 +795,7 @@ def _merge_shard_results(temp_path: str, shard_count: int, final_results_path: s
         if not output_dir_rel:
             output_dir_rel = os.path.relpath(os.path.dirname(manifest_path), shard_results_path)
 
-        with open(manifest_path) as f:
-            manifest = json.load(f)
+        manifest = _load_json_file(manifest_path)
 
         merged_passed.update(manifest.get("passed", {}))
         merged_failed.update(manifest.get("failed", {}))

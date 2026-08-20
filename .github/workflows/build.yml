@@ -128,11 +128,24 @@ jobs:
           pip3 install -r .github/scripts/requirements.txt -r dev_scripts/requirements.txt
       - name: Generate diffs
         run: python3 .github/scripts/generate_missing_hw_diffs.py --shard-index ${{ matrix.shard }} --shard-count 8
+      - name: Prepare partial diffs
+        run: |
+          mkdir -p diff-staging
+          CHANGED_DIFFS=$(git ls-files --others --modified --exclude-standard compare-results)
+          if [ -z "$CHANGED_DIFFS" ]; then
+            echo "No new or modified diffs for shard ${{ matrix.shard }}."
+            touch diff-staging/KEEP_ARTIFACT
+          else
+            echo "New or modified diffs detected for shard ${{ matrix.shard }}:"
+            echo "$CHANGED_DIFFS"
+            echo "$CHANGED_DIFFS" > changed_diffs_list.txt
+            rsync -av --files-from=changed_diffs_list.txt . diff-staging/
+          fi
       - name: Upload partial diffs
         uses: actions/upload-artifact@v7
         with:
           name: diffs-${{ strategy.job-index }}
-          path: compare-results/
+          path: diff-staging/
           retention-days: 1
 
   Publish:
@@ -160,8 +173,20 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           pattern: diffs-*
-          path: compare-results/
-          merge-multiple: true
+          path: incoming-diffs/
+      - name: Merge diffs
+        run: |
+          if [ -d incoming-diffs ]; then
+            echo "Merging incoming shard diffs..."
+            for diff_dir in incoming-diffs/diffs-*; do
+              if [ -d "$diff_dir" ]; then
+                echo "Merging $diff_dir..."
+                rsync -av --exclude="KEEP_ARTIFACT" "$diff_dir/" .
+              fi
+            done
+            rm -rf incoming-diffs
+          fi
+          rm -f KEEP_ARTIFACT
       - uses: actions/setup-python@v7
         with: { python-version: '3.12', cache: 'pip' }
       - name: Install requirements
