@@ -55,6 +55,8 @@ def restore_version(
         logger.error("Branch %s not found.", branch_ref)
         return False
 
+    abs_target_dir = os.path.abspath(target_dir)
+
     try:
         archive_proc = subprocess.Popen(
             ["git", "archive", branch_ref, f"results/{version}"],
@@ -62,7 +64,7 @@ def restore_version(
             cwd=cwd,
         )
         tar_proc = subprocess.Popen(
-            ["tar", "-x", "-C", target_dir],
+            ["tar", "-x", "-C", abs_target_dir],
             stdin=archive_proc.stdout,
             cwd=cwd,
         )
@@ -101,6 +103,10 @@ def main() -> int:
         help="Target xemu version or pattern (e.g. 0.8.135, xemu-0.8.135-..., or 'all')",
     )
     parser.add_argument(
+        "--repo-dir",
+        help="Git repository directory containing origin remote (defaults to --target-dir, or current directory, or script root)",
+    )
+    parser.add_argument(
         "--target-dir",
         default=".",
         help="Directory to extract results into (default: current directory)",
@@ -125,7 +131,16 @@ def main() -> int:
     args = parser.parse_args()
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO)
 
-    available_branches = fetch_archive_branches()
+    repo_dir = args.repo_dir
+    if not repo_dir:
+        if os.path.isdir(os.path.join(args.target_dir, ".git")):
+            repo_dir = args.target_dir
+        elif os.path.isdir(".git"):
+            repo_dir = "."
+        else:
+            repo_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+    available_branches = fetch_archive_branches(cwd=repo_dir)
 
     if args.list:
         print("Available archived versions:")
@@ -148,7 +163,7 @@ def main() -> int:
 
     success = True
     for v in matching:
-        if not restore_version(v, args.target_dir, force=args.force):
+        if not restore_version(v, args.target_dir, force=args.force, cwd=repo_dir):
             success = False
 
     return 0 if success else 1
