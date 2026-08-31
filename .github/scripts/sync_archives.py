@@ -23,7 +23,21 @@ def sync_version(version: str, remote_branches) -> bool:
     print(f"Checking {version}...")
 
     try:
+        remote_ref = f"refs/remotes/origin/{branch_name}"
         res_v_sha = git("rev-parse", f"HEAD:results/{version}")
+
+        # If HEAD:results/{version} lacks PNGs but remote archive already has them, preserve remote tree
+        if branch_name in remote_branches:
+            try:
+                head_files = git("ls-tree", "-r", "--name-only", f"HEAD:results/{version}").splitlines()
+                if not any(f.endswith(".png") for f in head_files):
+                    remote_res_v_sha = git("rev-parse", f"{remote_ref}:results/{version}")
+                    remote_files = git("ls-tree", "-r", "--name-only", f"{remote_ref}:results/{version}").splitlines()
+                    if any(f.endswith(".png") for f in remote_files):
+                        res_v_sha = remote_res_v_sha
+            except Exception as e:
+                logger.debug("Failed checking remote results tree: %s", e)
+
         issues_blob = git("rev-parse", "HEAD:results/known_issues.json")
 
         results_tree_entries = [f"040000 tree {res_v_sha}\t{version}", f"100644 blob {issues_blob}\tknown_issues.json"]
@@ -40,8 +54,6 @@ def sync_version(version: str, remote_branches) -> bool:
             pass
 
         root_tree_hash = git_mktree(root_entries)
-
-        remote_ref = f"refs/remotes/origin/{branch_name}"
         if branch_name in remote_branches:
             remote_sha = git("rev-parse", remote_ref)
             remote_tree = git("rev-parse", f"{remote_sha}^{{tree}}")
