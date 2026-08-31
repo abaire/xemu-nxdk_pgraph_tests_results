@@ -1,5 +1,0 @@
-nxdk-pgraph-test-runner>=0.1.21
-requests~=2.33.1
-GitPython~=3.1.44
-
-pywin32>=300 ; sys_platform == 'win32'

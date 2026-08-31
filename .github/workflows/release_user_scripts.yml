@@ -37,8 +37,6 @@ jobs:
         run: |
           mkdir -p package/windows
           cp user_scripts/run.bat package/windows/
-          cp user_scripts/execute.py package/windows/
-          cp user_scripts/requirements.txt package/windows/
           cp dist/README.md package/windows/
           cd package/windows && zip -r ../../dist_release/UserScripts-Windows.zip .
 
@@ -46,8 +44,6 @@ jobs:
         run: |
           mkdir -p package/macos
           cp user_scripts/run.sh package/macos/
-          cp user_scripts/execute.py package/macos/
-          cp user_scripts/requirements.txt package/macos/
           cp dist/README.md package/macos/
           chmod +x package/macos/run.sh
           cd package/macos && zip -r ../../dist_release/UserScripts-macOS.zip .
@@ -56,8 +52,6 @@ jobs:
         run: |
           mkdir -p package/linux
           cp user_scripts/run.sh package/linux/
-          cp user_scripts/execute.py package/linux/
-          cp user_scripts/requirements.txt package/linux/
           cp dist/README.md package/linux/
           chmod +x package/linux/run.sh
           cd package/linux && zip -r ../../dist_release/UserScripts-Linux.zip .

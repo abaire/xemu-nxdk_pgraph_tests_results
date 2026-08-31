@@ -1,3 +1,2 @@
-GitPython~=3.1.44
-#lpips~=0.1.4
-#opencv-python~=4.11.0.86
+xemu-pgraph-ci-tools @ git+https://github.com/abaire/xemu-pgraph-ci-tools.git
+# xemu-pgraph-ci-tools[lpips] @ git+https://github.com/abaire/xemu-pgraph-ci-tools.git

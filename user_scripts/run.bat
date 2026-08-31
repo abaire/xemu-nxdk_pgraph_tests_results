@@ -22,12 +22,12 @@ IF %MAJOR_VER% LSS 3 (
     GOTO VERSION_FAIL
 )
 
-IF %MAJOR_VER% EQU 3 IF %MINOR_VER% LSS 10 (
+IF %MAJOR_VER% EQU 3 IF %MINOR_VER% LSS 12 (
     GOTO VERSION_FAIL
 )
 GOTO VERSION_PASS
 :VERSION_FAIL
-ECHO ERROR: Python 3.10 or higher is required. Found version %PYTHON_VERSION%.
+ECHO ERROR: Python 3.12 or higher is required. Found version %PYTHON_VERSION%.
 ECHO Please upgrade your Python installation.
 EXIT /B 1
 :VERSION_PASS
@@ -42,22 +42,17 @@ IF NOT EXIST "%~dp0venv\" (
         EXIT /B 1
     )
 
-    ECHO Installing required packages from requirements.txt...
+    ECHO Installing dependencies...
 
-    "%~dp0venv\Scripts\pip.exe" install -r "%~dp0requirements.txt"
+    "%~dp0venv\Scripts\pip.exe" install "xemu-pgraph-ci-tools @ git+https://github.com/abaire/xemu-pgraph-ci-tools.git" pywin32
     IF %ERRORLEVEL% NEQ 0 (
-        ECHO ERROR: Failed to install Python packages.
+        ECHO ERROR: Failed to install dependencies.
         EXIT /B 1
     )
-
-    ECHO.
-    ECHO Initial setup complete.
-    ECHO Please run this again to execute the tests.
-    EXIT /B 1
 )
 
 CALL "%~dp0venv\Scripts\activate.bat"
 
-"%~dp0venv\Scripts\python.exe" "%~dp0\execute.py" %*
+"%~dp0venv\Scripts\python.exe" -m xemu_pgraph_ci_tools.runner %*
 
 ENDLOCAL
