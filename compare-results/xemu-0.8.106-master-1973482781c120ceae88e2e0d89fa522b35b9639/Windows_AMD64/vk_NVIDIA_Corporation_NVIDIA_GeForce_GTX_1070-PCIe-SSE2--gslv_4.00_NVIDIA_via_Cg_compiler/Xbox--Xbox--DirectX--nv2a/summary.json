@@ -1064,6 +1064,7 @@
     "ZPass_pixel_count:ZPassPointSizeVS-0x0201_ZB"
   ],
   "result_identifier": "xemu-0.8.106-master-1973482781c120ceae88e2e0d89fa522b35b9639:Windows_AMD64:vk_NVIDIA_Corporation_NVIDIA_GeForce_GTX_1070-PCIe-SSE2:gslv_4.00_NVIDIA_via_Cg_compiler",
+  "tests_evaluated": [],
   "tests_with_differences": {
     "2D_Lines:2DLine-15-C000003E0-400_200-400_400": "200",
     "2D_Lines:2DLine-16-C000007E0-400_200-400_400": "200",

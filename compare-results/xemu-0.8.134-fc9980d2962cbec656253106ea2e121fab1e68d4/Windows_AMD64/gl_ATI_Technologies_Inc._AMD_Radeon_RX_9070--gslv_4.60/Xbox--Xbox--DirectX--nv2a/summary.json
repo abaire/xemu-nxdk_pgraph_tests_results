@@ -2286,6 +2286,7 @@
     "ZPass_pixel_count:ZPassPointSizeVS-0x0201_ZB"
   ],
   "result_identifier": "xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4:Windows_AMD64:gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070:gslv_4.60",
+  "tests_evaluated": [],
   "tests_with_differences": {
     "2D_Lines:2DLine-15-C000003E0-400_200-400_400": "200",
     "2D_Lines:2DLine-16-C000007E0-400_200-400_400": "200",

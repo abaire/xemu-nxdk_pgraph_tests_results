@@ -2287,6 +2287,7 @@
     "ZPass_pixel_count:ZPassPointSizeVS-0x0201_ZB"
   ],
   "result_identifier": "xemu-0.8.133-26fcbe54f17e496bdf530dad9f237e74e2f943fc:Linux_x86_64:gl_NVIDIA_Corporation_NVIDIA_GeForce_RTX_4090-PCIe-SSE2:gslv_4.00_NVIDIA_via_Cg_compiler",
+  "tests_evaluated": [],
   "tests_with_differences": {
     "2D_Lines:2DLine-15-C000003E0-400_200-400_400": "200",
     "2D_Lines:2DLine-16-C000007E0-400_200-400_400": "200",

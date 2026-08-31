@@ -1347,6 +1347,7 @@
     "ZPass_pixel_count:ZPass_ZB"
   ],
   "result_identifier": "xemu-0.8.48-master-ebec5e30284a6ef2c55fe4f1d1c123eb88c19a74:Darwin_arm64:gl_Apple_Apple_M3_Max:gslv_4.10",
+  "tests_evaluated": [],
   "tests_with_differences": {
     "2D_Lines:2DLine-15-C000003E0-400_200-400_400": "200",
     "2D_Lines:2DLine-16-C000007E0-400_200-400_400": "200",

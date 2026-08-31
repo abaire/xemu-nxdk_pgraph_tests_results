@@ -1,3 +1,4 @@
 frozendict~=2.4.6
 Jinja2~=3.1.5
 requests~=2.33.1
+xemu-pgraph-ci-tools @ git+https://github.com/abaire/xemu-pgraph-ci-tools.git
