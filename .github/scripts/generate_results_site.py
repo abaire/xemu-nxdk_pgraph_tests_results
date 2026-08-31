@@ -202,14 +202,38 @@ class ComparisonInfo(NamedTuple):
         summary: dict[str, Any],
         results: tuple[TestSuiteComparisonInfo, ...],
     ) -> ComparisonInfo:
-        components = run_identifier.split("/")
+        result_id = summary.get("result_identifier", "")
+        if result_id and ":" in result_id:
+            parts = result_id.split(":")
+            if len(parts) >= 4:
+                xemu_version = parts[0]
+                platform_info = parts[1]
+                gl_info = f"{parts[2]}--{parts[3]}"
+            elif len(parts) == 3:
+                xemu_version = parts[0]
+                platform_info = parts[1]
+                gl_info = parts[2]
+            else:
+                xemu_version = parts[0]
+                platform_info = ""
+                gl_info = ""
+        else:
+            components = [c for c in run_identifier.split("/") if c]
+            if len(components) >= 5 and "--" not in components[-2]:
+                xemu_version = components[-5]
+                platform_info = components[-4]
+                gl_info = f"{components[-3]}--{components[-2]}"
+            else:
+                xemu_version = components[-4]
+                platform_info = components[-3]
+                gl_info = components[-2]
 
         return cls(
             identifier=RunIdentifier(
-                run_identifier=tuple(components),
-                xemu_version=components[-4],
-                platform_info=components[-3],
-                gl_info=components[-2],
+                run_identifier=(xemu_version, platform_info, gl_info),
+                xemu_version=xemu_version,
+                platform_info=platform_info,
+                gl_info=gl_info,
             ),
             golden_identifier_component=os.path.basename(run_identifier),
             golden_identifier=summary.get("golden_identifier", "UNKNOWN"),
@@ -315,9 +339,9 @@ class ComparisonScanner:
                         run_identifier_to_suits[run_root].append(result)
 
         ret: list[ComparisonInfo] = []
-        for run_identifier, test_suites in run_identifier_to_suits.items():
-            run_info = run_identifier_to_summary[run_identifier]
-            ret.append(ComparisonInfo.parse(run_identifier, run_info, tuple(test_suites)))
+        for run_root, run_info in run_identifier_to_summary.items():
+            test_suites = run_identifier_to_suits.get(run_root, [])
+            ret.append(ComparisonInfo.parse(run_root, run_info, tuple(test_suites)))
 
         return ret
 
@@ -862,6 +886,7 @@ class PagesWriter:
                     )
                     for suite_result in comparison.results
                 },
+                "difference_count": len(comparison.summary.get("tests_with_differences", {})),
                 "missing_tests": missing_tests,
                 "extra_tests": extra_tests,
                 "golden_identifier": comparison.golden_identifier,
