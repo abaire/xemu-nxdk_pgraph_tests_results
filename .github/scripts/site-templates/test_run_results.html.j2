@@ -9,8 +9,10 @@
 <h1>{{ run_identifier.xemu_version }}</h1>
 <h2>{{ pretty_machine_info.platform }} - {{ pretty_machine_info.renderer }}</h2>
 
-{%- if runner_info and runner_info.iso %}
-    <h2>{{ runner_info.iso }}</h2>
+{%- if comparisons %}
+    {%- for comparison_name, comparison in comparisons | dictsort(reverse=True) %}
+        <h3>Differences from {{ comparison_name }}: {{ comparison.difference_count }}</h3>
+    {%- endfor %}
 {% endif -%}
 
 {% if machine_info %}
