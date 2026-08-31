@@ -8,3 +8,6 @@ dependencies = [
 dependencies = [
   "mypy==2.3.1",
 ]
+
+[tool.ruff]
+extend-exclude = ["submodules"]

@@ -84,7 +84,7 @@ fi
 if [[ ! -d ".venv" ]]; then
   echo "Setting up Python virtualenv"
   python3 -m venv .venv
-  .venv/bin/pip install -r .github/scripts/requirements.txt
+  .venv/bin/pip install -r .github/scripts/requirements.txt -r dev_scripts/requirements.txt
 fi
 
 function execute_tests() {
@@ -95,7 +95,7 @@ function execute_tests() {
   set +e
   command=(
     .venv/bin/python3
-    execute.py
+    -m xemu_pgraph_ci_tools.runner
     --xemu "${xemu_binary}"
     --no-bundle
     -R "${local_results_dir}"
