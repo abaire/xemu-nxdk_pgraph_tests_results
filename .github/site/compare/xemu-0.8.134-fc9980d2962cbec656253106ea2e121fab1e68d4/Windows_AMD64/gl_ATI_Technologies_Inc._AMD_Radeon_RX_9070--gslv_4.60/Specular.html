@@ -31,7 +31,7 @@
     <h3 id="ControlFlags_FF">ControlFlags_FF</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">7926</div>
+        <div class="value">7926.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1 and failing to set SEPARATE_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but with a directional light pointing at {1, 0, 1}.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
@@ -42,7 +42,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/ControlFlags_FF-diff.png" alt="Diff result for Specular::ControlFlags_FF" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/ControlFlags_FF-diff.png" alt="Diff result for Specular::ControlFlags_FF" class="inline-image">
     
     </div>
 
@@ -61,7 +61,7 @@
     <h3 id="ControlFlags_VS">ControlFlags_VS</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">82613</div>
+        <div class="value">82613.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1 and failing to set SEPARATE_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but with a directional light pointing at {1, 0, 1}.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
@@ -72,7 +72,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/ControlFlags_VS-diff.png" alt="Diff result for Specular::ControlFlags_VS" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/ControlFlags_VS-diff.png" alt="Diff result for Specular::ControlFlags_VS" class="inline-image">
     
     </div>
 
@@ -91,7 +91,7 @@
     <h3 id="ControlFlagsLightDisable_FF">ControlFlagsLightDisable_FF</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">1514</div>
+        <div class="value">1514.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is disabled.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper two rows have SET_SPECULAR_ENABLE = false. The lower rows have it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0 </p>
@@ -102,7 +102,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/ControlFlagsLightDisable_FF-diff.png" alt="Diff result for Specular::ControlFlagsLightDisable_FF" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/ControlFlagsLightDisable_FF-diff.png" alt="Diff result for Specular::ControlFlagsLightDisable_FF" class="inline-image">
     
     </div>
 
@@ -121,7 +121,7 @@
     <h3 id="ControlFlagsLightDisable_VS">ControlFlagsLightDisable_VS</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">1631</div>
+        <div class="value">1631.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is disabled.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0 </p>
@@ -132,7 +132,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/ControlFlagsLightDisable_VS-diff.png" alt="Diff result for Specular::ControlFlagsLightDisable_VS" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/ControlFlagsLightDisable_VS-diff.png" alt="Diff result for Specular::ControlFlagsLightDisable_VS" class="inline-image">
     
     </div>
 
@@ -151,7 +151,7 @@
     <h3 id="ControlFlagsNoLight_FF">ControlFlagsNoLight_FF</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">827</div>
+        <div class="value">827.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1 and failing to set SEPARATE_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but no light exists.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
@@ -162,7 +162,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/ControlFlagsNoLight_FF-diff.png" alt="Diff result for Specular::ControlFlagsNoLight_FF" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/ControlFlagsNoLight_FF-diff.png" alt="Diff result for Specular::ControlFlagsNoLight_FF" class="inline-image">
     
     </div>
 
@@ -181,7 +181,7 @@
     <h3 id="ControlFlagsNoLight_VS">ControlFlagsNoLight_VS</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">83286</div>
+        <div class="value">83286.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Demonstrates that SET_SPECULAR_ENABLE = false forces specular values to {0, 0, 0, 1}. Also demonstrates that failing to set ALPHA_FROM_MATERIAL_SPECULAR will cause the specular alpha to be set to 1 and failing to set SEPARATE_SPECULAR will pass through vertex specular RGB instead of performing the light calculation.</p><p>Renders two groups of two rows of 4 quads each with the fixed function pipeline. The first row is the specular component, the second is the diffuse. Lighting is enabled but no light exists.</p><p>Each quad has specular and diffuse colors of: UL = {1.f, 0.f, 0.f, 0.15f}, {0.f, 0.f, 0.5f, 1.f} UR = {1.f, 0.f, 0.f, 0.75f}, {0.f, 0.f, 0.75f, 1.f} LR = {0.f, 1.f, 0.f, 1.f}, {0.f, 0.f, 1.f, 1.f} LL = {0.f, 1.f, 0.f, 0.2f}, {0.f, 0.f, 0.25f, 1.f}</p><p>The upper row has SET_SPECULAR_ENABLE = false. The lower row has it true. The first column has SET_LIGHT_CONTROL = SEPARATE_SPECULAR + ALPHA_FROM_MATERIAL_SPECULAR The second has SET_LIGHT_CONTROL = SEPARATE_SPECULAR The third has SET_LIGHT_CONTROL = ALPHA_FROM_MATERIAL_SPECULAR The fourth has SET_LIGHT_CONTROL = 0</p><p>Because lighting is enabled, the diffuse alpha is entirely dictated by SET_MATERIAL_ALPHA, and RGB is entirely set by the lighting calculations. </p>
@@ -192,7 +192,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/ControlFlagsNoLight_VS-diff.png" alt="Diff result for Specular::ControlFlagsNoLight_VS" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/ControlFlagsNoLight_VS-diff.png" alt="Diff result for Specular::ControlFlagsNoLight_VS" class="inline-image">
     
     </div>
 
@@ -211,7 +211,7 @@
     <h3 id="NonUnitNormal_0.972">NonUnitNormal_0.972</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">12841</div>
+        <div class="value">12841.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a triangle fan with spherical normals that are scaled to be 0.972 in length. 0.972 is small enough that no pixels are illuminated.</p>
@@ -222,7 +222,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/NonUnitNormal_0.972-diff.png" alt="Diff result for Specular::NonUnitNormal_0.972" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/NonUnitNormal_0.972-diff.png" alt="Diff result for Specular::NonUnitNormal_0.972" class="inline-image">
     
     </div>
 
@@ -241,7 +241,7 @@
     <h3 id="NonUnitNormal_0.973">NonUnitNormal_0.973</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">14949</div>
+        <div class="value">14949.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a triangle fan with spherical normals that are scaled to be 0.973 in length. 0.973 is large enough that center pixels are non-0.</p>
@@ -252,7 +252,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/NonUnitNormal_0.973-diff.png" alt="Diff result for Specular::NonUnitNormal_0.973" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/NonUnitNormal_0.973-diff.png" alt="Diff result for Specular::NonUnitNormal_0.973" class="inline-image">
     
     </div>
 
@@ -271,7 +271,7 @@
     <h3 id="NonUnitNormal_1.000">NonUnitNormal_1.000</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">3716</div>
+        <div class="value">3716.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a triangle fan with spherical unit-length normals. This is the control image.</p>
@@ -282,7 +282,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/NonUnitNormal_1.000-diff.png" alt="Diff result for Specular::NonUnitNormal_1.000" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/NonUnitNormal_1.000-diff.png" alt="Diff result for Specular::NonUnitNormal_1.000" class="inline-image">
     
     </div>
 
@@ -301,7 +301,7 @@
     <h3 id="NonUnitNormal_1.008">NonUnitNormal_1.008</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">3716</div>
+        <div class="value">3716.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a triangle fan with spherical normals that are scaled to be 1.008 in length. This is close enough to 1.0 that the color is still applied.</p>
@@ -312,7 +312,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/NonUnitNormal_1.008-diff.png" alt="Diff result for Specular::NonUnitNormal_1.008" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/NonUnitNormal_1.008-diff.png" alt="Diff result for Specular::NonUnitNormal_1.008" class="inline-image">
     
     </div>
 
@@ -331,7 +331,7 @@
     <h3 id="NonUnitNormal_1.009">NonUnitNormal_1.009</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">49365</div>
+        <div class="value">49365.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a triangle fan with spherical normals that are scaled to be 1.009 in length. This demonstrates that specular color is reset to 0 when overflowing ~1.0. </p>
@@ -342,7 +342,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/NonUnitNormal_1.009-diff.png" alt="Diff result for Specular::NonUnitNormal_1.009" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/NonUnitNormal_1.009-diff.png" alt="Diff result for Specular::NonUnitNormal_1.009" class="inline-image">
     
     </div>
 
@@ -361,7 +361,7 @@
     <h3 id="SpecParams_FF_AllZero">SpecParams_FF_AllZero</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">25796</div>
+        <div class="value">25796.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a number of meshes with a directional light and a point light, shading the specular channel only. LIGHT_CONTROL is set to SEPARATE_SPECULAR and SET_SPECULAR_PARAMS is set to the values displayed in the image.</p>
@@ -372,7 +372,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_AllZero-diff.png" alt="Diff result for Specular::SpecParams_FF_AllZero" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_AllZero-diff.png" alt="Diff result for Specular::SpecParams_FF_AllZero" class="inline-image">
     
     </div>
 
@@ -391,7 +391,7 @@
     <h3 id="SpecParams_FF_InvMechAssault">SpecParams_FF_InvMechAssault</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">25621</div>
+        <div class="value">25621.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a number of meshes with a directional light and a point light, shading the specular channel only. LIGHT_CONTROL is set to SEPARATE_SPECULAR and SET_SPECULAR_PARAMS is set to the values displayed in the image.</p>
@@ -402,7 +402,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_InvMechAssault-diff.png" alt="Diff result for Specular::SpecParams_FF_InvMechAssault" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_InvMechAssault-diff.png" alt="Diff result for Specular::SpecParams_FF_InvMechAssault" class="inline-image">
     
     </div>
 
@@ -421,7 +421,7 @@
     <h3 id="SpecParams_FF_MechAssault">SpecParams_FF_MechAssault</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">4291</div>
+        <div class="value">4291.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a number of meshes with a directional light and a point light, shading the specular channel only. LIGHT_CONTROL is set to SEPARATE_SPECULAR and SET_SPECULAR_PARAMS is set to the values displayed in the image.</p>
@@ -432,7 +432,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_MechAssault-diff.png" alt="Diff result for Specular::SpecParams_FF_MechAssault" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_MechAssault-diff.png" alt="Diff result for Specular::SpecParams_FF_MechAssault" class="inline-image">
     
     </div>
 
@@ -451,7 +451,7 @@
     <h3 id="SpecParams_FF_NinjaGaidenBlack">SpecParams_FF_NinjaGaidenBlack</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">4248</div>
+        <div class="value">4248.0</div>
         <div class="label">Description</div>
         <div class="value">
             <p>Renders a number of meshes with a directional light and a point light, shading the specular channel only. LIGHT_CONTROL is set to SEPARATE_SPECULAR and SET_SPECULAR_PARAMS is set to the values displayed in the image.</p>
@@ -462,7 +462,7 @@
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_NinjaGaidenBlack-diff.png" alt="Diff result for Specular::SpecParams_FF_NinjaGaidenBlack" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_NinjaGaidenBlack-diff.png" alt="Diff result for Specular::SpecParams_FF_NinjaGaidenBlack" class="inline-image">
     
     </div>
 
@@ -481,13 +481,13 @@
     <h3 id="SpecParams_FF_Pow0_1">SpecParams_FF_Pow0_1</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">8185</div></div>
+        <div class="value">8185.0</div></div>
 
     <div class="comparison-image-set">
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_Pow0_1-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow0_1" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_Pow0_1-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow0_1" class="inline-image">
     
     </div>
 
@@ -506,13 +506,13 @@
     <h3 id="SpecParams_FF_Pow16_0">SpecParams_FF_Pow16_0</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">4198</div></div>
+        <div class="value">4198.0</div></div>
 
     <div class="comparison-image-set">
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_Pow16_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow16_0" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_Pow16_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow16_0" class="inline-image">
     
     </div>
 
@@ -531,13 +531,13 @@
     <h3 id="SpecParams_FF_Pow1_0">SpecParams_FF_Pow1_0</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">13258</div></div>
+        <div class="value">13258.0</div></div>
 
     <div class="comparison-image-set">
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_Pow1_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow1_0" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_Pow1_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow1_0" class="inline-image">
     
     </div>
 
@@ -556,13 +556,13 @@
     <h3 id="SpecParams_FF_Pow24_0">SpecParams_FF_Pow24_0</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">4269</div></div>
+        <div class="value">4269.0</div></div>
 
     <div class="comparison-image-set">
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_Pow24_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow24_0" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_Pow24_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow24_0" class="inline-image">
     
     </div>
 
@@ -581,13 +581,13 @@
     <h3 id="SpecParams_FF_Pow2_0">SpecParams_FF_Pow2_0</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">9833</div></div>
+        <div class="value">9833.0</div></div>
 
     <div class="comparison-image-set">
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_Pow2_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow2_0" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_Pow2_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow2_0" class="inline-image">
     
     </div>
 
@@ -606,13 +606,13 @@
     <h3 id="SpecParams_FF_Pow4_0">SpecParams_FF_Pow4_0</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">3498</div></div>
+        <div class="value">3498.0</div></div>
 
     <div class="comparison-image-set">
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_Pow4_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow4_0" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_Pow4_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow4_0" class="inline-image">
     
     </div>
 
@@ -631,13 +631,13 @@
     <h3 id="SpecParams_FF_Pow8_0">SpecParams_FF_Pow8_0</h3>
     <div class="label-value-grid">
         <div class="label">Difference</div>
-        <div class="value">4088</div></div>
+        <div class="value">4088.0</div></div>
 
     <div class="comparison-image-set">
 
     <div class="image-container">
     
-    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070--gslv_4.60/Xbox--Xbox--DirectX--nv2a/Specular/SpecParams_FF_Pow8_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow8_0" class="inline-image">
+    <img src="https://raw.githubusercontent.com/abaire/xemu-nxdk_pgraph_tests_results/github_pages/compare-results/xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4/Windows_AMD64/gl_ATI_Technologies_Inc._AMD_Radeon_RX_9070/gslv_4.60/Xbox__Xbox__DirectX__nv2a/Specular/SpecParams_FF_Pow8_0-diff.png" alt="Diff result for Specular::SpecParams_FF_Pow8_0" class="inline-image">
     
     </div>
 
