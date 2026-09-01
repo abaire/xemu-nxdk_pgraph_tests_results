@@ -1,7 +1,7 @@
 {
   "golden_identifier": "Xbox_Hardware",
   "goldens_without_results": [],
-  "result_identifier": "results:xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4:Darwin_arm64:gl_Apple_Apple_M5_Max",
+  "result_identifier": "xemu-0.8.134-fc9980d2962cbec656253106ea2e121fab1e68d4:Darwin_arm64:gl_Apple_Apple_M5_Max",
   "tests_evaluated": [
     "2D_Lines:2DLine-15-C000003E0-400_200-400_400",
     "2D_Lines:2DLine-16-C000007E0-400_200-400_400",

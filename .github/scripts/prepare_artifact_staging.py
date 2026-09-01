@@ -36,6 +36,13 @@ def main() -> int:
     os.makedirs(staging_dir, exist_ok=True)
 
     try:
+        # Clean up legacy compare-results/results directory if it exists
+        legacy_dir = os.path.join(source_dir, "compare-results", "results")
+        if os.path.isdir(legacy_dir):
+            print("Cleaning up legacy compare-results/results directory...")
+            subprocess.run(["git", "rm", "-r", "--cached", "compare-results/results"], cwd=source_dir, check=False)
+            shutil.rmtree(legacy_dir, ignore_errors=True)
+
         # Add target directories to git index so untracked and modified files are indexed
         for d in [".github/scripts", "dev_scripts", "results", "compare-results"]:
             full_d = os.path.join(source_dir, d)

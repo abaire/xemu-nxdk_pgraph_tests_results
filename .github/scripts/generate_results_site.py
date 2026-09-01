@@ -218,15 +218,23 @@ class ComparisonInfo(NamedTuple):
                 platform_info = ""
                 gl_info = ""
         else:
-            components = [c for c in run_identifier.split("/") if c]
-            if len(components) >= 5 and "--" not in components[-2]:
+            components = [c for c in run_identifier.replace("\\", "/").split("/") if c]
+            if len(components) >= 6:
                 xemu_version = components[-5]
                 platform_info = components[-4]
                 gl_info = f"{components[-3]}--{components[-2]}"
-            else:
+            elif len(components) == 5:
                 xemu_version = components[-4]
                 platform_info = components[-3]
                 gl_info = components[-2]
+            elif len(components) == 4:
+                xemu_version = components[-3]
+                platform_info = components[-2]
+                gl_info = components[-1]
+            else:
+                xemu_version = "UNKNOWN"
+                platform_info = "UNKNOWN"
+                gl_info = "UNKNOWN"
 
         return cls(
             identifier=RunIdentifier(
@@ -279,7 +287,14 @@ class ComparisonScanner:
 
         # Restore the paths of the original images that were used to produce the diff image.
         # TODO: Store this as metadata instead of relying on consistent locations.
-        results_base_path = os.path.join(self.results_dir, run_info["result_identifier"].replace(":", "/"))
+        res_id = run_info.get("result_identifier", "")
+        if res_id:
+            results_base_path = os.path.join(self.results_dir, res_id.replace(":", "/"))
+        else:
+            rel_comp = os.path.relpath(test_suite_dir, self.comparison_dir)
+            comp_parts = rel_comp.split(os.sep)
+            results_parts = [p for p in comp_parts[:-1] if not p.startswith("Xbox__")]
+            results_base_path = os.path.join(self.results_dir, *results_parts)
         golden_base_path = (
             ""
             if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER
@@ -529,6 +544,16 @@ class ResultsScanner:
         run_identifier = RunIdentifier.parse(run_id)
 
         comparisons = self.run_identifier_to_comparison_results.get(run_identifier.minimal_identifier(), [])
+        if not comparisons:
+            # Fallback lookup: match on xemu_version + platform_info + gl prefix
+            for comp_id, comp_list in self.run_identifier_to_comparison_results.items():
+                if comp_id.xemu_version == run_identifier.xemu_version and comp_id.platform_info == run_identifier.platform_info:
+                    gl_a = run_identifier.gl_info.split("--")[0]
+                    gl_b = comp_id.gl_info.split("--")[0]
+                    if gl_a == gl_b:
+                        comparisons = comp_list
+                        break
+
         if not comparisons:
             logger.warning("Failed to lookup HW comparisons for %s", run_identifier.minimal_identifier())
         return ResultsInfo(
