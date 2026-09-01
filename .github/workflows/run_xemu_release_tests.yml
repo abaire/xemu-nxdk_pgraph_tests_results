@@ -1,0 +1,343 @@
+name: Run PGraph Tests for xemu Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      xemu_tag:
+        description: 'Target official xemu release tag (e.g. v0.8.35, 0.8.136, or latest)'
+        required: true
+        type: string
+      pgraph_tag:
+        description: 'nxdk_pgraph_tests release tag to test against (default: latest)'
+        required: false
+        default: 'latest'
+        type: string
+      branch_name:
+        description: 'Target branch name for results (defaults to results/xemu-<tag>)'
+        required: false
+        default: ''
+        type: string
+
+concurrency:
+  group: run-xemu-tests-${{ github.event.inputs.xemu_tag }}
+  cancel-in-progress: true
+
+jobs:
+  prepare-test-assets:
+    name: Prepare Test Assets & Roswell BIOS
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install xemu-pgraph-ci-tools
+        run: |
+          pip install git+https://github.com/abaire/xemu-pgraph-ci-tools.git
+
+      - name: Download Official xemu Release
+        run: |
+          mkdir -p assets
+          python3 -c "
+          import os, sys
+          from xemu_pgraph_ci_tools.github import download_xemu
+          tag = '${{ inputs.xemu_tag }}'.strip()
+          xemu_path = download_xemu('assets', tag)
+          if not xemu_path or not os.path.exists(xemu_path):
+              sys.exit(f'Failed to download official xemu release for tag: {tag}')
+          os.chmod(xemu_path, 0o755)
+          target_path = 'assets/xemu'
+          if xemu_path != target_path:
+              os.rename(xemu_path, target_path)
+          print(f'Successfully prepared xemu binary at {target_path}')
+          "
+
+      - name: Download nxdk_pgraph_tests ISO
+        run: |
+          python3 -c "
+          import os, sys
+          from xemu_pgraph_ci_tools.github import download_tester_iso
+          tag = '${{ inputs.pgraph_tag }}'.strip()
+          iso_path = download_tester_iso('assets', tag)
+          if not iso_path or not os.path.exists(iso_path):
+              sys.exit(f'Failed to download tester ISO for tag: {tag}')
+          target_iso = 'assets/nxdk_pgraph_tests.iso'
+          if iso_path != target_iso:
+              os.rename(iso_path, target_iso)
+          print(f'Successfully prepared tester ISO at {target_iso}')
+          "
+
+      - name: Download xemu Hard Disk Image
+        run: |
+          python3 -c "
+          import os, sys
+          from xemu_pgraph_ci_tools.github import download_xemu_hdd
+          hdd_path = download_xemu_hdd('assets')
+          if not hdd_path or not os.path.exists(hdd_path):
+              sys.exit('Failed to download xemu hard disk image')
+          target_hdd = 'assets/xbox_hdd.qcow2'
+          if hdd_path != target_hdd:
+              os.rename(hdd_path, target_hdd)
+          print(f'Successfully prepared HDD image at {target_hdd}')
+          "
+
+      - name: Download extract-xiso Utility
+        run: |
+          python3 -c "
+          import os, sys, shutil
+          from nxdk_pgraph_test_repacker import ensure_extract_xiso
+          tool_path = ensure_extract_xiso()
+          if not tool_path or not os.path.exists(tool_path):
+              sys.exit('Failed to download extract-xiso utility')
+          os.chmod(tool_path, 0o755)
+          target_path = 'assets/extract-xiso'
+          if tool_path != target_path:
+              shutil.copy2(tool_path, target_path)
+          print(f'Successfully prepared extract-xiso at {target_path}')
+          "
+
+      # =========================================================================
+      # Roswell BIOS Cache & Build Step
+      # Checks the latest commit on mborgerson/roswell; restores from cache if
+      # unchanged, or builds from source and updates cache when HEAD changes.
+      # =========================================================================
+      - name: Fetch Roswell HEAD Commit SHA
+        id: roswell_meta
+        run: |
+          ROSWELL_SHA=$(git ls-remote https://github.com/mborgerson/roswell.git HEAD | awk '{print $1}')
+          if [ -z "$ROSWELL_SHA" ]; then
+            echo "Failed to retrieve Roswell HEAD SHA"
+            exit 1
+          fi
+          echo "sha=${ROSWELL_SHA}" >> "$GITHUB_OUTPUT"
+          echo "Latest Roswell commit SHA: ${ROSWELL_SHA}"
+
+      - name: Cache Roswell BIOS
+        id: roswell_cache
+        uses: actions/cache@v4
+        with:
+          path: assets/roswell.bin
+          key: roswell-bios-${{ steps.roswell_meta.outputs.sha }}
+
+      - name: Build Roswell BIOS
+        if: steps.roswell_cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -qy
+          sudo apt-get install -y --no-install-recommends \
+            binutils-mingw-w64-i686 \
+            gcc-mingw-w64-i686 \
+            g++-mingw-w64-i686 \
+            gcc-multilib \
+            lz4 \
+            ccache \
+            cmake \
+            ninja-build \
+            flex \
+            bison \
+            python3 \
+            curl \
+            ca-certificates
+
+          git clone --depth 1 https://github.com/mborgerson/roswell.git roswell_src
+          cd roswell_src
+          cmake -G Ninja -B build \
+            -DCMAKE_TOOLCHAIN_FILE="$PWD/toolchain-gcc.cmake" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DDBG=0 \
+            -DCOVERAGE=OFF \
+            .
+          cmake --build build
+          cd ..
+          if [ ! -f roswell_src/build/flash.bin ]; then
+            echo "Failed to build roswell BIOS flash.bin"
+            exit 1
+          fi
+          cp roswell_src/build/flash.bin assets/roswell.bin
+
+      - name: Save Run Metadata
+        run: |
+          cat <<EOF > assets/run_meta.json
+          {
+            "xemu_tag": "${{ inputs.xemu_tag }}",
+            "pgraph_tag": "${{ inputs.pgraph_tag }}",
+            "branch_name": "${{ inputs.branch_name }}"
+          }
+          EOF
+
+      - name: Upload Test Assets Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-assets
+          path: assets/
+          retention-days: 1
+
+  run-shards:
+    name: Run Shard ${{ matrix.shard }}/${{ matrix.total_shards }}
+    needs: prepare-test-assets
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        total_shards: [16]
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Headless Graphics, Runtime & Test Dependencies
+        run: |
+          sudo apt-get update -qy
+          sudo apt-get install -y --no-install-recommends \
+            xvfb libgl1-mesa-dri libgl1 libglx-mesa0 libegl1 libosmesa6 perceptualdiff \
+            libsdl2-2.0-0 libepoxy0 libpixman-1-0 libslirp0 libsamplerate0 \
+            libpipewire-0.3-0 libvulkan1 libpcap0.8 libusb-1.0-0 libcurl4 libfuse2t64
+
+      - name: Download Test Assets
+        uses: actions/download-artifact@v4
+        with:
+          name: test-assets
+          path: assets
+
+      - name: Install xemu-pgraph-ci-tools Runner Package
+        run: |
+          pip install git+https://github.com/abaire/xemu-pgraph-ci-tools.git
+
+      - name: Install extract-xiso Tool
+        run: |
+          chmod +x assets/extract-xiso
+          sudo cp assets/extract-xiso /usr/local/bin/extract-xiso
+          mkdir -p ~/.local/share/python-xiso-repacker
+          cp assets/extract-xiso ~/.local/share/python-xiso-repacker/extract-xiso
+
+      - name: Execute Sharded Headless Tests
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          MESA_LOADER_DRIVER_OVERRIDE: "llvmpipe"
+          SDL_AUDIO_DRIVER: "dummy"
+          APPIMAGE_EXTRACT_AND_RUN: "1"
+        run: |
+          chmod +x assets/xemu
+          mkdir -p output_shard_${{ matrix.shard }}
+          xvfb-run -s "-screen 0 1280x720x24" xemu-pgraph-run \
+            --verbose \
+            --snapshot \
+            --stall-timeout 30 \
+            --timeout 1800 \
+            --xemu ./assets/xemu \
+            --hdd ./assets/xbox_hdd.qcow2 \
+            --bios ./assets/roswell.bin \
+            --mcpx '' \
+            --memory 128 \
+            --enable-serial \
+            --iso ./assets/nxdk_pgraph_tests.iso \
+            --shard-index ${{ matrix.shard }} \
+            --shard-count ${{ matrix.total_shards }} \
+            --results-path ./output_shard_${{ matrix.shard }}
+
+      - name: Upload Shard Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ matrix.shard }}-results
+          path: output_shard_${{ matrix.shard }}/
+          retention-days: 1
+
+  merge-and-create-pr:
+    name: Merge Shard Results & Create Pull Request
+    needs: [prepare-test-assets, run-shards]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install xemu-pgraph-ci-tools
+        run: |
+          pip install git+https://github.com/abaire/xemu-pgraph-ci-tools.git
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Download Test Assets
+        uses: actions/download-artifact@v4
+        with:
+          name: test-assets
+          path: assets
+
+      - name: Download All Shard Result Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: shard_results
+          pattern: shard-*-results
+
+      - name: Merge Shard Results
+        run: |
+          mkdir -p merged_results
+          SHARD_DIRS=$(find shard_results -mindepth 1 -maxdepth 1 -type d)
+          xemu-pgraph-merge --inputs $SHARD_DIRS --output-dir ./merged_results
+
+      - name: Copy Merged Results to Repository
+        run: |
+          mkdir -p results
+          cp -rn merged_results/* results/ || cp -r merged_results/* results/
+
+      - name: Commit to Branch and Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          XEMU_TAG="${{ inputs.xemu_tag }}"
+          PGRAPH_TAG="${{ inputs.pgraph_tag }}"
+          SAFE_TAG=$(echo "$XEMU_TAG" | tr '/:' '--')
+          BRANCH_NAME="${{ inputs.branch_name }}"
+          if [ -z "$BRANCH_NAME" ]; then
+            BRANCH_NAME="results/xemu-${SAFE_TAG}"
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "$BRANCH_NAME"
+          git add results/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit. Test results may already exist."
+            exit 0
+          fi
+
+          git commit -m "Add Roswell/PGRAPH test results for xemu ${XEMU_TAG}"
+          git push origin "$BRANCH_NAME" --force
+
+          PR_TITLE="PGRAPH test results for xemu ${XEMU_TAG}"
+          PR_BODY=$(cat <<EOF
+          ### 🎮 Automated PGRAPH Test Results
+
+          - **xemu release tag**: \`${XEMU_TAG}\`
+          - **nxdk_pgraph_tests tag**: \`${PGRAPH_TAG}\`
+          - **BIOS**: Roswell BIOS
+          - **Renderer**: Software GL (Mesa llvmpipe via xvfb)
+          - **Execution**: 16 parallel CI shards
+
+          Please review the committed results and image diffs. Merging this PR to \`main\` will automatically trigger the downstream pipeline to compute HW diffs, update the GitHub Pages comparison site, and archive raw images.
+          EOF
+          )
+
+          EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --base main --json number --jq '.[0].number')
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Updating existing PR #${EXISTING_PR}"
+            gh pr edit "$EXISTING_PR" --title "$PR_TITLE" --body "$PR_BODY"
+          else
+            echo "Creating new PR"
+            gh pr create --base main --head "$BRANCH_NAME" --title "$PR_TITLE" --body "$PR_BODY"
+          fi
