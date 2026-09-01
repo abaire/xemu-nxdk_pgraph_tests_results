@@ -168,6 +168,15 @@ class RunIdentifier(NamedTuple):
         )
 
 
+class SourceTestIdentifier(NamedTuple):
+    """Encapsulates the identification of a specific test artifact within a test run."""
+
+    xemu_version: str
+    platform_info: str
+    suite_name: str
+    test_name: str
+
+
 class TestCaseComparisonInfo(NamedTuple):
     """Encapsulates information about differences in results for a single test case."""
 
@@ -250,6 +259,38 @@ class ComparisonInfo(NamedTuple):
         )
 
 
+def _index_source_images(results_dir: str) -> dict[SourceTestIdentifier, str]:
+    """Indexes all PNG images in results_dir into a map:
+    SourceTestIdentifier -> relative_path_from_repo_root
+    """
+    image_map: dict[SourceTestIdentifier, str] = {}
+    if not os.path.isdir(results_dir):
+        return image_map
+
+    for root, _dirnames, filenames in os.walk(results_dir):
+        pngs = [f for f in filenames if f.endswith(".png") and not f.endswith("-diff.png")]
+        if not pngs:
+            continue
+        suite_name = os.path.basename(root)
+        rel_root = os.path.relpath(root, results_dir)
+        components = [c for c in rel_root.split(os.sep) if c]
+        # components is [xemu_version, platform_info, ..., suite_name]
+        if len(components) >= 3:
+            xemu_ver = components[0]
+            platform = components[1]
+            for f in pngs:
+                test_name = os.path.splitext(f)[0]
+                full_rel = os.path.join(results_dir, rel_root, f)
+                ident = SourceTestIdentifier(
+                    xemu_version=xemu_ver,
+                    platform_info=platform,
+                    suite_name=suite_name,
+                    test_name=test_name,
+                )
+                image_map[ident] = full_rel
+    return image_map
+
+
 class ComparisonScanner:
     """Scans and categorizes differences between test runs."""
 
@@ -262,6 +303,7 @@ class ComparisonScanner:
         hw_golden_base_url: str,
         test_suite_descriptors: dict[str, TestSuiteDescriptor],
         golden_results_dir: str = "",
+        source_image_index: dict[SourceTestIdentifier, str] | None = None,
     ) -> None:
         self.comparison_dir = comparison_dir
         self.output_dir = output_dir
@@ -270,6 +312,9 @@ class ComparisonScanner:
         self.golden_results_dir = golden_results_dir if golden_results_dir else results_dir
         self.hw_golden_base_url = hw_golden_base_url
         self.test_suite_descriptors = test_suite_descriptors
+        self.source_image_index = (
+            source_image_index if source_image_index is not None else _index_source_images(results_dir)
+        )
 
     def _process_test_case_artifacts(
         self,
@@ -285,14 +330,16 @@ class ComparisonScanner:
         if not images:
             return []
 
+        rel_comp = os.path.relpath(test_suite_dir, self.comparison_dir)
+        comp_parts = [p for p in rel_comp.split(os.sep) if p]
+        xemu_ver = comp_parts[0] if len(comp_parts) >= 1 else ""
+        platform = comp_parts[1] if len(comp_parts) >= 2 else ""
+
         # Restore the paths of the original images that were used to produce the diff image.
-        # TODO: Store this as metadata instead of relying on consistent locations.
         res_id = run_info.get("result_identifier", "")
         if res_id:
             results_base_path = os.path.join(self.results_dir, res_id.replace(":", "/"))
         else:
-            rel_comp = os.path.relpath(test_suite_dir, self.comparison_dir)
-            comp_parts = rel_comp.split(os.sep)
             results_parts = [p for p in comp_parts[:-1] if not p.startswith("Xbox__")]
             results_base_path = os.path.join(self.results_dir, *results_parts)
         golden_base_path = (
@@ -308,14 +355,26 @@ class ComparisonScanner:
             fq_name = f"{suite_name}:{test_name}"
 
             original_image_subpath = fq_name.split(":")
-            source_image_url = "/".join([self.base_url, results_base_path, *original_image_subpath])
-            golden_image_url = "/".join([golden_base_url, golden_base_path, *original_image_subpath])
+
+            ident = SourceTestIdentifier(
+                xemu_version=xemu_ver,
+                platform_info=platform,
+                suite_name=suite_name,
+                test_name=test_name,
+            )
+            rel_src = self.source_image_index.get(ident)
+            if rel_src:
+                source_image_url = f"{self.base_url}/{rel_src.replace(os.sep, '/')}"
+            else:
+                source_image_url = "/".join([self.base_url, results_base_path, *original_image_subpath]) + ".png"
+
+            golden_image_url = "/".join([golden_base_url, golden_base_path, *original_image_subpath]) + ".png"
 
             ret.append(
                 TestCaseComparisonInfo(
                     test_name=test_name,
-                    source_image_url=f"{source_image_url}.png",
-                    golden_image_url=f"{golden_image_url}.png",
+                    source_image_url=source_image_url,
+                    golden_image_url=golden_image_url,
                     diff_image_url=f"{self.base_url}/{image_file}",
                     diff_distance=run_info["tests_with_differences"].get(fq_name, math.inf),
                 )
@@ -672,6 +731,7 @@ class PagesWriter:
         hw_golden_images_base_url: str,
         test_source_base_url: str,
         hw_golden_browser_base_url: str,
+        source_image_index: dict[SourceTestIdentifier, str] | None = None,
     ) -> None:
         self.results = results
         self.env = env
@@ -682,6 +742,7 @@ class PagesWriter:
         self.hw_images_base_url = hw_golden_images_base_url.rstrip("/")
         self.test_source_base_url = test_source_base_url.rstrip("/")
         self.hw_golden_browser_base_url = hw_golden_browser_base_url.rstrip("/")
+        self.source_image_index = source_image_index or {}
 
     @staticmethod
     def _comparison_suite_url(comparison: ComparisonInfo, suite_result: TestSuiteComparisonInfo) -> str:
@@ -802,12 +863,35 @@ class PagesWriter:
         return f"{path}.png"
 
     def results_url_for_fqtest(self, run: RunIdentifier, fully_qualified_test_name: str) -> str:
+        suite, test_case = self.split_fq_name(fully_qualified_test_name)
+        ident = SourceTestIdentifier(
+            xemu_version=run.xemu_version,
+            platform_info=run.platform_info,
+            suite_name=suite,
+            test_name=test_case,
+        )
+        rel_src = self.source_image_index.get(ident)
+        if rel_src:
+            return f"{self.images_base_url}/{rel_src.replace(os.sep, '/')}"
+
+        for results_info in self.results.values():
+            if (
+                results_info.identifier.xemu_version == run.xemu_version
+                and results_info.identifier.platform_info == run.platform_info
+            ):
+                for s in results_info.results:
+                    if s.name == suite:
+                        for tr in s.test_results:
+                            if tr.name == test_case and tr.artifact_url:
+                                return tr.artifact_url
+
         path = "/".join(
             [
                 self.images_base_url,
                 RESULTS_SUBDIR,
                 run.minimal_path.replace(":", "/"),
-                *self.split_fq_name(fully_qualified_test_name),
+                suite,
+                test_case,
             ]
         )
         return f"{path}.png"
@@ -1075,6 +1159,8 @@ def main():
         else {}
     )
 
+    source_image_index = _index_source_images(args.results_dir)
+
     if args.comparison_dir:
         run_identifier_to_comparison_results = ComparisonScanner(
             args.comparison_dir,
@@ -1084,6 +1170,7 @@ def main():
             args.hw_golden_base_url,
             test_suite_descriptors,
             args.golden_results_dir,
+            source_image_index=source_image_index,
         ).process()
     else:
         run_identifier_to_comparison_results = {}
@@ -1112,6 +1199,7 @@ def main():
         args.hw_golden_base_url,
         args.test_source_browser_base_url,
         args.hw_golden_browser_base_url,
+        source_image_index=source_image_index,
     ).write()
 
 
