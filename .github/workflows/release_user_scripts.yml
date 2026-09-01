@@ -28,7 +28,7 @@ jobs:
           python-version: '3.12'
 
       - name: Extract README instructions
-        run: python3 .github/scripts/extract_readme.py
+        run: .github/scripts/extract_readme.py
 
       - name: Create artifacts directory
         run: mkdir -p dist_release

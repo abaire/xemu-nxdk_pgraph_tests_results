@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
+# ruff: noqa: S607, BLE001, FBT001, FBT002, TRY300, TRY400
 """Restores raw test result images for a specific xemu version from git archive branches."""
+
+from __future__ import annotations
 
 import argparse
 import logging
@@ -96,9 +99,7 @@ def restore_version(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Restores archived result images from archive/<version> git branches."
-    )
+    parser = argparse.ArgumentParser(description="Restores archived result images from archive/<version> git branches.")
     parser.add_argument(
         "--version",
         help="Target xemu version or pattern (e.g. 0.8.135, xemu-0.8.135-..., or 'all')",

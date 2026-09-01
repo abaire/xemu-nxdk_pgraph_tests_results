@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # ruff: noqa: S607 Starting a process with a partial executable path
 # ruff: noqa: TRY300 Consider moving this statement to an `else` block
 # ruff: noqa: BLE001 Do not catch blind exception: `Exception`
