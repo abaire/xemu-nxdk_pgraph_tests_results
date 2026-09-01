@@ -5,6 +5,7 @@ import argparse
 import logging
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -85,7 +86,7 @@ def restore_version(
             for c_dir in comp_dirs:
                 if os.path.exists(c_dir):
                     logger.info("Removing comparison cache %s (force requested)", c_dir)
-                    subprocess.run(["rm", "-rf", c_dir], check=False)
+                    shutil.rmtree(c_dir, ignore_errors=True)
 
         return True
 
