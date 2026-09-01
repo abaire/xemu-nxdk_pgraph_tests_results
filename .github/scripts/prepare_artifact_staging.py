@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# ruff: noqa: S607 Starting a process with a partial executable path
+# ruff: noqa: BLE001 Do not catch blind exception
 """Stages modified and added files, and records deleted files for artifact upload."""
 
 from __future__ import annotations

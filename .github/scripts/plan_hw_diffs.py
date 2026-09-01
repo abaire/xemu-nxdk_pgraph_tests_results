@@ -20,7 +20,9 @@ def main() -> int:
     parser.add_argument("--golden-dir", default=None, help="Directory containing golden HW results")
     parser.add_argument("--cache-path", default="cache", help="Directory for caching downloaded goldens")
     parser.add_argument("--max-shards", type=int, default=32, help="Maximum number of parallel shards")
-    parser.add_argument("--output-plan-file", default="diff_tasks.json", help="File to write the planned tasks JSON array")
+    parser.add_argument(
+        "--output-plan-file", default="diff_tasks.json", help="File to write the planned tasks JSON array"
+    )
 
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")

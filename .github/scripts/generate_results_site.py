@@ -22,6 +22,7 @@ from typing import Any, NamedTuple
 import requests
 from frozendict import deepfreeze, frozendict
 from jinja2 import Environment, FileSystemLoader
+from xemu_pgraph_ci_tools.models import RunIdentifier, SourceTestIdentifier
 
 logger = logging.getLogger(__name__)
 
@@ -128,53 +129,6 @@ class TestSuiteDescriptorLoader:
             descriptor.suite_name: descriptor
             for descriptor in [TestSuiteDescriptor.from_obj(item) for item in registry.get("test_suites", [])]
         }
-
-
-class RunIdentifier(NamedTuple):
-    """Holds components of a run identifier."""
-
-    run_identifier: tuple[str, ...]
-    xemu_version: str
-    platform_info: str
-    gl_info: str
-
-    @property
-    def path(self) -> str:
-        return str(os.path.join(*self.run_identifier)).replace(":", "_-_")
-
-    @property
-    def minimal_path(self) -> str:
-        """Returns a path consisting of 'xemu/platform/gl'"""
-        return self.minimal_identifier().path
-
-    def minimal_identifier(self) -> RunIdentifier:
-        """Returns a RunIdentifier that omits any extraneous components of the run_identifier member."""
-        return RunIdentifier(
-            run_identifier=(self.xemu_version, self.platform_info, self.gl_info),
-            xemu_version=self.xemu_version,
-            platform_info=self.platform_info,
-            gl_info=self.gl_info,
-        )
-
-    @classmethod
-    def parse(cls, run_identifier: str) -> RunIdentifier:
-        # results/Linux_foo/gl_version/glsl_version/xemu_version
-        components = run_identifier.split("/")
-        return cls(
-            run_identifier=tuple(components),
-            xemu_version=components[-4],
-            platform_info=components[-3],
-            gl_info=f"{components[-2]}--{components[-1]}",
-        )
-
-
-class SourceTestIdentifier(NamedTuple):
-    """Encapsulates the identification of a specific test artifact within a test run."""
-
-    xemu_version: str
-    platform_info: str
-    suite_name: str
-    test_name: str
 
 
 class TestCaseComparisonInfo(NamedTuple):
@@ -606,7 +560,10 @@ class ResultsScanner:
         if not comparisons:
             # Fallback lookup: match on xemu_version + platform_info + gl prefix
             for comp_id, comp_list in self.run_identifier_to_comparison_results.items():
-                if comp_id.xemu_version == run_identifier.xemu_version and comp_id.platform_info == run_identifier.platform_info:
+                if (
+                    comp_id.xemu_version == run_identifier.xemu_version
+                    and comp_id.platform_info == run_identifier.platform_info
+                ):
                     gl_a = run_identifier.gl_info.split("--")[0]
                     gl_b = comp_id.gl_info.split("--")[0]
                     if gl_a == gl_b:
@@ -1032,6 +989,12 @@ class PagesWriter:
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
             emulator_grouped_pages = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
             for run_identifier, run in run_identifier_keyed_results.items():
+                if (
+                    not run_identifier.xemu_version
+                    or run_identifier.xemu_version in ("results", "baseline", "UNKNOWN")
+                    or not run_identifier.xemu_version.startswith("xemu")
+                ):
+                    continue
                 pretty_machine_info = PrettyMachineInfo.parse(run)
                 emulator_grouped_pages[run_identifier.xemu_version][pretty_machine_info.platform][
                     pretty_machine_info.renderer
