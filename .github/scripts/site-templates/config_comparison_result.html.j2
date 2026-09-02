@@ -1,0 +1,105 @@
+{% extends "base.html.j2" %}
+
+{% block title -%}
+    {{ source_title }} vs {{ target_title }}
+{%- endblock %}
+
+{% block content -%}
+
+<div class="comparison-header">
+    <div class="breadcrumb">
+        <a href="{{ top_comparisons_url }}">&larr; Back to Configuration Comparisons</a>
+    </div>
+
+    <h1>{{ source_title }} <span class="vs-text">vs</span> {{ target_title }}</h1>
+    
+    <div class="comparison-meta-bar">
+        <div class="meta-item">
+            <span class="meta-label">Source Run:</span>
+            <code class="meta-code">{{ source_run }}</code>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Target Run:</span>
+            <code class="meta-code">{{ target_run }}</code>
+        </div>
+        {% if timestamp %}
+        <div class="meta-item">
+            <span class="meta-label">Generated:</span>
+            <span>{{ timestamp }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="filter-toolbar">
+        <label class="checkbox-container">
+            <input type="checkbox" id="hide-identical-toggle">
+            <span class="checkbox-label">Hide items identical between source and target</span>
+        </label>
+        <div class="counts-badges">
+            <span id="active-diff-count" class="badge diff-badge" data-initial-count="{{ total_diffs }}">{{ total_diffs }} difference(s)</span>
+            {% if matching_count %}
+            <span class="badge match-badge">{{ matching_count }} identical to target</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% for suite_name, test_results in results_by_suite | dictsort %}
+    <div class="suite-section" data-suite="{{ suite_name }}">
+        <h2 id="{{ suite_name }}"><a href="#{{ suite_name }}" class="anchor-link">{{ suite_name }}</a></h2>
+
+        {% for result in test_results | sort(attribute='test_name') %}
+            <div class="test-comparison-block" id="{{ suite_name }}_{{ result.test_name }}" data-identical="{{ 'true' if result.is_identical else 'false' }}">
+                <h3 id="{{ suite_name }}__{{ result.test_name }}">{{ result.test_name }}</h3>
+                <div class="label-value-grid">
+                    <div class="label">Difference</div>
+                    <div class="value">
+                        {% if result.is_identical %}
+                            <span class="tag-identical">&check; Identical to target (differs from Xbox)</span>
+                        {% else %}
+                            <span class="diff-value">{{ result.diff_distance }} pixels different</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="comparison-image-set">
+                    <!-- vs Target Diff -->
+                    <div class="titled-image-container">
+                        <div class="image-title">vs Target</div>
+                        {% if result.config_diff_url %}
+                            <img src="{{ result.config_diff_url }}" alt="Diff vs Target for {{ suite_name }}::{{ result.test_name }}" class="inline-image">
+                        {% else %}
+                            <div class="missing-image matching-image">Identical to Target</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 3-Way Switcher -->
+                    <div class="image-group">
+                        <div class="image-group-title-bar">
+                            <div class="image-title" data-state="source"><a href="{{ result.source_image_url }}">Source</a></div>
+                            <div class="image-title" data-state="golden-target"><a href="{{ result.target_image_url }}">Target</a></div>
+                            {% if result.hw_golden_url %}
+                            <div class="image-title" data-state="golden-hw"><a href="{{ result.hw_golden_url }}">Xbox Golden</a></div>
+                            {% endif %}
+                        </div>
+                        <img src="{{ result.source_image_url }}" alt="Source image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison" data-state="source">
+                        <img src="{{ result.target_image_url }}" alt="Target image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison" data-state="golden-target" style="display: none;">
+                        {% if result.hw_golden_url %}
+                        <img src="{{ result.hw_golden_url }}" alt="Xbox Golden image for {{ suite_name }}::{{ result.test_name }}" class="image-comparison" data-state="golden-hw" style="display: none;">
+                        {% endif %}
+                    </div>
+
+                    <!-- vs Xbox HW Diff -->
+                    {% if result.hw_diff_url %}
+                    <div class="titled-image-container">
+                        <div class="image-title">vs Xbox</div>
+                        <img src="{{ result.hw_diff_url }}" alt="Diff vs Xbox for {{ suite_name }}::{{ result.test_name }}" class="inline-image">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+
+{%- endblock -%}

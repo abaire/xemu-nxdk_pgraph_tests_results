@@ -36,16 +36,71 @@ function enableImagePairs(document) {
     });
 }
 
+function enableImageCycling(document) {
+    const imageGroups = document.querySelectorAll('.image-group');
+
+    imageGroups.forEach(group => {
+        const images = group.querySelectorAll('.image-comparison');
+        const titles = group.querySelectorAll('.image-title');
+        const availableStates = Array.from(images).map(img => img.dataset.state);
+        let activeState = 'source';
+
+        function applyActiveState(newState) {
+            if (!availableStates.includes(newState)) {
+                newState = availableStates[0] || 'source';
+            }
+
+            images.forEach(img => {
+                img.style.display = (img.dataset.state === newState) ? 'block' : 'none';
+            });
+
+            titles.forEach(title => {
+                title.style.fontWeight = (title.dataset.state === newState) ? 'bold' : 'normal';
+            });
+
+            group.classList.remove("image-group-golden", "image-group-golden-target");
+            if (newState === 'golden-hw') {
+                group.classList.add("image-group-golden");
+            } else if (newState === 'golden-target') {
+                group.classList.add("image-group-golden-target");
+            }
+
+            activeState = newState;
+        }
+
+        function cycleState(event) {
+            const idx = availableStates.indexOf(activeState);
+            let nextIdx;
+            if (event.shiftKey) {
+                nextIdx = (idx - 1 + availableStates.length) % availableStates.length;
+            } else {
+                nextIdx = (idx + 1) % availableStates.length;
+            }
+            applyActiveState(availableStates[nextIdx]);
+        }
+
+        applyActiveState(activeState);
+        images.forEach(img => {
+            img.addEventListener('click', cycleState);
+        });
+
+        titles.forEach(title => {
+            title.addEventListener('click', (event) => {
+                event.preventDefault();
+                applyActiveState(title.dataset.state);
+            });
+        });
+    });
+}
+
 function enableViewLinks(document) {
     const viewLinks = document.querySelectorAll('.view-link');
 
     viewLinks.forEach(link => {
-
         const container = link.closest('.titled-image-container');
         if (container) {
             const hiddenImage = container.querySelector('.hidden-image');
             if (hiddenImage) {
-
                 link.addEventListener('click', (event) => {
                     event.preventDefault();
                     hiddenImage.style.display = 'block';
@@ -70,14 +125,85 @@ function enableAnchorLinks(document) {
         }
     }
 
-    const h2Elements = document.querySelectorAll('h2');
-    h2Elements.forEach(addClickHandler);
-    const h3Elements = document.querySelectorAll('h3');
-    h3Elements.forEach(addClickHandler);
+    document.querySelectorAll('h2').forEach(addClickHandler);
+    document.querySelectorAll('h3').forEach(addClickHandler);
+}
+
+function enableHideIdenticalFilter(document) {
+    const checkbox = document.getElementById('hide-identical-toggle');
+    if (!checkbox) return;
+
+    const countBadge = document.getElementById('active-diff-count');
+    const initialDiffCount = countBadge ? parseInt(countBadge.dataset.initialCount || countBadge.textContent, 10) : 0;
+    const testBlocks = document.querySelectorAll('.test-comparison-block');
+    const suiteSections = document.querySelectorAll('.suite-section');
+
+    function updateFilter() {
+        const hideIdentical = checkbox.checked;
+        let visibleDiffs = 0;
+
+        testBlocks.forEach(block => {
+            const isIdentical = block.dataset.identical === 'true';
+            if (hideIdentical && isIdentical) {
+                block.style.display = 'none';
+            } else {
+                block.style.display = '';
+                if (!isIdentical) {
+                    visibleDiffs++;
+                }
+            }
+        });
+
+        // Hide suite header if all tests inside it are hidden
+        suiteSections.forEach(section => {
+            const blocks = section.querySelectorAll('.test-comparison-block');
+            const anyVisible = Array.from(blocks).some(b => b.style.display !== 'none');
+            section.style.display = anyVisible ? '' : 'none';
+        });
+
+        if (countBadge) {
+            if (hideIdentical) {
+                countBadge.textContent = `${visibleDiffs} active difference(s)`;
+            } else {
+                countBadge.textContent = `${initialDiffCount} difference(s)`;
+            }
+        }
+    }
+
+    checkbox.addEventListener('change', updateFilter);
+}
+
+function enableComparisonSorting(document) {
+    const select = document.getElementById('sort-select');
+    const container = document.getElementById('comparisons-container');
+    if (!select || !container) return;
+
+    select.addEventListener('change', () => {
+        const cards = Array.from(container.querySelectorAll('.comparison-card'));
+        const mode = select.value;
+
+        cards.sort((a, b) => {
+            if (mode === 'date-desc') {
+                return (b.dataset.date || '').localeCompare(a.dataset.date || '');
+            } else if (mode === 'date-asc') {
+                return (a.dataset.date || '').localeCompare(b.dataset.date || '');
+            } else if (mode === 'source-asc') {
+                return (a.dataset.source || '').localeCompare(b.dataset.source || '');
+            } else if (mode === 'diffs-desc') {
+                return parseInt(b.dataset.diffs || '0', 10) - parseInt(a.dataset.diffs || '0', 10);
+            }
+            return 0;
+        });
+
+        cards.forEach(card => container.appendChild(card));
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     enableViewLinks(document);
     enableImagePairs(document);
+    enableImageCycling(document);
     enableAnchorLinks(document);
+    enableHideIdenticalFilter(document);
+    enableComparisonSorting(document);
 });

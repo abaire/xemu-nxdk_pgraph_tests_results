@@ -1,0 +1,67 @@
+{% extends "base.html.j2" %}
+
+{% block title %}
+    Configuration Comparisons - nxdk_pgraph_tests
+{% endblock %}
+
+{% block content -%}
+
+    <h1>Configuration Comparisons</h1>
+    <p class="subtitle">Side-by-side visual comparisons between specific xemu configurations and releases.</p>
+
+    {% if comparisons %}
+        <div class="controls-toolbar">
+            <label for="sort-select">Sort by:</label>
+            <select id="sort-select" class="control-select">
+                <option value="date-desc">Generation Date (Newest first)</option>
+                <option value="date-asc">Generation Date (Oldest first)</option>
+                <option value="source-asc">Source Configuration (A-Z)</option>
+                <option value="diffs-desc">Difference Count (High to Low)</option>
+            </select>
+        </div>
+
+        <div id="comparisons-container" class="comparisons-grid">
+        {% for comp in comparisons %}
+            <div class="comparison-card"
+                 data-date="{{ comp.timestamp }}"
+                 data-source="{{ comp.source_display }}"
+                 data-diffs="{{ comp.diff_count }}">
+                <div class="card-header">
+                    <span class="badge diff-badge">{{ comp.diff_count }} diff(s)</span>
+                    <span class="card-date">{{ comp.date_formatted }}</span>
+                </div>
+                
+                <div class="card-body">
+                    <div class="config-section">
+                        <div class="config-label">Source</div>
+                        <div class="config-value">
+                            <strong>{{ comp.source_version }}</strong>
+                            <div class="config-sub">{{ comp.source_platform }} &bull; {{ comp.source_renderer }}</div>
+                        </div>
+                    </div>
+
+                    <div class="vs-divider">&darr; vs &darr;</div>
+
+                    <div class="config-section">
+                        <div class="config-label">Target</div>
+                        <div class="config-value">
+                            <strong>{{ comp.target_version }}</strong>
+                            <div class="config-sub">{{ comp.target_platform }} &bull; {{ comp.target_renderer }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <a href="{{ comp.url | urlencode }}" class="btn-view">View 3-Way Comparison &rarr;</a>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No configuration comparisons generated yet.</p>
+            <p>Trigger the <code>Compare xemu Configurations</code> workflow in GitHub Actions to create one.</p>
+        </div>
+    {% endif %}
+
+{%- endblock %}
