@@ -6,6 +6,14 @@
 </head>
 <body>
 
+    <header class="topnav">
+        <div class="topnav-brand">xemu pgraph results</div>
+        <nav class="topnav-links">
+            <a href="{{ top_results_url }}" class="nav-item{% if active_nav == 'results' %} active{% endif %}">Test Results</a>
+            <a href="{{ top_comparisons_url }}" class="nav-item{% if active_nav == 'comparisons' %} active{% endif %}">Configuration Comparisons</a>
+        </nav>
+    </header>
+
     <div class="sidenav">
     {%- if home_url %}
     <a href="{{ home_url }}"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f7/Home_%2885249%29_-_The_Noun_Project.svg" width="{{ sidenav_icon_width }}" alt="Navigate to the top level" /></a>

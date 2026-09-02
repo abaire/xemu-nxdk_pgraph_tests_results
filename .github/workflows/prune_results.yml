@@ -1,0 +1,124 @@
+name: Prune Test Results & Comparisons
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_mode:
+        description: 'Scope of items to prune'
+        required: true
+        type: choice
+        options:
+          - all
+          - comparisons_only
+          - config_comparisons_only
+        default: all
+      targets:
+        description: 'Specific targets to prune (comma-separated URLs, paths, xemu version strings, or comparison slugs)'
+        required: false
+        default: ''
+        type: string
+      version_range:
+        description: 'Semantic version range to prune inclusive (e.g. v0.6.30-v0.8.100 or 0.8.100..0.6.30)'
+        required: false
+        default: ''
+        type: string
+      dry_run:
+        description: 'Dry run (preview items to be removed without deleting)'
+        required: true
+        default: true
+        type: boolean
+      rewrite_history:
+        description: 'Completely purge deleted images from git history via git-filter-repo so GitHub GC reclaims space'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: prune-results-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  Prune:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout github_pages
+        uses: actions/checkout@v7
+        with:
+          ref: github_pages
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install requirements
+        run: |
+          export PIP_BREAK_SYSTEM_PACKAGES=1
+          pip3 install -r .github/scripts/requirements.txt
+          if [ "${{ inputs.rewrite_history }}" = "true" ]; then
+            pip3 install git-filter-repo
+          fi
+
+      - name: Configure git identity
+        run: |
+          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR via action"
+
+      - name: Execute Pruning
+        run: |
+          python3 .github/scripts/prune_data.py \
+            --target-mode "${{ inputs.target_mode }}" \
+            --targets "${{ inputs.targets }}" \
+            --version-range "${{ inputs.version_range }}" \
+            ${{ inputs.dry_run && '--dry-run' || '' }} \
+            ${{ inputs.rewrite_history && '--rewrite-history' || '' }}
+
+      - name: Regenerate Site Content (if not dry run)
+        if: inputs.dry_run == false
+        run: |
+          python3 .github/scripts/generate_results_site.py results .github/site \
+            --comparison-dir compare-results \
+            --config-comparisons-dir config-comparisons \
+            --base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages \
+            -v
+
+      - name: Push Changes
+        if: inputs.dry_run == false
+        run: |
+          if [ "${{ inputs.rewrite_history }}" = "true" ]; then
+            echo "Force pushing history-rewritten branch..."
+            git add .github/site/
+            git commit -m "Regenerate site after history prune" || true
+            git push origin github_pages --force
+          else
+            git add -A results/ compare-results/ config-comparisons/ .github/site/
+            if git diff-index --quiet HEAD; then
+              echo "No changes to commit"
+            else
+              git commit -m "Prune results (${{ inputs.target_mode }}) and update site"
+              git push origin github_pages
+            fi
+          fi
+
+      - name: Setup Pages
+        if: inputs.dry_run == false
+        uses: actions/configure-pages@v6
+
+      - name: Upload artifact
+        if: inputs.dry_run == false
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: '.github/site'
+
+      - name: Deploy to GitHub Pages
+        if: inputs.dry_run == false
+        id: deployment
+        uses: actions/deploy-pages@v5

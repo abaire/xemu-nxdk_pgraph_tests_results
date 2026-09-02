@@ -1,0 +1,240 @@
+name: Compare xemu Configurations
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run:
+        description: 'Source xemu run (site URL or path, e.g. results/xemu-0.8.136-.../Linux_x86_64/...)'
+        required: true
+        type: string
+      target_run:
+        description: 'Target xemu run (site URL or path to compare against)'
+        required: true
+        type: string
+      max_shards:
+        description: 'Maximum number of parallel shards for perceptualdiff'
+        required: false
+        default: 16
+        type: number
+      force_regenerate:
+        description: 'Force re-compute all diffs for this comparison pair'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: compare-config-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  PlanConfigDiffs:
+    runs-on: ubuntu-latest
+    outputs:
+      slug: ${{ steps.plan.outputs.slug }}
+      source_run: ${{ steps.plan.outputs.source_run }}
+      target_run: ${{ steps.plan.outputs.target_run }}
+      matrix: ${{ steps.plan.outputs.matrix }}
+      diff_count: ${{ steps.plan.outputs.diff_count }}
+      shard_count: ${{ steps.plan.outputs.shard_count }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: github_pages
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install requirements
+        run: |
+          export PIP_BREAK_SYSTEM_PACKAGES=1
+          pip3 install -r .github/scripts/requirements.txt
+
+      - name: Ensure images are available (restore if missing)
+        run: |
+          python3 -c "
+          import os, sys
+          from restore_archived_version import restore_version
+          sys.path.insert(0, '.github/scripts')
+
+          def check_or_restore(run_path):
+              parts = run_path.strip('/').split('/')
+              if not parts:
+                  return
+              ver = parts[0]
+              full_dir = os.path.join('results', ver)
+              has_pngs = False
+              if os.path.isdir(full_dir):
+                  for _, _, files in os.walk(full_dir):
+                      if any(f.endswith('.png') for f in files):
+                          has_pngs = True
+                          break
+              if not has_pngs:
+                  print(f'Images missing locally for {ver}, restoring from archive...')
+                  restore_version(ver, target_dir='.')
+
+          check_or_restore('${{ inputs.source_run }}')
+          check_or_restore('${{ inputs.target_run }}')
+          " || true
+
+      - name: Plan diff tasks
+        id: plan
+        run: |
+          python3 .github/scripts/plan_config_diffs.py \
+            --source-run "${{ inputs.source_run }}" \
+            --target-run "${{ inputs.target_run }}" \
+            --results-dir results \
+            --compare-results-dir compare-results \
+            --output-dir config-comparisons \
+            --max-shards ${{ inputs.max_shards }} \
+            --output-plan-file config_diff_tasks.json
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: config-diff-plan
+          path: config_diff_tasks.json
+          retention-days: 1
+
+  DiffShards:
+    needs: [ PlanConfigDiffs ]
+    name: Diff shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    if: needs.PlanConfigDiffs.outputs.diff_count > '0'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.PlanConfigDiffs.outputs.matrix) }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: github_pages
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: config-diff-plan
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install requirements & perceptualdiff
+        run: |
+          sudo apt-get update && sudo apt-get install -y perceptualdiff
+          export PIP_BREAK_SYSTEM_PACKAGES=1
+          pip3 install -r .github/scripts/requirements.txt
+
+      - name: Generate diffs
+        run: |
+          python3 .github/scripts/generate_config_diffs.py \
+            --tasks-file config_diff_tasks.json \
+            --shard-index ${{ matrix.shard }} \
+            --shard-count ${{ needs.PlanConfigDiffs.outputs.shard_count }} \
+            --stage-dir diff-staging
+
+      - name: Upload shard diffs
+        uses: actions/upload-artifact@v7
+        with:
+          name: config-diffs-${{ strategy.job-index }}
+          path: diff-staging/
+          retention-days: 1
+
+  Publish:
+    runs-on: ubuntu-latest
+    needs: [ PlanConfigDiffs, DiffShards ]
+    if: |
+      always() &&
+      needs.PlanConfigDiffs.result == 'success' &&
+      (needs.DiffShards.result == 'success' || needs.DiffShards.result == 'skipped')
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: github_pages
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: config-diff-plan
+
+      - name: Download shard diffs
+        if: needs.DiffShards.result == 'success'
+        uses: actions/download-artifact@v8
+        with:
+          pattern: config-diffs-*
+          path: incoming-diffs/
+
+      - name: Merge diff images
+        run: |
+          if [ -d incoming-diffs ]; then
+            echo "Merging incoming shard diffs..."
+            for diff_dir in incoming-diffs/config-diffs-*; do
+              if [ -d "$diff_dir" ]; then
+                echo "Merging $diff_dir..."
+                rsync -av --exclude="KEEP_ARTIFACT" "$diff_dir/" .
+              fi
+            done
+            rm -rf incoming-diffs
+          fi
+          rm -f KEEP_ARTIFACT
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install requirements
+        run: |
+          export PIP_BREAK_SYSTEM_PACKAGES=1
+          pip3 install -r .github/scripts/requirements.txt
+
+      - name: Merge config comparison summaries
+        run: |
+          python3 .github/scripts/merge_config_diffs.py \
+            --comparison-dir config-comparisons \
+            --slug "${{ needs.PlanConfigDiffs.outputs.slug }}" \
+            --tasks-file config_diff_tasks.json
+
+      - name: Generate site content
+        run: |
+          python3 .github/scripts/generate_results_site.py results .github/site \
+            --comparison-dir compare-results \
+            --config-comparisons-dir config-comparisons \
+            --base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages \
+            -v
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR via action"
+
+          git add config-comparisons/ .github/scripts/ .github/site/
+
+          if git diff-index --quiet HEAD; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add configuration comparison ${{ needs.PlanConfigDiffs.outputs.slug }}"
+            git push
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: '.github/site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

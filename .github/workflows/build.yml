@@ -252,6 +252,7 @@ jobs:
         run: |
           python3 .github/scripts/generate_results_site.py results .github/site \
             --comparison-dir compare-results \
+            --config-comparisons-dir config-comparisons \
             --base-url https://raw.githubusercontent.com/${{ github.repository }}/github_pages \
             -v
       - name: Commit and Push
@@ -259,7 +260,7 @@ jobs:
           git config --local user.email "$GITHUB_ACTOR+github-actions@users.noreply.github.com"
           git config --local user.name "$GITHUB_ACTOR via action"
           
-          git add results/ .github/scripts/ compare-results/ .github/site/
+          git add results/ .github/scripts/ compare-results/ config-comparisons/ .github/site/
           
           if git diff-index --quiet HEAD; then
             echo "No changes to commit"

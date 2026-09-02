@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-# ruff: noqa: C416 Unnecessary dict comprehension
+
 # ruff: noqa: C414 Unnecessary list call
-# ruff: noqa: PLR2004 Magic value used in comparison
-# ruff: noqa: S701 By default, jinja2 sets `autoescape` to `False`. Consider using `autoescape=True` or the `select_autoescape` function to mitigate XSS vulnerabilities.
+
 
 from __future__ import annotations
 
@@ -35,6 +34,42 @@ HW_GOLDEN_IDENTIFIER = "Xbox_Hardware"
 
 COMPARE_SUBDIR = "compare"
 RESULTS_SUBDIR = "results"
+CONFIG_COMPARE_SUBDIR = "comparisons"
+HW_GOLDEN_DIR_NAME = "Xbox__Xbox__DirectX__nv2a"
+
+
+@dataclass
+class ConfigComparisonTestItem:
+    test_name: str
+    suite_name: str
+    diff_distance: float
+    is_identical: bool
+    source_image_url: str
+    target_image_url: str
+    hw_golden_url: str
+    config_diff_url: str
+    hw_diff_url: str
+
+
+@dataclass
+class ConfigComparisonViewData:
+    slug: str
+    source_run: str
+    target_run: str
+    timestamp: str
+    date_formatted: str
+    diff_count: int
+    matching_count: int
+    source_version: str
+    source_platform: str
+    source_renderer: str
+    source_display: str
+    target_version: str
+    target_platform: str
+    target_renderer: str
+    target_display: str
+    url: str
+    results_by_suite: dict[str, list[ConfigComparisonTestItem]]
 
 
 class TestSuiteDescriptor(NamedTuple):
@@ -90,7 +125,9 @@ def _load_json_file(file_path: str) -> Any:
     try:
         return json.loads(content)
     except Exception:
-        logger.exception("Failed to parse JSON file '%s'. Raw file content:\n%s", file_path, content)
+        logger.exception(
+            "Failed to parse JSON file '%s'. Raw file content:\n%s", file_path, content
+        )
         raise
 
 
@@ -127,7 +164,10 @@ class TestSuiteDescriptorLoader:
 
         return {
             descriptor.suite_name: descriptor
-            for descriptor in [TestSuiteDescriptor.from_obj(item) for item in registry.get("test_suites", [])]
+            for descriptor in [
+                TestSuiteDescriptor.from_obj(item)
+                for item in registry.get("test_suites", [])
+            ]
         }
 
 
@@ -150,7 +190,7 @@ class TestSuiteComparisonInfo(NamedTuple):
 
 
 class ComparisonInfo(NamedTuple):
-    """"""
+    """Contains comparison information between a test run and golden results."""
 
     identifier: RunIdentifier
     golden_identifier_component: str
@@ -222,7 +262,9 @@ def _index_source_images(results_dir: str) -> dict[SourceTestIdentifier, str]:
         return image_map
 
     for root, _dirnames, filenames in os.walk(results_dir):
-        pngs = [f for f in filenames if f.endswith(".png") and not f.endswith("-diff.png")]
+        pngs = [
+            f for f in filenames if f.endswith(".png") and not f.endswith("-diff.png")
+        ]
         if not pngs:
             continue
         suite_name = os.path.basename(root)
@@ -263,11 +305,15 @@ class ComparisonScanner:
         self.output_dir = output_dir
         self.base_url = base_url
         self.results_dir = results_dir
-        self.golden_results_dir = golden_results_dir if golden_results_dir else results_dir
+        self.golden_results_dir = (
+            golden_results_dir if golden_results_dir else results_dir
+        )
         self.hw_golden_base_url = hw_golden_base_url
         self.test_suite_descriptors = test_suite_descriptors
         self.source_image_index = (
-            source_image_index if source_image_index is not None else _index_source_images(results_dir)
+            source_image_index
+            if source_image_index is not None
+            else _index_source_images(results_dir)
         )
 
     def _process_test_case_artifacts(
@@ -299,7 +345,9 @@ class ComparisonScanner:
         golden_base_path = (
             ""
             if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER
-            else os.path.join(self.golden_results_dir, run_info["golden_identifier"].replace(":", "/"))
+            else os.path.join(
+                self.golden_results_dir, run_info["golden_identifier"].replace(":", "/")
+            )
         )
 
         ret: list[TestCaseComparisonInfo] = []
@@ -320,9 +368,17 @@ class ComparisonScanner:
             if rel_src:
                 source_image_url = f"{self.base_url}/{rel_src.replace(os.sep, '/')}"
             else:
-                source_image_url = "/".join([self.base_url, results_base_path, *original_image_subpath]) + ".png"
+                source_image_url = (
+                    "/".join(
+                        [self.base_url, results_base_path, *original_image_subpath]
+                    )
+                    + ".png"
+                )
 
-            golden_image_url = "/".join([golden_base_url, golden_base_path, *original_image_subpath]) + ".png"
+            golden_image_url = (
+                "/".join([golden_base_url, golden_base_path, *original_image_subpath])
+                + ".png"
+            )
 
             ret.append(
                 TestCaseComparisonInfo(
@@ -330,25 +386,35 @@ class ComparisonScanner:
                     source_image_url=source_image_url,
                     golden_image_url=golden_image_url,
                     diff_image_url=f"{self.base_url}/{image_file}",
-                    diff_distance=run_info["tests_with_differences"].get(fq_name, math.inf),
+                    diff_distance=run_info["tests_with_differences"].get(
+                        fq_name, math.inf
+                    ),
                 )
             )
 
         return ret
 
-    def _process_test_suite(self, test_suite_dir: str, run_info: dict[str, Any]) -> TestSuiteComparisonInfo | None:
+    def _process_test_suite(
+        self, test_suite_dir: str, run_info: dict[str, Any]
+    ) -> TestSuiteComparisonInfo | None:
         golden_base_url = (
-            self.hw_golden_base_url if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER else self.base_url
+            self.hw_golden_base_url
+            if run_info["golden_identifier"] == HW_GOLDEN_IDENTIFIER
+            else self.base_url
         )
 
         suite_name = os.path.basename(test_suite_dir)
 
-        test_artifacts = self._process_test_case_artifacts(test_suite_dir, suite_name, run_info, golden_base_url)
+        test_artifacts = self._process_test_case_artifacts(
+            test_suite_dir, suite_name, run_info, golden_base_url
+        )
         if test_artifacts:
             return TestSuiteComparisonInfo(
                 suite_name=suite_name,
                 test_cases=tuple(test_artifacts),
-                descriptor=_fuzzy_lookup_suite_descriptor(self.test_suite_descriptors, suite_name),
+                descriptor=_fuzzy_lookup_suite_descriptor(
+                    self.test_suite_descriptors, suite_name
+                ),
             )
         return None
 
@@ -357,7 +423,9 @@ class ComparisonScanner:
     ) -> list[ComparisonInfo]:
         """Processes the results for each comparison between pairs of results."""
 
-        run_identifier_to_suits: dict[str, list[TestSuiteComparisonInfo]] = defaultdict(list)
+        run_identifier_to_suits: dict[str, list[TestSuiteComparisonInfo]] = defaultdict(
+            list
+        )
         for run_root, run_info in run_identifier_to_summary.items():
             for item in os.listdir(run_root):
                 suite_path = os.path.join(run_root, item)
@@ -375,14 +443,21 @@ class ComparisonScanner:
 
     def _process_summaries(self) -> dict[str, dict[str, Any]]:
         """Discovers summary.json files, loads them, and returns a map of directory path to their content."""
-        summary_files = glob.glob("**/summary.json", root_dir=self.comparison_dir, recursive=True)
+        summary_files = glob.glob(
+            "**/summary.json", root_dir=self.comparison_dir, recursive=True
+        )
 
         def load_summary(subpath: str) -> tuple[str, dict[str, Any]]:
             full_path = os.path.join(self.comparison_dir, subpath)
             logger.debug("Load summary from '%s'", full_path)
             return os.path.dirname(full_path), _load_json_file(full_path)
 
-        return {key: value for key, value in [load_summary(summary_file) for summary_file in summary_files]}
+        return {
+            key: value
+            for key, value in [
+                load_summary(summary_file) for summary_file in summary_files
+            ]
+        }
 
     def process(
         self,
@@ -508,14 +583,20 @@ class ResultsScanner:
     def _process_suite(
         self, artifacts_path: str, suite_name: str, results_summary: ResultsSummary
     ) -> SuiteResults | None:
-        test_artifacts = self._process_test_case_artifacts(artifacts_path, suite_name, results_summary)
+        test_artifacts = self._process_test_case_artifacts(
+            artifacts_path, suite_name, results_summary
+        )
         if test_artifacts:
             fq_prefix = f"{suite_name}::"
             flaky_tests = {
-                key: value for key, value in results_summary.get("flaky", {}).items() if key.startswith(fq_prefix)
+                key: value
+                for key, value in results_summary.get("flaky", {}).items()
+                if key.startswith(fq_prefix)
             }
             failed_tests = {
-                key: value for key, value in results_summary.get("failed", {}).items() if key.startswith(fq_prefix)
+                key: value
+                for key, value in results_summary.get("failed", {}).items()
+                if key.startswith(fq_prefix)
             }
 
             return SuiteResults(
@@ -527,7 +608,9 @@ class ResultsScanner:
             )
         return None
 
-    def _process_results(self, run_id: str, machine_info: MachineInfo, results_summary: ResultsSummary) -> ResultsInfo:
+    def _process_results(
+        self, run_id: str, machine_info: MachineInfo, results_summary: ResultsSummary
+    ) -> ResultsInfo:
         suite_results: dict[str, SuiteResults] = {}
 
         for root, dirnames, filenames in os.walk(run_id):
@@ -556,7 +639,9 @@ class ResultsScanner:
 
         run_identifier = RunIdentifier.parse(run_id)
 
-        comparisons = self.run_identifier_to_comparison_results.get(run_identifier.minimal_identifier(), [])
+        comparisons = self.run_identifier_to_comparison_results.get(
+            run_identifier.minimal_identifier(), []
+        )
         if not comparisons:
             # Fallback lookup: match on xemu_version + platform_info + gl prefix
             for comp_id, comp_list in self.run_identifier_to_comparison_results.items():
@@ -571,26 +656,32 @@ class ResultsScanner:
                         break
 
         if not comparisons:
-            logger.warning("Failed to lookup HW comparisons for %s", run_identifier.minimal_identifier())
+            logger.warning(
+                "Failed to lookup HW comparisons for %s",
+                run_identifier.minimal_identifier(),
+            )
         return ResultsInfo(
             identifier=run_identifier,
             machine_info=machine_info,
-            renderer_info=results_summary.get("renderer_info"),
-            runner_info=results_summary.get("runner_info"),
+            renderer_info=results_summary.get("renderer_info") or {"vulkan": "false"},
+            runner_info=results_summary.get("runner_info") or {"iso": "UNKNOWN"},
             results=tuple(list(suite_results.values())),
             comparisons=comparisons,
         )
 
     def _process_summaries(self) -> dict[str, tuple[MachineInfo, ResultsSummary]]:
         """Discovers results.json and machine_info.txt files and returns a map of directory path to their contents."""
-        results_files = glob.glob("**/results.json", root_dir=self.results_dir, recursive=True)
+        results_files = glob.glob(
+            "**/results.json", root_dir=self.results_dir, recursive=True
+        )
 
         def load_results(subpath: str) -> tuple[str, ResultsSummary]:
             full_path = os.path.join(self.results_dir, subpath)
             return os.path.dirname(full_path), _load_json_file(full_path)
 
         run_id_to_results: dict[str, ResultsSummary] = {
-            key: value for key, value in [load_results(filename) for filename in results_files]
+            key: value
+            for key, value in [load_results(filename) for filename in results_files]
         }
 
         for run_id, results_summary in run_id_to_results.items():
@@ -606,7 +697,9 @@ class ResultsScanner:
             else:
                 results_summary["runner_info"] = {"iso": "UNKNOWN"}
 
-        machine_info_files = glob.glob("**/machine_info.txt", root_dir=self.results_dir, recursive=True)
+        machine_info_files = glob.glob(
+            "**/machine_info.txt", root_dir=self.results_dir, recursive=True
+        )
 
         def load_machine_info(subpath: str) -> tuple[str, MachineInfo]:
             full_path = os.path.join(self.results_dir, subpath)
@@ -615,7 +708,10 @@ class ResultsScanner:
                 return os.path.dirname(full_path), content.split("\n")
 
         run_id_to_machine_info: dict[str, MachineInfo] = {
-            key: value for key, value in [load_machine_info(filename) for filename in machine_info_files]
+            key: value
+            for key, value in [
+                load_machine_info(filename) for filename in machine_info_files
+            ]
         }
 
         ret: dict[str, tuple[MachineInfo, ResultsSummary]] = {}
@@ -660,7 +756,9 @@ class PrettyMachineInfo(NamedTuple):
         gl_vendor = machine_info_dict.get("GL_VENDOR", "").replace("/", "-")
         gl_renderer = machine_info_dict.get("GL_RENDERER", "").replace("/", "-")
         gl_version = machine_info_dict.get("GL_VERSION", "").replace("/", "-")
-        glsl_version = machine_info_dict.get("GL_SHADING_LANGUAGE_VERSION", "").replace("/", "-")
+        glsl_version = machine_info_dict.get("GL_SHADING_LANGUAGE_VERSION", "").replace(
+            "/", "-"
+        )
 
         run_identifier = results_info.identifier
         platform = f"{os} - {cpu}" if cpu and os else run_identifier.platform_info
@@ -676,6 +774,173 @@ class PrettyMachineInfo(NamedTuple):
         return cls(platform=platform, gl=gl, glsl=glsl_version, renderer=renderer)
 
 
+class ConfigComparisonScanner:
+    """Scans and parses configuration comparisons from config-comparisons/."""
+
+    def __init__(
+        self,
+        config_comparisons_dir: str,
+        output_dir: str,
+        base_url: str,
+        hw_golden_base_url: str,
+        hw_comparison_dir: str | None,
+        source_image_index: dict[SourceTestIdentifier, str],
+        results: dict[str, ResultsInfo],
+    ) -> None:
+        self.config_comparisons_dir = config_comparisons_dir
+        self.output_dir = output_dir
+        self.base_url = base_url.rstrip("/")
+        self.hw_golden_base_url = hw_golden_base_url.rstrip("/")
+        self.hw_comparison_dir = hw_comparison_dir
+        self.source_image_index = source_image_index
+        self.results = results
+
+    def _resolve_image_url(self, run_path: str, suite: str, test: str) -> str:
+        parts = [p for p in run_path.replace("\\", "/").split("/") if p]
+        xemu_ver = parts[0] if parts else ""
+        platform = parts[1] if len(parts) > 1 else ""
+        ident = SourceTestIdentifier(
+            xemu_version=xemu_ver,
+            platform_info=platform,
+            suite_name=suite,
+            test_name=test,
+        )
+        rel_src = self.source_image_index.get(ident)
+        if rel_src:
+            return f"{self.base_url}/{rel_src.replace(os.sep, '/')}"
+        return f"{self.base_url}/results/{run_path}/{suite}/{test}.png"
+
+    def _format_run_display(self, run_path: str) -> tuple[str, str, str, str]:
+        """Returns (version, platform, renderer, full_display)."""
+        clean_path = run_path.strip("/")
+        for full_id, r in self.results.items():
+            if clean_path in full_id or full_id.endswith(clean_path):
+                pretty = PrettyMachineInfo.parse(r)
+                return (
+                    r.identifier.xemu_version,
+                    pretty.platform,
+                    f"{pretty.renderer} ({pretty.gl})",
+                    f"{r.identifier.xemu_version} - {pretty.platform} - {pretty.renderer}",
+                )
+
+        parts = [p for p in clean_path.split("/") if p]
+        ver = parts[0] if parts else "UNKNOWN"
+        platform = parts[1] if len(parts) > 1 else "UNKNOWN"
+        gl = parts[2] if len(parts) > 2 else ""
+        renderer = "Vulkan" if "vulkan" in gl.lower() else "OpenGL"
+        return ver, platform, renderer, f"{ver} - {platform} - {renderer}"
+
+    def process(self) -> list[ConfigComparisonViewData]:
+        if not os.path.isdir(self.config_comparisons_dir):
+            return []
+
+        ret: list[ConfigComparisonViewData] = []
+        slug_dirs = [
+            d
+            for d in os.listdir(self.config_comparisons_dir)
+            if os.path.isdir(os.path.join(self.config_comparisons_dir, d))
+            and not d.startswith(".")
+        ]
+
+        for slug in sorted(slug_dirs):
+            summary_path = os.path.join(
+                self.config_comparisons_dir, slug, "summary.json"
+            )
+            if not os.path.isfile(summary_path):
+                continue
+
+            summary = _load_json_file(summary_path)
+            source_run = summary.get("source_run", "")
+            target_run = summary.get("target_run", "")
+            timestamp = summary.get("timestamp", "")
+            date_formatted = timestamp.split("T")[0] if "T" in timestamp else timestamp
+            diff_count = summary.get("diff_count", 0)
+            tests_with_diffs: dict[str, float] = summary.get(
+                "tests_with_differences", {}
+            )
+            tests_matching_target: list[str] = summary.get("tests_matching_target", [])
+
+            s_ver, s_plat, s_rend, s_disp = self._format_run_display(source_run)
+            t_ver, t_plat, t_rend, t_disp = self._format_run_display(target_run)
+
+            results_by_suite: dict[str, list[ConfigComparisonTestItem]] = defaultdict(
+                list
+            )
+
+            all_tests = set(tests_with_diffs.keys()) | set(tests_matching_target)
+            for fq_name in sorted(all_tests):
+                if ":" in fq_name:
+                    suite, test = fq_name.split(":", 1)
+                else:
+                    suite, test = "unknown", fq_name
+
+                is_identical = fq_name in tests_matching_target
+                diff_distance = tests_with_diffs.get(fq_name, 0.0)
+
+                src_url = self._resolve_image_url(source_run, suite, test)
+                tgt_url = self._resolve_image_url(target_run, suite, test)
+                hw_url = f"{self.hw_golden_base_url}/{suite}/{test}.png"
+
+                diff_file = os.path.join(
+                    self.config_comparisons_dir, slug, suite, f"{test}-diff.png"
+                )
+                config_diff_url = (
+                    f"{self.base_url}/config-comparisons/{slug}/{suite}/{test}-diff.png"
+                    if (not is_identical or os.path.isfile(diff_file))
+                    else ""
+                )
+
+                hw_diff_url = ""
+                if self.hw_comparison_dir:
+                    hw_diff_file = os.path.join(
+                        self.hw_comparison_dir,
+                        source_run,
+                        HW_GOLDEN_DIR_NAME,
+                        suite,
+                        f"{test}-diff.png",
+                    )
+                    if os.path.isfile(hw_diff_file):
+                        hw_diff_url = f"{self.base_url}/compare-results/{source_run}/{HW_GOLDEN_DIR_NAME}/{suite}/{test}-diff.png"
+
+                results_by_suite[suite].append(
+                    ConfigComparisonTestItem(
+                        test_name=test,
+                        suite_name=suite,
+                        diff_distance=diff_distance,
+                        is_identical=is_identical,
+                        source_image_url=src_url,
+                        target_image_url=tgt_url,
+                        hw_golden_url=hw_url,
+                        config_diff_url=config_diff_url,
+                        hw_diff_url=hw_diff_url,
+                    )
+                )
+
+            ret.append(
+                ConfigComparisonViewData(
+                    slug=slug,
+                    source_run=source_run,
+                    target_run=target_run,
+                    timestamp=timestamp,
+                    date_formatted=date_formatted,
+                    diff_count=diff_count,
+                    matching_count=len(tests_matching_target),
+                    source_version=s_ver,
+                    source_platform=s_plat,
+                    source_renderer=s_rend,
+                    source_display=s_disp,
+                    target_version=t_ver,
+                    target_platform=t_plat,
+                    target_renderer=t_rend,
+                    target_display=t_disp,
+                    url=f"{CONFIG_COMPARE_SUBDIR}/{slug}/index.html",
+                    results_by_suite=dict(results_by_suite),
+                )
+            )
+
+        return ret
+
+
 class PagesWriter:
     """Generates HTML output suitable for GitHub pages."""
 
@@ -689,6 +954,7 @@ class PagesWriter:
         test_source_base_url: str,
         hw_golden_browser_base_url: str,
         source_image_index: dict[SourceTestIdentifier, str] | None = None,
+        config_comparisons: list[ConfigComparisonViewData] | None = None,
     ) -> None:
         self.results = results
         self.env = env
@@ -700,10 +966,17 @@ class PagesWriter:
         self.test_source_base_url = test_source_base_url.rstrip("/")
         self.hw_golden_browser_base_url = hw_golden_browser_base_url.rstrip("/")
         self.source_image_index = source_image_index or {}
+        self.config_comparisons = config_comparisons or []
 
     @staticmethod
-    def _comparison_suite_url(comparison: ComparisonInfo, suite_result: TestSuiteComparisonInfo) -> str:
-        return os.path.join(COMPARE_SUBDIR, comparison.identifier.minimal_path, f"{suite_result.suite_name}.html")
+    def _comparison_suite_url(
+        comparison: ComparisonInfo, suite_result: TestSuiteComparisonInfo
+    ) -> str:
+        return os.path.join(
+            COMPARE_SUBDIR,
+            comparison.identifier.minimal_path,
+            f"{suite_result.suite_name}.html",
+        )
 
     def _home_url(self, output_dir: str) -> str:
         return f"{os.path.relpath(self.output_dir, output_dir)}/index.html"
@@ -720,16 +993,27 @@ class PagesWriter:
     ) -> None:
         """Generates a page that renders all diffs between a result set and golden for a particular test suite."""
         index_template = self.env.get_template("suite_comparison_result.html.j2")
-        output_dir = os.path.join(self.output_dir, COMPARE_SUBDIR, comparison.identifier.minimal_path)
+        output_dir = os.path.join(
+            self.output_dir, COMPARE_SUBDIR, comparison.identifier.minimal_path
+        )
         os.makedirs(output_dir, exist_ok=True)
 
-        with open(os.path.join(output_dir, f"{suite_result.suite_name}.html"), "w") as outfile:
+        rel_root = os.path.relpath(self.output_dir, output_dir)
+        top_results_url = f"{rel_root}/index.html"
+        top_comparisons_url = f"{rel_root}/{CONFIG_COMPARE_SUBDIR}/index.html"
+
+        with open(
+            os.path.join(output_dir, f"{suite_result.suite_name}.html"), "w"
+        ) as outfile:
             outfile.write(
                 index_template.render(
                     source_identifier=comparison.summary["result_identifier"],
                     golden_identifier=comparison.summary["golden_identifier"],
                     suite_name=suite_result.suite_name,
                     results=results,
+                    top_results_url=top_results_url,
+                    top_comparisons_url=top_comparisons_url,
+                    active_nav="results",
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                     home_url=self._home_url(output_dir),
@@ -741,9 +1025,13 @@ class PagesWriter:
 
     @staticmethod
     def _comparison_url(comparison: ComparisonInfo) -> str:
-        return os.path.join(COMPARE_SUBDIR, comparison.identifier.minimal_path, "index.html")
+        return os.path.join(
+            COMPARE_SUBDIR, comparison.identifier.minimal_path, "index.html"
+        )
 
-    def _write_comparisons_page(self, comparison: ComparisonInfo, golden_base_url: str) -> None:
+    def _write_comparisons_page(
+        self, comparison: ComparisonInfo, golden_base_url: str
+    ) -> None:
         """Generates a page that renders all diffs between a pair of results, with links to per-suite diff pages."""
 
         index_template = self.env.get_template("comparison_result.html.j2")
@@ -751,11 +1039,18 @@ class PagesWriter:
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
 
+        rel_root = os.path.relpath(self.output_dir, output_dir)
+        top_results_url = f"{rel_root}/index.html"
+        top_comparisons_url = f"{rel_root}/{CONFIG_COMPARE_SUBDIR}/index.html"
+
         navigate_up_url = f"{os.path.relpath(self.output_dir, output_dir)}/{RESULTS_SUBDIR}/{comparison.identifier.minimal_path}/index.html#{comparison.golden_identifier}"
 
         suite_to_results: dict[str, list[TestCaseComparisonInfo]] = defaultdict(
             list,
-            {result.suite_name: list(result.test_cases) for result in comparison.results},
+            {
+                result.suite_name: list(result.test_cases)
+                for result in comparison.results
+            },
         )
 
         for fqname in comparison.summary.get("goldens_without_results", []):
@@ -773,7 +1068,9 @@ class PagesWriter:
             suite_name, test_name = self.split_fq_name(fqname)
             info = TestCaseComparisonInfo(
                 test_name=test_name,
-                source_image_url=self.results_url_for_fqtest(comparison.identifier, fqname),
+                source_image_url=self.results_url_for_fqtest(
+                    comparison.identifier, fqname
+                ),
                 golden_image_url="",
                 diff_image_url="",
                 diff_distance=math.inf,
@@ -796,6 +1093,9 @@ class PagesWriter:
                         }
                         for suite in comparison.results
                     },
+                    top_results_url=top_results_url,
+                    top_comparisons_url=top_comparisons_url,
+                    active_nav="results",
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                     home_url=self._home_url(output_dir),
@@ -805,7 +1105,10 @@ class PagesWriter:
 
         for suite_results in comparison.results:
             self._write_comparison_suite_page(
-                comparison, suite_results, suite_to_results[suite_results.suite_name], navigate_up_url
+                comparison,
+                suite_results,
+                suite_to_results[suite_results.suite_name],
+                navigate_up_url,
             )
 
     @staticmethod
@@ -815,11 +1118,17 @@ class PagesWriter:
         return split[0], split[1]
 
     @staticmethod
-    def golden_url_for_fqtest(fully_qualified_test_name: str, golden_base_url: str) -> str:
-        path = "/".join([golden_base_url, *PagesWriter.split_fq_name(fully_qualified_test_name)])
+    def golden_url_for_fqtest(
+        fully_qualified_test_name: str, golden_base_url: str
+    ) -> str:
+        path = "/".join(
+            [golden_base_url, *PagesWriter.split_fq_name(fully_qualified_test_name)]
+        )
         return f"{path}.png"
 
-    def results_url_for_fqtest(self, run: RunIdentifier, fully_qualified_test_name: str) -> str:
+    def results_url_for_fqtest(
+        self, run: RunIdentifier, fully_qualified_test_name: str
+    ) -> str:
         suite, test_case = self.split_fq_name(fully_qualified_test_name)
         ident = SourceTestIdentifier(
             xemu_version=run.xemu_version,
@@ -855,7 +1164,9 @@ class PagesWriter:
 
     @staticmethod
     def _suite_result_url(run: ResultsInfo, suite: SuiteResults) -> str:
-        return os.path.join(RESULTS_SUBDIR, run.identifier.minimal_path, suite.name, "index.html")
+        return os.path.join(
+            RESULTS_SUBDIR, run.identifier.minimal_path, suite.name, "index.html"
+        )
 
     def _suite_source_url(self, source_file_path: str, source_line: int) -> str:
         if self.test_source_base_url and source_file_path:
@@ -864,31 +1175,43 @@ class PagesWriter:
             return f"{self.test_source_base_url}/{source_file_path}"
         return ""
 
-    def _pack_descriptor(self, descriptor: TestSuiteDescriptor | None) -> dict[str, Any] | None:
+    def _pack_descriptor(
+        self, descriptor: TestSuiteDescriptor | None
+    ) -> dict[str, Any] | None:
         if not descriptor:
             return None
         return {
             "description": descriptor.description,
             "source_file": descriptor.source_file,
-            "source_url": self._suite_source_url(descriptor.source_file, descriptor.source_file_line),
+            "source_url": self._suite_source_url(
+                descriptor.source_file, descriptor.source_file_line
+            ),
             "test_descriptions": descriptor.test_descriptions,
         }
 
-    def _write_test_suite_results_page(self, run: ResultsInfo, suite: SuiteResults) -> None:
+    def _write_test_suite_results_page(
+        self, run: ResultsInfo, suite: SuiteResults
+    ) -> None:
         """Generates a page for all of the test case results within a single test suite."""
         index_template = self.env.get_template("test_suite_results.html.j2")
-        output_subdir = os.path.join(RESULTS_SUBDIR, run.identifier.minimal_path, suite.name)
+        output_subdir = os.path.join(
+            RESULTS_SUBDIR, run.identifier.minimal_path, suite.name
+        )
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
 
+        rel_root = os.path.relpath(self.output_dir, output_dir)
+        top_results_url = f"{rel_root}/index.html"
+        top_comparisons_url = f"{rel_root}/{CONFIG_COMPARE_SUBDIR}/index.html"
+
         pretty_machine_info = PrettyMachineInfo.parse(run)
-        result_infos: dict[str, dict[str, str]] = {}
+        result_infos: dict[str, dict[str, Any]] = {}
         for result in suite.test_results:
             result_infos[result.name] = {"url": result.artifact_url}
         for info in suite.flaky_tests.values():
             result_infos.get(info["name"], {})["failures"] = info["failures"]
         for info in suite.failed_tests.values():
-            result_infos[info["name"]] = {"url": None, "failures": info["failures"]}
+            result_infos[info["name"]] = {"url": "", "failures": info["failures"]}
 
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
             outfile.write(
@@ -897,6 +1220,9 @@ class PagesWriter:
                     pretty_machine_info=pretty_machine_info,
                     suite_name=suite.name,
                     results=result_infos,
+                    top_results_url=top_results_url,
+                    top_comparisons_url=top_comparisons_url,
+                    active_nav="results",
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                     descriptor=self._pack_descriptor(suite.descriptor),
@@ -913,8 +1239,15 @@ class PagesWriter:
         output_dir = os.path.join(self.output_dir, output_subdir)
         os.makedirs(output_dir, exist_ok=True)
 
+        rel_root = os.path.relpath(self.output_dir, output_dir)
+        top_results_url = f"{rel_root}/index.html"
+        top_comparisons_url = f"{rel_root}/{CONFIG_COMPARE_SUBDIR}/index.html"
+
         result_urls = {
-            suite.name: os.path.relpath(self._suite_result_url(run, suite), output_subdir) for suite in run.results
+            suite.name: os.path.relpath(
+                self._suite_result_url(run, suite), output_subdir
+            )
+            for suite in run.results
         }
 
         all_failed_tests: dict[str, list[str]] = {}
@@ -926,7 +1259,7 @@ class PagesWriter:
             for name, info in suite.flaky_tests.items():
                 all_flaky_tests[name] = info.get("failures", [])
 
-        comparisons: dict[str, dict[str, str]] = {}
+        comparisons: dict[str, dict[str, Any]] = {}
         for comparison in run.comparisons:
             golden_base_url = (
                 self.hw_images_base_url
@@ -935,16 +1268,22 @@ class PagesWriter:
             )
 
             missing_tests: dict[str, str] = {
-                fqname.replace(":", " :: "): self.golden_url_for_fqtest(fqname, golden_base_url)
+                fqname.replace(":", " :: "): self.golden_url_for_fqtest(
+                    fqname, golden_base_url
+                )
                 for fqname in comparison.summary.get("goldens_without_results", [])
             }
             extra_tests: dict[str, str] = {
-                fqname.replace(":", " "): self.results_url_for_fqtest(run.identifier, fqname)
+                fqname.replace(":", " "): self.results_url_for_fqtest(
+                    run.identifier, fqname
+                )
                 for fqname in comparison.summary.get("tests_without_goldens", [])
             }
 
             comparisons[comparison.golden_identifier] = {
-                "comparison_page": os.path.relpath(self._comparison_url(comparison), output_subdir),
+                "comparison_page": os.path.relpath(
+                    self._comparison_url(comparison), output_subdir
+                ),
                 "results": {
                     suite_result.suite_name: os.path.relpath(
                         self._comparison_suite_url(comparison, suite_result),
@@ -952,7 +1291,9 @@ class PagesWriter:
                     )
                     for suite_result in comparison.results
                 },
-                "difference_count": len(comparison.summary.get("tests_with_differences", {})),
+                "difference_count": len(
+                    comparison.summary.get("tests_with_differences", {})
+                ),
                 "missing_tests": missing_tests,
                 "extra_tests": extra_tests,
                 "golden_identifier": comparison.golden_identifier,
@@ -972,6 +1313,9 @@ class PagesWriter:
                     test_suites=result_urls,
                     failed_tests=all_failed_tests,
                     flaky_tests=all_flaky_tests,
+                    top_results_url=top_results_url,
+                    top_comparisons_url=top_comparisons_url,
+                    active_nav="results",
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                     home_url=home_url,
@@ -981,13 +1325,17 @@ class PagesWriter:
             )
 
     def _write_top_level_index(self) -> None:
-        run_identifier_keyed_results = {run.identifier: run for run in self.results.values()}
+        run_identifier_keyed_results = {
+            run.identifier: run for run in self.results.values()
+        }
 
         index_template = self.env.get_template("index.html.j2")
         output_dir = self.output_dir
 
         with open(os.path.join(output_dir, "index.html"), "w") as outfile:
-            emulator_grouped_pages = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+            emulator_grouped_pages: dict[
+                str, dict[str, dict[str, list[dict[str, Any]]]]
+            ] = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
             for run_identifier, run in run_identifier_keyed_results.items():
                 if (
                     not run_identifier.xemu_version
@@ -996,9 +1344,9 @@ class PagesWriter:
                 ):
                     continue
                 pretty_machine_info = PrettyMachineInfo.parse(run)
-                emulator_grouped_pages[run_identifier.xemu_version][pretty_machine_info.platform][
-                    pretty_machine_info.renderer
-                ].append(
+                emulator_grouped_pages[run_identifier.xemu_version][
+                    pretty_machine_info.platform
+                ][pretty_machine_info.renderer].append(
                     {
                         "results_url": f"{RESULTS_SUBDIR}/{run_identifier.minimal_path}/index.html",
                         "machine_info": pretty_machine_info,
@@ -1007,10 +1355,62 @@ class PagesWriter:
             outfile.write(
                 index_template.render(
                     emulator_grouped_results=emulator_grouped_pages,
+                    top_results_url="index.html",
+                    top_comparisons_url=f"{CONFIG_COMPARE_SUBDIR}/index.html",
+                    active_nav="results",
                     css_dir=os.path.relpath(self.css_output_dir, output_dir),
                     js_dir=os.path.relpath(self.js_output_dir, output_dir),
                 )
             )
+
+    def _write_config_comparisons_pages(self) -> None:
+        """Generates configuration comparisons index and detail pages."""
+        comp_output_dir = os.path.join(self.output_dir, CONFIG_COMPARE_SUBDIR)
+        os.makedirs(comp_output_dir, exist_ok=True)
+
+        index_template = self.env.get_template("config_comparisons_index.html.j2")
+        with open(
+            os.path.join(comp_output_dir, "index.html"), "w", encoding="utf-8"
+        ) as outfile:
+            outfile.write(
+                index_template.render(
+                    comparisons=self.config_comparisons,
+                    top_results_url="../index.html",
+                    top_comparisons_url="index.html",
+                    home_url="../index.html",
+                    active_nav="comparisons",
+                    css_dir="..",
+                    js_dir="..",
+                )
+            )
+
+        detail_template = self.env.get_template("config_comparison_result.html.j2")
+        for comp in self.config_comparisons:
+            detail_dir = os.path.join(comp_output_dir, comp.slug)
+            os.makedirs(detail_dir, exist_ok=True)
+
+            with open(
+                os.path.join(detail_dir, "index.html"), "w", encoding="utf-8"
+            ) as outfile:
+                outfile.write(
+                    detail_template.render(
+                        source_title=comp.source_display,
+                        target_title=comp.target_display,
+                        source_run=comp.source_run,
+                        target_run=comp.target_run,
+                        timestamp=comp.date_formatted,
+                        total_diffs=comp.diff_count,
+                        matching_count=comp.matching_count,
+                        results_by_suite=comp.results_by_suite,
+                        top_results_url="../../index.html",
+                        top_comparisons_url="../index.html",
+                        home_url="../../index.html",
+                        navigate_up_url="../index.html",
+                        active_nav="comparisons",
+                        css_dir="../..",
+                        js_dir="../..",
+                    )
+                )
 
     def _write_css(self) -> None:
         css_template = self.env.get_template("site.css.j2")
@@ -1032,6 +1432,7 @@ class PagesWriter:
         self._write_css()
         self._write_js()
         self._write_top_level_index()
+        self._write_config_comparisons_pages()
         for run in self.results.values():
             self._write_run_results_pages(run)
 
@@ -1042,13 +1443,20 @@ class PagesWriter:
 VERSION_STRING_RE = re.compile(r"xemu-(\d+)\.(\d+)\.(\d+)-.+")
 
 
-def _xemu_version_sort_filter(data_dict: dict[str, Any], *, reverse: bool = True) -> list[tuple[str, Any]]:
+def _xemu_version_sort_filter(
+    data_dict: dict[str, Any], *, reverse: bool = True
+) -> list[tuple[str, Any]]:
     def get_version_key(dict_entry):
         match = VERSION_STRING_RE.match(dict_entry[0])
         if not match:
             return 0, 0, 0, dict_entry[0]
 
-        return int(match.group(1)), int(match.group(2)), int(match.group(3)), dict_entry[0]
+        return (
+            int(match.group(1)),
+            int(match.group(2)),
+            int(match.group(3)),
+            dict_entry[0],
+        )
 
     return sorted(data_dict.items(), key=get_version_key, reverse=reverse)
 
@@ -1084,6 +1492,10 @@ def main():
         "--comparison-dir",
         "-c",
         help="Directory containing diff results that should be processed.",
+    )
+    parser.add_argument(
+        "--config-comparisons-dir",
+        help="Directory containing configuration comparison results that should be processed.",
     )
     parser.add_argument(
         "--templates-dir",
@@ -1146,6 +1558,20 @@ def main():
         test_suite_descriptors,
     ).process()
 
+    config_comparisons = (
+        ConfigComparisonScanner(
+            args.config_comparisons_dir,
+            args.output_dir,
+            args.base_url,
+            args.hw_golden_base_url,
+            args.comparison_dir,
+            source_image_index,
+            results,
+        ).process()
+        if args.config_comparisons_dir
+        else []
+    )
+
     if not args.templates_dir:
         args.templates_dir = os.path.join(os.path.dirname(__file__), "site-templates")
 
@@ -1163,6 +1589,7 @@ def main():
         args.test_source_browser_base_url,
         args.hw_golden_browser_base_url,
         source_image_index=source_image_index,
+        config_comparisons=config_comparisons,
     ).write()
 
 
