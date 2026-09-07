@@ -154,7 +154,7 @@ jobs:
             libpipewire-0.3-0 libvulkan1 libpcap0.8 libusb-1.0-0 libcurl4 libfuse2t64
 
       - name: Download Test Assets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: test-assets
           path: assets
@@ -226,13 +226,13 @@ jobs:
           fetch-depth: 0
 
       - name: Download Test Assets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: test-assets
           path: assets
 
       - name: Download All Shard Result Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: shard_results
           pattern: shard-*-results
