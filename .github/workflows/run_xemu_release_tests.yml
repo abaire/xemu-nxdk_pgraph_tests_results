@@ -124,7 +124,7 @@ jobs:
           EOF
 
       - name: Upload Test Assets Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-assets
           path: assets/
@@ -196,7 +196,7 @@ jobs:
             --results-path ./output_shard_${{ matrix.shard }}
 
       - name: Upload Shard Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: shard-${{ matrix.shard }}-results
           path: output_shard_${{ matrix.shard }}/
