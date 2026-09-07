@@ -101,62 +101,17 @@ jobs:
           "
 
       # =========================================================================
-      # Roswell BIOS Cache & Build Step
-      # Checks the latest commit on mborgerson/roswell; restores from cache if
-      # unchanged, or builds from source and updates cache when HEAD changes.
+      # Roswell BIOS Release Download
+      # Downloads the latest Roswell BIOS release asset (*flash.bin) from mborgerson/roswell.
       # =========================================================================
-      - name: Fetch Roswell HEAD Commit SHA
-        id: roswell_meta
+      - name: Download Latest Roswell BIOS Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ROSWELL_SHA=$(git ls-remote https://github.com/mborgerson/roswell.git HEAD | awk '{print $1}')
-          if [ -z "$ROSWELL_SHA" ]; then
-            echo "Failed to retrieve Roswell HEAD SHA"
-            exit 1
-          fi
-          echo "sha=${ROSWELL_SHA}" >> "$GITHUB_OUTPUT"
-          echo "Latest Roswell commit SHA: ${ROSWELL_SHA}"
-
-      - name: Cache Roswell BIOS
-        id: roswell_cache
-        uses: actions/cache@v4
-        with:
-          path: assets/roswell.bin
-          key: roswell-bios-${{ steps.roswell_meta.outputs.sha }}
-
-      - name: Build Roswell BIOS
-        if: steps.roswell_cache.outputs.cache-hit != 'true'
-        run: |
-          sudo apt-get update -qy
-          sudo apt-get install -y --no-install-recommends \
-            binutils-mingw-w64-i686 \
-            gcc-mingw-w64-i686 \
-            g++-mingw-w64-i686 \
-            gcc-multilib \
-            lz4 \
-            ccache \
-            cmake \
-            ninja-build \
-            flex \
-            bison \
-            python3 \
-            curl \
-            ca-certificates
-
-          git clone --depth 1 https://github.com/mborgerson/roswell.git roswell_src
-          cd roswell_src
-          cmake -G Ninja -B build \
-            -DCMAKE_TOOLCHAIN_FILE="$PWD/toolchain-gcc.cmake" \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DDBG=0 \
-            -DCOVERAGE=OFF \
-            .
-          cmake --build build
-          cd ..
-          if [ ! -f roswell_src/build/flash.bin ]; then
-            echo "Failed to build roswell BIOS flash.bin"
-            exit 1
-          fi
-          cp roswell_src/build/flash.bin assets/roswell.bin
+          gh release download \
+            --repo mborgerson/roswell \
+            --pattern "*flash.bin" \
+            --output assets/roswell.bin
 
       - name: Save Run Metadata
         run: |
