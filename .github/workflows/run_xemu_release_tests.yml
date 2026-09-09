@@ -19,8 +19,9 @@ on:
         type: string
 
 concurrency:
-  group: run-xemu-tests-${{ github.event.inputs.xemu_tag }}
+  group: run-xemu-tests-${{ inputs.xemu_tag }}
   cancel-in-progress: true
+
 
 jobs:
   prepare-test-assets:
@@ -250,7 +251,7 @@ jobs:
 
       - name: Commit to Branch and Create Pull Request
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PR_CREATION_TOKEN || secrets.XEMU_ROBOT_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           XEMU_TAG="${{ inputs.xemu_tag }}"
           PGRAPH_TAG="${{ inputs.pgraph_tag }}"
@@ -274,7 +275,14 @@ jobs:
           git commit -m "Add Roswell/PGRAPH test results for xemu ${XEMU_TAG}"
           git push origin "$BRANCH_NAME" --force
 
-          PR_TITLE="PGRAPH test results for xemu ${XEMU_TAG}"
+          if [ "$XEMU_TAG" = "pre-release" ]; then
+            PR_TITLE="PGRAPH test results for xemu pre-release (Latest Master)"
+            EXTRA_DESC="- **Build Type**: Latest development pre-release build from xemu master"
+          else
+            PR_TITLE="PGRAPH test results for xemu ${XEMU_TAG}"
+            EXTRA_DESC=""
+          fi
+
           PR_BODY=$(cat <<EOF
           ### 🎮 Automated PGRAPH Test Results
 
@@ -283,10 +291,12 @@ jobs:
           - **BIOS**: Roswell BIOS
           - **Renderer**: Software GL (Mesa llvmpipe via xvfb)
           - **Execution**: 16 parallel CI shards
+          ${EXTRA_DESC}
 
           Please review the committed results and image diffs. Merging this PR to \`main\` will automatically trigger the downstream pipeline to compute HW diffs, update the GitHub Pages comparison site, and archive raw images.
           EOF
           )
+
 
           EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --base main --json number --jq '.[0].number')
           if [ -n "$EXISTING_PR" ]; then
